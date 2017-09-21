@@ -28,9 +28,19 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\jetproger.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\~Jetproger.Tools.Binaries\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -40,6 +50,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\AssemblyInfo.cs" />
+    <Compile Include="Bases\Constants.cs" />
+    <Compile Include="Bases\ConvertExtensions.cs" />
+    <Compile Include="Bases\DataReaders.cs" />
+    <Compile Include="Bases\DataRows.cs" />
+    <Compile Include="Bases\Dictionaries.cs" />
+    <Compile Include="Bases\Graphics.cs" />
+    <Compile Include="Bases\Numerations.cs" />
+    <Compile Include="Bases\Supports.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\jetproger.pfx" />
