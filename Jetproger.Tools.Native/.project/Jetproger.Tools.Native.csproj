@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0E365FF3-8139-4F71-B5E1-E8A5212F94B7}</ProjectGuid>
+    <ProjectGuid>{635C1C60-606C-43A1-919C-DD4908057912}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Jetproger.Tools.Cache</RootNamespace>
-    <AssemblyName>Jetproger.Tools.Cache</AssemblyName>
+    <RootNamespace>Jetproger.Tools.Native</RootNamespace>
+    <AssemblyName>Jetproger.Tools.Native</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -15,7 +15,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\..\.Jetproger.Tools.Native\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -23,7 +23,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\..\.Jetproger.Tools.Native\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -32,7 +32,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>..\jetproger.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\..\.solution\jetproger.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -45,14 +45,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\AssemblyInfo.cs" />
+    <Compile Include="..\..\.solution\AssemblyInfo.cs">
+      <Link>.project\AssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\jetproger.pfx" />
+    <None Include="..\..\.solution\jetproger.pfx">
+      <Link>.project\jetproger.pfx</Link>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Bases\" />
+    <Compile Include="..\Bases\NativeMethods.cs">
+      <Link>Bases\NativeMethods.cs</Link>
+    </Compile>
   </ItemGroup>
+  <Target Name="RemoveDirectories" BeforeTargets="ResolveReferences">
+      <Exec Command = 'for /d %%p in ("$(ProjectDir)"\*) do if /I "%%p" neq "$(ProjectDir)\obj" (rd /Q /S "%%p")' />
+  </Target>
+  <Target Name="RemoveObj" AfterTargets="Rebuild">
+      <Exec Command = 'rd /Q /S "$(ProjectDir)\obj"' />
+  </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

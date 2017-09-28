@@ -9,7 +9,7 @@ namespace Jetproger.Tools.Convert.Bases
     {
         public static object Default(this Type type)
         {
-            if (!_defaults.ContainsKey(type))
+            if (!Defaults.ContainsKey(type))
             {
                 if (!type.IsGenericType && !type.IsEnum) return null;
                 if (type.IsAbstract || type.IsInterface) return null;
@@ -17,7 +17,7 @@ namespace Jetproger.Tools.Convert.Bases
                 if (genericType != null && (genericType == typeof(Nullable<>) || genericType == typeof(Func<>) || genericType == typeof(Action<>))) return null;
                 return Activator.CreateInstance(type);
             }
-            return _defaults[type];
+            return Defaults[type];
         }
 
         public static T As<T>(this object value)
@@ -25,31 +25,31 @@ namespace Jetproger.Tools.Convert.Bases
             var resultType = typeof(T);
             if (value == null) return (T)resultType.Default();
             var valueType = value.GetType();
-            if (Supports.IsTypeOf(valueType, resultType)) return (T)value;
+            if (Methods.IsTypeOf(valueType, resultType)) return (T)value;
             if (valueType == typeof(string) && resultType == typeof(Icon)) return (T)(object)Graphics.AsIcon((string)value);
             if (valueType == typeof(byte[]) && resultType == typeof(Icon)) return (T)(object)Graphics.AsIcon((byte[])value);
             if (valueType == typeof(string) && resultType == typeof(Image)) return (T)(object)Graphics.AsImage((string)value);
             if (valueType == typeof(byte[]) && resultType == typeof(Image)) return (T)(object)Graphics.AsImage((byte[])value);
-            if (_convertors.ContainsKey(resultType)) return (T)_convertors[resultType](value);
+            if (Convertors.ContainsKey(resultType)) return (T)Convertors[resultType](value);
             if (resultType.IsAbstract || resultType.IsInterface) return (T)(object)null;
-            if (valueType == typeof(string)) return (T)Supports.DeserializeJson((string)value, resultType);
-            return (T)Supports.DeserializeJson(Supports.SerializeJson(value), resultType);
+            if (valueType == typeof(string)) return (T)Methods.DeserializeJson((string)value, resultType);
+            return (T)Methods.DeserializeJson(Methods.SerializeJson(value), resultType);
         }
 
         public static object As(this object value, Type resultType)
         {
-            if (_convertors.ContainsKey(resultType)) return _convertors[resultType](value);
+            if (Convertors.ContainsKey(resultType)) return Convertors[resultType](value);
             if (value == null) return null;
             var valueType = value.GetType();
-            if (Supports.IsTypeOf(valueType, resultType)) return value;
+            if (Methods.IsTypeOf(valueType, resultType)) return value;
             if (valueType == typeof(string) && resultType == typeof(Icon)) return Graphics.AsIcon((string)value);
             if (valueType == typeof(byte[]) && resultType == typeof(Icon)) return Graphics.AsIcon((byte[])value);
             if (valueType == typeof(string) && resultType == typeof(Image)) return Graphics.AsImage((string)value);
             if (valueType == typeof(byte[]) && resultType == typeof(Image)) return Graphics.AsImage((byte[])value);
-            if (_convertors.ContainsKey(resultType)) return _convertors[resultType](value);
+            if (Convertors.ContainsKey(resultType)) return Convertors[resultType](value);
             if (resultType.IsAbstract || resultType.IsInterface) return null;
-            if (valueType == typeof(string)) return Supports.DeserializeJson((string)value, resultType);
-            return Supports.DeserializeJson(Supports.SerializeJson(value), resultType);
+            if (valueType == typeof(string)) return Methods.DeserializeJson((string)value, resultType);
+            return Methods.DeserializeJson(Methods.SerializeJson(value), resultType);
         }
 
         public static bool? AsBoolNull(this object value)
@@ -167,7 +167,7 @@ namespace Jetproger.Tools.Convert.Bases
             if (value is DateTime) return (char)((DateTime)value).ToOADate();
             if (value is Guid) return (char)BitConverter.ToUInt16(((Guid)value).ToByteArray(), 0);
             if (value is byte[]) return (char)BitConverter.ToUInt16((byte[])value, 0);
-            if (value is char[]) return Supports.SetLen((char[])value, 1)[0];
+            if (value is char[]) return Methods.SetLen((char[])value, 1)[0];
             if (value.GetType().IsClass) return (char)value.GetHashCode();
             return Cast<char>(value);
         }
@@ -335,8 +335,8 @@ namespace Jetproger.Tools.Convert.Bases
         {
             if (value == null || value == DBNull.Value) return default(byte[]);
             if (value is byte[]) return (byte[])value;
-            if (value is string) return Supports.GetStringAsBytes((string)value);
-            if (value is char[]) return Supports.GetStringAsBytes(value.AsString());
+            if (value is string) return Methods.GetStringAsBytes((string)value);
+            if (value is char[]) return Methods.GetStringAsBytes(value.AsString());
             if (value is Guid) return ((Guid)value).ToByteArray();
             if (value is DateTime) return BitConverter.GetBytes(((DateTime)value).ToOADate());
             if (value is bool) return BitConverter.GetBytes((bool)value);
@@ -401,21 +401,21 @@ namespace Jetproger.Tools.Convert.Bases
             if (value is Guid) return (Guid)value;
             if (value is string) return Guid.TryParse((string)value, out result) ? result : default(Guid);
             if (value is char[]) return Guid.TryParse(value.AsString(), out result) ? result : default(Guid);
-            if (value is byte[]) return new Guid(Supports.SetLen((byte[])value, 16));
-            if (value is DateTime) return new Guid(Supports.SetLen(((DateTime)value).ToOADate().AsBytes(), 16));
-            if (value is bool) return new Guid(Supports.SetLen(value.AsBytes(), 16));
-            if (value is byte) return new Guid(Supports.SetLen(value.AsBytes(), 16));
-            if (value is sbyte) return new Guid(Supports.SetLen(value.AsBytes(), 16));
-            if (value is char) return new Guid(Supports.SetLen(value.AsBytes(), 16));
-            if (value is short) return new Guid(Supports.SetLen(value.AsBytes(), 16));
-            if (value is ushort) return new Guid(Supports.SetLen(value.AsBytes(), 16));
-            if (value is int) return new Guid(Supports.SetLen(value.AsBytes(), 16));
-            if (value is uint) return new Guid(Supports.SetLen(value.AsBytes(), 16));
-            if (value is long) return new Guid(Supports.SetLen(value.AsBytes(), 16));
-            if (value is ulong) return new Guid(Supports.SetLen(value.AsBytes(), 16));
-            if (value is float) return new Guid(Supports.SetLen(value.AsBytes(), 16));
-            if (value is decimal) return new Guid(Supports.SetLen(value.AsBytes(), 16));
-            if (value is double) return new Guid(Supports.SetLen(value.AsBytes(), 16));
+            if (value is byte[]) return new Guid(Methods.SetLen((byte[])value, 16));
+            if (value is DateTime) return new Guid(Methods.SetLen(((DateTime)value).ToOADate().AsBytes(), 16));
+            if (value is bool) return new Guid(Methods.SetLen(value.AsBytes(), 16));
+            if (value is byte) return new Guid(Methods.SetLen(value.AsBytes(), 16));
+            if (value is sbyte) return new Guid(Methods.SetLen(value.AsBytes(), 16));
+            if (value is char) return new Guid(Methods.SetLen(value.AsBytes(), 16));
+            if (value is short) return new Guid(Methods.SetLen(value.AsBytes(), 16));
+            if (value is ushort) return new Guid(Methods.SetLen(value.AsBytes(), 16));
+            if (value is int) return new Guid(Methods.SetLen(value.AsBytes(), 16));
+            if (value is uint) return new Guid(Methods.SetLen(value.AsBytes(), 16));
+            if (value is long) return new Guid(Methods.SetLen(value.AsBytes(), 16));
+            if (value is ulong) return new Guid(Methods.SetLen(value.AsBytes(), 16));
+            if (value is float) return new Guid(Methods.SetLen(value.AsBytes(), 16));
+            if (value is decimal) return new Guid(Methods.SetLen(value.AsBytes(), 16));
+            if (value is double) return new Guid(Methods.SetLen(value.AsBytes(), 16));
             return default(Guid);
         }
 
@@ -439,11 +439,11 @@ namespace Jetproger.Tools.Convert.Bases
             if (value is DateTime) return ((DateTime)value).ToString("yyyy-MM-ddTHH:mm:ss.fff", Formatter);
             if (value is char) return ((char)value).ToString(CultureInfo.InvariantCulture);
             if (value is char[]) return string.Concat((char[])value);
-            if (value is byte[]) return Supports.GetBytesAsString((byte[])value);
+            if (value is byte[]) return Methods.GetBytesAsString((byte[])value);
             if (value is Icon) return Graphics.AsString((Icon)value);
             if (value is Image) return Graphics.AsString((Image)value);
             if (value is Exception) return GetExceptionAsString((Exception)value);
-            return Supports.SerializeJson(value);
+            return Methods.SerializeJson(value);
         }
 
         private static string GetExceptionAsString(Exception e)

@@ -8,7 +8,7 @@ namespace Jetproger.Tools.Convert.Bases
 {
     public static partial class ConvertExtensions
     {
-        private static class Supports
+        private static class Methods
         {
             public static T[] SetLen<T>(T[] array, int length)
             {

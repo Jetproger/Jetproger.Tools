@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{304C9CBB-080C-4BD5-8AE9-C61B202294EA}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Jetproger.Tools.Metadata</RootNamespace>
+    <AssemblyName>Jetproger.Tools.Metadata</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\.Jetproger.Tools.Metadata\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\.Jetproger.Tools.Metadata\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\..\.solution\jetproger.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\.Newtonsoft.Json\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\Metadata.cs">
+      <Link>Bases\Metadata.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\TypeExtensions.cs">
+      <Link>Bases\TypeExtensions.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\Cache.cs">
+      <Link>Bases\Cache.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\CacheCore.cs">
+      <Link>Bases\CacheCore.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\CacheLoader.cs">
+      <Link>Bases\CacheLoader.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\Methods.cs">
+      <Link>Bases\Methods.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\Convert.cs">
+      <Link>Bases\Convert.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\Property.cs">
+      <Link>Bases\Property.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\.solution\AssemblyInfo.cs">
+      <Link>.project\AssemblyInfo.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\.solution\jetproger.pfx">
+      <Link>.project\jetproger.pfx</Link>
+	</None>
+  </ItemGroup>
+  <Target Name="RemoveDirectories" BeforeTargets="ResolveReferences">
+      <Exec Command = 'for /d %%p in ("$(ProjectDir)"\*) do if /I "%%p" neq "$(ProjectDir)\obj" (rd /Q /S "%%p")' />
+  </Target>
+  <Target Name="RemoveObj" AfterTargets="Rebuild">
+      <Exec Command = 'rd /Q /S "$(ProjectDir)\obj"' />
+  </Target>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

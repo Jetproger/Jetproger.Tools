@@ -15,7 +15,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\..\.Jetproger.Tools.Convert\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -23,7 +23,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\..\.Jetproger.Tools.Convert\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -32,36 +32,74 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>..\jetproger.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\..\.solution\jetproger.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\~Jetproger.Tools.Binaries\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\.Newtonsoft.Json\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\AssemblyInfo.cs" />
-    <Compile Include="Bases\Constants.cs" />
-    <Compile Include="Bases\ConvertExtensions.cs" />
-    <Compile Include="Bases\DataReaders.cs" />
-    <Compile Include="Bases\DataRows.cs" />
-    <Compile Include="Bases\Dictionaries.cs" />
-    <Compile Include="Bases\Graphics.cs" />
-    <Compile Include="Bases\Numerations.cs" />
-    <Compile Include="Bases\Supports.cs" />
+    <Compile Include="..\Bases\Constants.cs">
+      <Link>Bases\Constants.cs</Link>
+	</Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\jetproger.pfx" />
+    <Compile Include="..\Bases\ConvertExtensions.cs">
+      <Link>Bases\ConvertExtensions.cs</Link>
+	</Compile>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\DataReaders.cs">
+      <Link>Bases\DataReaders.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\DataRows.cs">
+      <Link>Bases\DataRows.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\Dictionaries.cs">
+      <Link>Bases\Dictionaries.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\Graphics.cs">
+      <Link>Bases\Graphics.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\Numerations.cs">
+      <Link>Bases\Numerations.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\Methods.cs">
+      <Link>Bases\Methods.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\.solution\AssemblyInfo.cs">
+      <Link>.project\AssemblyInfo.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\.solution\jetproger.pfx">
+      <Link>.project\jetproger.pfx</Link>
+	</None>
+  </ItemGroup>
+  <Target Name="RemoveDirectories" BeforeTargets="ResolveReferences">
+      <Exec Command = 'for /d %%p in ("$(ProjectDir)"\*) do if /I "%%p" neq "$(ProjectDir)\obj" (rd /Q /S "%%p")' />
+  </Target>
+  <Target Name="RemoveObj" AfterTargets="Rebuild">
+      <Exec Command = 'rd /Q /S "$(ProjectDir)\obj"' />
+  </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

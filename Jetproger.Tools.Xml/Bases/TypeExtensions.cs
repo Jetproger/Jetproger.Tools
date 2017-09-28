@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Jetproger.Tools.Xml.Bases
 {
@@ -178,35 +177,6 @@ namespace Jetproger.Tools.Xml.Bases
         private static bool IsString(this Type type)
         {
             return type == typeof(string);
-        }
-
-        private static readonly HashSet<Type> _simpleTypes = new HashSet<Type>
-        {
-            typeof(bool), typeof(bool?),
-            typeof(byte), typeof(byte?),
-            typeof(sbyte), typeof(sbyte?),
-            typeof(char), typeof(char?),
-            typeof(short), typeof(short?), typeof(ushort), typeof(ushort?),
-            typeof(int), typeof(int?), typeof(uint), typeof(uint?),
-            typeof(IntPtr), typeof(IntPtr?), typeof(UIntPtr), typeof(UIntPtr?),
-            typeof(long), typeof(long?), typeof(ulong), typeof(ulong?),
-            typeof(Guid), typeof(Guid?),
-            typeof(float), typeof(float?),
-            typeof(decimal), typeof(decimal?),
-            typeof(double), typeof(double?),
-            typeof(DateTime), typeof(DateTime?),
-            typeof(char[]), typeof(byte[]),
-            typeof(string),
-        };
-
-        private static bool IsSimple(object value)
-        {
-            return value != null && IsSimple(value.GetType());
-        }
-
-        private static bool IsSimple(this Type type)
-        {
-            return type != null && (type.IsEnum || _simpleTypes.Contains(type));
         }
 
         private static Type GetGenericArgumentType(this Type type)

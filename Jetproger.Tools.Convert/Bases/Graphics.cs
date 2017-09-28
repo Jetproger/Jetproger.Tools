@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 
@@ -67,9 +68,16 @@ namespace Jetproger.Tools.Convert.Bases
 
             public static Icon AsIcon(byte[] bytes)
             {
-                using (var ms = new MemoryStream(bytes))
+                try
                 {
-                    return new Icon(ms);
+                    using (var ms = new MemoryStream(bytes))
+                    {
+                        return new Icon(ms);
+                    }
+                }
+                catch
+                {
+                    return GetDefaultIcon();
                 }
             }
 
@@ -80,20 +88,27 @@ namespace Jetproger.Tools.Convert.Bases
 
             public static Image AsImage(byte[] bytes)
             {
-                using (var ms = new MemoryStream(bytes))
+                try
                 {
-                    return Image.FromStream(ms, true);
+                    using (var ms = new MemoryStream(bytes))
+                    {
+                        return Image.FromStream(ms, true);
+                    }
+                }
+                catch
+                {
+                    return GetDefaultImage();
                 }
             }
 
             public static Image GetDefaultImage()
             {
-                return Supports.GetOne(DefaultImage, () => AsImage(ImageDefault));
+                return Methods.GetOne(DefaultImage, () => AsImage(ImageDefault));
             }
 
             public static Icon GetDefaultIcon()
             {
-                return Supports.GetOne(DefaultIcon, () => AsIcon(IconDefault));
+                return Methods.GetOne(DefaultIcon, () => AsIcon(IconDefault));
             }
         }
     }

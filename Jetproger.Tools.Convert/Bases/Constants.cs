@@ -33,7 +33,7 @@ namespace Jetproger.Tools.Convert.Bases
             }
         };
 
-        private static readonly Dictionary<Type, Func<object, object>> _convertors = new Dictionary<Type, Func<object, object>>
+        private static readonly Dictionary<Type, Func<object, object>> Convertors = new Dictionary<Type, Func<object, object>>
         {
             { typeof(bool), o => AsBool(o) },
             { typeof(bool?), o => AsBoolNull(o) },
@@ -70,7 +70,7 @@ namespace Jetproger.Tools.Convert.Bases
             { typeof(string), o => AsString(o) }
         };
 
-        private static readonly Dictionary<Type, object> _defaults = new Dictionary<Type, object>
+        private static readonly Dictionary<Type, object> Defaults = new Dictionary<Type, object>
         {
             { typeof(bool), default(bool) },
             { typeof(bool?), default(bool?) },

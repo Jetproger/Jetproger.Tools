@@ -8,7 +8,7 @@ namespace Jetproger.Tools.Xml.Bases
 {
     public static partial class XmlExtensions
     {
-        private static class Supports
+        private static class Methods
         {
             public static T[] SetLen<T>(T[] array, int length)
             {
@@ -23,7 +23,7 @@ namespace Jetproger.Tools.Xml.Bases
                 var sb = new StringBuilder("0x");
                 foreach (byte b in bytes)
                 {
-                    string s = System.Convert.ToString(b, 16);
+                    string s = Convert.ToString(b, 16);
                     sb.AppendFormat("{0}{1}", s.Length < 2 ? "0" : "", s);
                 }
                 return sb.ToString();
@@ -43,7 +43,7 @@ namespace Jetproger.Tools.Xml.Bases
                     {
                         var k = 2 * i;
                         var valueString = $"{s[k]}{s[k + 1]}";
-                        var valueByte = System.Convert.ToByte(valueString, 16);
+                        var valueByte = Convert.ToByte(valueString, 16);
                         bytes.Add(valueByte);
                     }
                     return bytes.ToArray();
@@ -66,18 +66,6 @@ namespace Jetproger.Tools.Xml.Bases
                 return holder[0];
             }
 
-            public static T GetOne<T>(T?[] holder, Func<T> factory) where T : struct
-            {
-                if (holder[0] == null)
-                {
-                    lock (holder)
-                    {
-                        if (holder[0] == null) holder[0] = factory();
-                    }
-                }
-                return holder[0].Value;
-            }
-
             public static bool IsTypeOf(Type type, Type sample)
             {
                 return type == sample || type.IsSubclassOf(sample) || type.GetInterfaces().Any(interfaceType => interfaceType == sample);
@@ -94,11 +82,6 @@ namespace Jetproger.Tools.Xml.Bases
                     if (IsSimple(o.GetType())) sw.Write(o.AsString()); else JsonSerializer.Serialize(sw, o);
                     return sw.ToString();
                 }
-            }
-
-            public static T DeserializeJson<T>(string json)
-            {
-                return (T)DeserializeJson(json, typeof(T));
             }
 
             public static object DeserializeJson(string json, Type resultType)
@@ -118,7 +101,7 @@ namespace Jetproger.Tools.Xml.Bases
                 public override Encoding Encoding => Encoding.UTF8;
             }
 
-            private static readonly HashSet<Type> _simpleTypes = new HashSet<Type> {
+            private static readonly HashSet<Type> SimpleTypes = new HashSet<Type> {
                 typeof(bool), typeof(bool?),
                 typeof(byte), typeof(byte?),
                 typeof(sbyte), typeof(sbyte?),
@@ -136,25 +119,10 @@ namespace Jetproger.Tools.Xml.Bases
                 typeof(string),
             };
 
-            private static bool IsSimple(object value)
-            {
-                return value != null && IsSimple(value.GetType());
-            }
-
             private static bool IsSimple(Type type)
             {
-                return type != null && (type.IsEnum || _simpleTypes.Contains(type));
+                return type != null && (type.IsEnum || SimpleTypes.Contains(type));
             }
-        }
-
-        private static TResult With<TInput, TResult>(this TInput o, System.Func<TInput, TResult> evaluator) where TResult : class where TInput : class
-        {
-            return o == null ? null : evaluator(o);
-        }
-
-        private static TResult With<TInput, TResult>(this TInput? o, System.Func<TInput?, TResult> evaluator) where TResult : class where TInput : struct
-        {
-            return o == null ? null : evaluator(o);
         }
     }
 }

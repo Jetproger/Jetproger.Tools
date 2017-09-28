@@ -8,11 +8,6 @@ namespace Jetproger.Tools.Xml.Bases
 {
     public static partial class XmlExtensions
     {
-        public static XmlNode AddNode(this XmlNode root, string name, string namespaceUri = null)
-        {
-            return AddNode(root, name, "", namespaceUri);
-        }
-
         public static XmlNode AddNode(this XmlNode root, string name, bool value)
         {
             return AddNode(root, name, value.AsInt().AsString());
@@ -20,7 +15,7 @@ namespace Jetproger.Tools.Xml.Bases
 
         public static XmlNode AddNode(this XmlNode root, string name, bool? value)
         {
-            return value.With(o => AddNode(root, name, o.AsInt().AsString()));
+            return value != null ? AddNode(root, name, value.AsInt().AsString()) : null;
         }
 
         public static XmlNode AddNode(this XmlNode root, string name, byte value)
@@ -30,7 +25,7 @@ namespace Jetproger.Tools.Xml.Bases
 
         public static XmlNode AddNode(this XmlNode root, string name, byte? value)
         {
-            return value.With(o => AddNode(root, name, o.AsString()));
+            return value != null ? AddNode(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddNode(this XmlNode root, string name, sbyte value)
@@ -40,12 +35,12 @@ namespace Jetproger.Tools.Xml.Bases
 
         public static XmlNode AddNode(this XmlNode root, string name, sbyte? value)
         {
-            return value.With(o => AddNode(root, name, o.AsString()));
+            return value != null ? AddNode(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddNode(this XmlNode root, string name, byte[] value)
         {
-            return value.With(o => AddNode(root, name, o.AsString()));
+            return value != null ? AddNode(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddNode(this XmlNode root, string name, char value)
@@ -55,12 +50,12 @@ namespace Jetproger.Tools.Xml.Bases
 
         public static XmlNode AddNode(this XmlNode root, string name, char? value)
         {
-            return value.With(o => AddNode(root, name, value.AsString()));
+            return value != null ? AddNode(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddNode(this XmlNode root, string name, char[] value)
         {
-            return value.With(o => AddNode(root, name, value.AsString()));
+            return value != null ? AddNode(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddNode(this XmlNode root, string name, short value)
@@ -70,7 +65,7 @@ namespace Jetproger.Tools.Xml.Bases
 
         public static XmlNode AddNode(this XmlNode root, string name, short? value)
         {
-            return value.With(o => AddNode(root, name, value.AsString()));
+            return value != null ? AddNode(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddNode(this XmlNode root, string name, ushort value)
@@ -80,7 +75,7 @@ namespace Jetproger.Tools.Xml.Bases
 
         public static XmlNode AddNode(this XmlNode root, string name, ushort? value)
         {
-            return value.With(o => AddNode(root, name, value.AsString()));
+            return value != null ? AddNode(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddNode(this XmlNode root, string name, int value)
@@ -90,7 +85,7 @@ namespace Jetproger.Tools.Xml.Bases
 
         public static XmlNode AddNode(this XmlNode root, string name, int? value)
         {
-            return value.With(o => AddNode(root, name, value.AsString()));
+            return value != null ? AddNode(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddNode(this XmlNode root, string name, uint value)
@@ -100,7 +95,7 @@ namespace Jetproger.Tools.Xml.Bases
 
         public static XmlNode AddNode(this XmlNode root, string name, uint? value)
         {
-            return value.With(o => AddNode(root, name, value.AsString()));
+            return value != null ? AddNode(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddNode(this XmlNode root, string name, long value)
@@ -110,7 +105,7 @@ namespace Jetproger.Tools.Xml.Bases
 
         public static XmlNode AddNode(this XmlNode root, string name, long? value)
         {
-            return value.With(o => AddNode(root, name, value.AsString()));
+            return value != null ? AddNode(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddNode(this XmlNode root, string name, ulong value)
@@ -120,7 +115,7 @@ namespace Jetproger.Tools.Xml.Bases
 
         public static XmlNode AddNode(this XmlNode root, string name, ulong? value)
         {
-            return value.With(o => AddNode(root, name, value.AsString()));
+            return value != null ? AddNode(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddNode(this XmlNode root, string name, Guid value)
@@ -130,7 +125,7 @@ namespace Jetproger.Tools.Xml.Bases
 
         public static XmlNode AddNode(this XmlNode root, string name, Guid? value)
         {
-            return value.With(o => AddNode(root, name, value.AsString()));
+            return value != null ? AddNode(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddNode(this XmlNode root, string name, float value)
@@ -140,7 +135,7 @@ namespace Jetproger.Tools.Xml.Bases
 
         public static XmlNode AddNode(this XmlNode root, string name, float? value)
         {
-            return value.With(o => AddNode(root, name, value.AsString()));
+            return value != null ? AddNode(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddNode(this XmlNode root, string name, decimal value)
@@ -150,7 +145,7 @@ namespace Jetproger.Tools.Xml.Bases
 
         public static XmlNode AddNode(this XmlNode root, string name, decimal? value)
         {
-            return value.With(o => AddNode(root, name, value.AsString()));
+            return value != null ? AddNode(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddNode(this XmlNode root, string name, double value)
@@ -160,7 +155,7 @@ namespace Jetproger.Tools.Xml.Bases
 
         public static XmlNode AddNode(this XmlNode root, string name, double? value)
         {
-            return value.With(o => AddNode(root, name, value.AsString()));
+            return value != null ? AddNode(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddNode(this XmlNode root, string name, DateTime value)
@@ -170,7 +165,7 @@ namespace Jetproger.Tools.Xml.Bases
 
         public static XmlNode AddNode(this XmlNode root, string name, DateTime? value)
         {
-            return value.With(o => AddNode(root, name, value.AsString()));
+            return value != null ? AddNode(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddAttr(this XmlNode root, string name)
@@ -185,7 +180,7 @@ namespace Jetproger.Tools.Xml.Bases
 
         public static XmlNode AddAttr(this XmlNode root, string name, bool? value)
         {
-            return value.With(o => AddAttr(root, name, o.AsInt().AsString()));
+            return value != null ? AddAttr(root, name, value.AsInt().AsString()) : null;
         }
 
         public static XmlNode AddAttr(this XmlNode root, string name, byte value)
@@ -195,7 +190,7 @@ namespace Jetproger.Tools.Xml.Bases
 
         public static XmlNode AddAttr(this XmlNode root, string name, byte? value)
         {
-            return value.With(o => AddAttr(root, name, o.AsString()));
+            return value != null ? AddAttr(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddAttr(this XmlNode root, string name, sbyte value)
@@ -205,12 +200,12 @@ namespace Jetproger.Tools.Xml.Bases
 
         public static XmlNode AddAttr(this XmlNode root, string name, sbyte? value)
         {
-            return value.With(o => AddAttr(root, name, o.AsString()));
+            return value != null ? AddAttr(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddAttr(this XmlNode root, string name, byte[] value)
         {
-            return value.With(o => AddAttr(root, name, o.AsString()));
+            return value != null ? AddAttr(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddAttr(this XmlNode root, string name, char value)
@@ -220,12 +215,12 @@ namespace Jetproger.Tools.Xml.Bases
 
         public static XmlNode AddAttr(this XmlNode root, string name, char? value)
         {
-            return value.With(o => AddAttr(root, name, value.AsString()));
+            return value != null ? AddAttr(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddAttr(this XmlNode root, string name, char[] value)
         {
-            return value.With(o => AddAttr(root, name, value.AsString()));
+            return value != null ? AddAttr(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddAttr(this XmlNode root, string name, short value)
@@ -235,7 +230,7 @@ namespace Jetproger.Tools.Xml.Bases
 
         public static XmlNode AddAttr(this XmlNode root, string name, short? value)
         {
-            return value.With(o => AddAttr(root, name, value.AsString()));
+            return value != null ? AddAttr(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddAttr(this XmlNode root, string name, ushort value)
@@ -245,7 +240,7 @@ namespace Jetproger.Tools.Xml.Bases
 
         public static XmlNode AddAttr(this XmlNode root, string name, ushort? value)
         {
-            return value.With(o => AddAttr(root, name, value.AsString()));
+            return value != null ? AddAttr(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddAttr(this XmlNode root, string name, int value)
@@ -255,7 +250,7 @@ namespace Jetproger.Tools.Xml.Bases
 
         public static XmlNode AddAttr(this XmlNode root, string name, int? value)
         {
-            return value.With(o => AddAttr(root, name, value.AsString()));
+            return value != null ? AddAttr(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddAttr(this XmlNode root, string name, uint value)
@@ -265,7 +260,7 @@ namespace Jetproger.Tools.Xml.Bases
 
         public static XmlNode AddAttr(this XmlNode root, string name, uint? value)
         {
-            return value.With(o => AddAttr(root, name, value.AsString()));
+            return value != null ? AddAttr(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddAttr(this XmlNode root, string name, long value)
@@ -275,7 +270,7 @@ namespace Jetproger.Tools.Xml.Bases
 
         public static XmlNode AddAttr(this XmlNode root, string name, long? value)
         {
-            return value.With(o => AddAttr(root, name, value.AsString()));
+            return value != null ? AddAttr(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddAttr(this XmlNode root, string name, ulong value)
@@ -285,7 +280,7 @@ namespace Jetproger.Tools.Xml.Bases
 
         public static XmlNode AddAttr(this XmlNode root, string name, ulong? value)
         {
-            return value.With(o => AddAttr(root, name, value.AsString()));
+            return value != null ? AddAttr(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddAttr(this XmlNode root, string name, Guid value)
@@ -295,7 +290,7 @@ namespace Jetproger.Tools.Xml.Bases
 
         public static XmlNode AddAttr(this XmlNode root, string name, Guid? value)
         {
-            return value.With(o => AddAttr(root, name, value.AsString()));
+            return value != null ? AddAttr(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddAttr(this XmlNode root, string name, float value)
@@ -305,7 +300,7 @@ namespace Jetproger.Tools.Xml.Bases
 
         public static XmlNode AddAttr(this XmlNode root, string name, float? value)
         {
-            return value.With(o => AddAttr(root, name, value.AsString()));
+            return value != null ? AddAttr(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddAttr(this XmlNode root, string name, decimal value)
@@ -315,7 +310,7 @@ namespace Jetproger.Tools.Xml.Bases
 
         public static XmlNode AddAttr(this XmlNode root, string name, decimal? value)
         {
-            return value.With(o => AddAttr(root, name, value.AsString()));
+            return value != null ? AddAttr(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddAttr(this XmlNode root, string name, double value)
@@ -325,7 +320,7 @@ namespace Jetproger.Tools.Xml.Bases
 
         public static XmlNode AddAttr(this XmlNode root, string name, double? value)
         {
-            return value.With(o => AddAttr(root, name, value.AsString()));
+            return value != null ? AddAttr(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddAttr(this XmlNode root, string name, DateTime value)
@@ -335,7 +330,7 @@ namespace Jetproger.Tools.Xml.Bases
 
         public static XmlNode AddAttr(this XmlNode root, string name, DateTime? value)
         {
-            return value.With(o => AddAttr(root, name, value.AsString()));
+            return value != null ? AddAttr(root, name, value.AsString()) : null;
         }
 
         public static XmlNode AddNode(this XmlNode root, string name, object value)
@@ -387,6 +382,11 @@ namespace Jetproger.Tools.Xml.Bases
             AddNode(root, "Message", exception.Message);
             AddNode(root, "Info", exception.AsString());
             return root;
+        }
+
+        public static XmlNode AddNode(this XmlNode root, string name, string namespaceUri = null)
+        {
+            return AddNode(root, name, "", namespaceUri);
         }
 
         public static XmlNode AddNode(this XmlNode root, string name, string value, string namespaceUri = null)
