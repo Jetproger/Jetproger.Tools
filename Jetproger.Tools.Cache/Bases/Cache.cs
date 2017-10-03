@@ -1,5 +1,11 @@
 using System;
-using Jetproger.Tools;
+using System.Collections;
+using System.Diagnostics;
+using System.Runtime.Remoting;
+using System.Runtime.Remoting.Channels;
+using System.Runtime.Remoting.Channels.Ipc;
+using System.Runtime.Serialization.Formatters;
+using System.Security.Principal;
 using Jetproger.Tools.Cache.Bases;
 
 namespace Tools
@@ -16,14 +22,73 @@ namespace Tools
                 {
                     lock (CacheLoaders)
                     {
-                        if (CacheLoaders[0] == null) CacheLoaders[0] = InitializeCache();
+                        if (CacheLoaders[0] == null)
+                        {
+                            CacheLoaders[0] = GetLoader();
+                        }
                     }
                 }
                 return CacheLoaders[0];
             }
         }
 
-        private static CacheLoader InitializeCache()
+        private static CacheLoader GetLoader()
+        {
+            CreateChannel();
+            var type = typeof(CacheLoader);
+            var portName = $"{(type.FullName ?? string.Empty).Replace(".", "-").ToLower()}-{Process.GetCurrentProcess().Id}";
+            var objectUri = type.Name.ToLower();
+            var uri = $"ipc://{portName}/{objectUri}";
+            var loader = TryGetExistsLoader(type, uri);
+            if (loader != null) return loader;
+            CreateCache();
+            return (CacheLoader)Activator.GetObject(type, uri);
+        }
+
+        private static void CreateChannel()
+        {
+            var type = typeof(Type);
+            foreach (var entry in RemotingConfiguration.GetRegisteredWellKnownServiceTypes())
+            {
+                if (entry.ObjectType == type) return;
+            }
+            var portName = $"{AppDomain.CurrentDomain.FriendlyName.Replace(".", "-").ToLower()}-{Process.GetCurrentProcess().Id}";
+            var objectUri = type.Name.ToLower();
+            var client = new BinaryClientFormatterSinkProvider();
+            var server = new BinaryServerFormatterSinkProvider
+            {
+                TypeFilterLevel = TypeFilterLevel.Full
+            };
+            var config = new Hashtable
+            {
+                ["name"] = string.Empty,
+                ["portName"] = portName,
+                ["tokenImpersonationLevel"] = TokenImpersonationLevel.Impersonation,
+                ["impersonate"] = true,
+                ["useDefaultCredentials"] = true,
+                ["secure"] = true,
+                ["typeFilterLevel"] = TypeFilterLevel.Full
+            };
+            var ipcChannel = new IpcChannel(config, client, server);
+            ChannelServices.RegisterChannel(ipcChannel, true);
+            RemotingConfiguration.RegisterWellKnownServiceType(type, objectUri, WellKnownObjectMode.SingleCall);
+        }
+
+        private static CacheLoader TryGetExistsLoader(Type type, string uri)
+        {
+            try
+            {
+                var loader = (CacheLoader)Activator.GetObject(type, uri);
+                loader.CreateChannel();
+                return loader;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private static void CreateCache()
         {
             var setup = new AppDomainSetup
             {
@@ -38,7 +103,7 @@ namespace Tools
             var assemblyName = type.Assembly.GetName().Name;
             var typeName = type.FullName ?? string.Empty;
             var instance = domain.CreateInstanceAndUnwrap(assemblyName, typeName) as CacheLoader;
-            return instance;
+            instance?.CreateChannel();
         }
 
         #region Get

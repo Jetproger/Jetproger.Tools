@@ -7,11 +7,10 @@ using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
 using System.Runtime.Serialization.Formatters;
 using System.Security.Principal;
-using Jetproger.Tools.Metadata.Bases;
 
-namespace Tools
+namespace Jetproger.Tools.Resource.Bases
 {
-    public static partial class Metadata
+    public static partial class Toolx
     {
         private static class Cache
         {

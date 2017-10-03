@@ -8,7 +8,7 @@ using System.Runtime.Serialization.Formatters;
 using System.Security.Permissions;
 using System.Security.Principal;
 
-namespace Jetproger.Tools.Metadata.Bases
+namespace Jetproger.Tools.Resource.Bases
 {
     public class CacheLoader : MarshalByRefObject
     {

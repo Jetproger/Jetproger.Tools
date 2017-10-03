@@ -19,6 +19,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -37,11 +38,10 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -55,15 +55,150 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\NativeMethods.cs">
-      <Link>Bases\NativeMethods.cs</Link>
+    <Compile Include="..\Bases\DrawTextFormats.cs">
+      <Link>Bases\DrawTextFormats.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\EditControlMargins.cs">
+      <Link>Bases\EditControlMargins.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\EditControlMessages.cs">
+      <Link>Bases\EditControlMessages.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\EditControlNotifications.cs">
+      <Link>Bases\EditControlNotifications.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\EditControlStyles.cs">
+      <Link>Bases\EditControlStyles.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\FileCodes.cs">
+      <Link>Bases\FileCodes.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\HitTests.cs">
+      <Link>Bases\HitTests.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\LanCollection.cs">
+      <Link>Bases\LanCollection.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\MDICREATESTRUCT.cs">
+      <Link>Bases\MDICREATESTRUCT..cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\NonScrollableMdiClient.cs">
+      <Link>Bases\NonScrollableMdiClient.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\Native.cs">
+      <Link>Bases\Native.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\POINT.cs">
+      <Link>Bases\POINT.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\RECT.cs">
+      <Link>Bases\RECT.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\ServerTypes.cs">
+      <Link>Bases\ServerTypes.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\SERVER_INFO_101.cs">
+      <Link>Bases\SERVER_INFO_101.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\ShellFileInfos.cs">
+      <Link>Bases\ShellFileInfos.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\SHFILEINFO.cs">
+      <Link>Bases\SHFILEINFO.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\SystemMetrics.cs">
+      <Link>Bases\SystemMetrics.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\TreeViewMessages.cs">
+      <Link>Bases\TreeViewMessages.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\TVINSERTSTRUCT.cs">
+      <Link>Bases\TVINSERTSTRUCT.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\TVITEM.cs">
+      <Link>Bases\TVITEM.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\WindowActivateStates.cs">
+      <Link>Bases\WindowActivateStates.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\WindowLongs.cs">
+      <Link>Bases\WindowLongs.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\WindowMessages.cs">
+      <Link>Bases\WindowMessages.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\WindowPositions.cs">
+      <Link>Bases\WindowPositions.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\WindowPosStruct.cs">
+      <Link>Bases\WindowPosStruct.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\WindowShows.cs">
+      <Link>Bases\WindowShows.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\WindowStyles.cs">
+      <Link>Bases\WindowStyles.cs</Link>
     </Compile>
   </ItemGroup>
   <Target Name="RemoveDirectories" BeforeTargets="ResolveReferences">
-      <Exec Command = 'for /d %%p in ("$(ProjectDir)"\*) do if /I "%%p" neq "$(ProjectDir)\obj" (rd /Q /S "%%p")' />
+    <Exec Command="for /d %%p in (&quot;$(ProjectDir)&quot;\*) do if /I &quot;%%p&quot; neq &quot;$(ProjectDir)\obj&quot; (rd /Q /S &quot;%%p&quot;)" />
   </Target>
   <Target Name="RemoveObj" AfterTargets="Rebuild">
-      <Exec Command = 'rd /Q /S "$(ProjectDir)\obj"' />
+    <Exec Command="rd /Q /S &quot;$(ProjectDir)\obj&quot;" />
   </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

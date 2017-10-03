@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Web;
-
 namespace Tools
 {
     public static partial class Metadata
     {
-        private static readonly ConcurrentDictionary<string, ConcurrentDictionary<string, object>> Data = new ConcurrentDictionary<string, ConcurrentDictionary<string, object>>();
-
-
         public static FieldInfo GetField(object value, string fieldName)
         {
             string assemblyName, typeName, valueName;

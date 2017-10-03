@@ -50,6 +50,11 @@
 	</Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Bases\Dynamic.cs">
+      <Link>Bases\Dynamic.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="..\..\.solution\AssemblyInfo.cs">
       <Link>.project\AssemblyInfo.cs</Link>
 	</Compile>
