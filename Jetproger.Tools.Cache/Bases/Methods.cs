@@ -4,9 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
-using System.Reflection;
 using System.Text;
-using Newtonsoft.Json;
 
 namespace Tools
 {
@@ -14,13 +12,6 @@ namespace Tools
     {
         private static class Methods
         {
-            public static readonly JsonSerializer JsonSerializer = new JsonSerializer
-            {
-                Formatting = Formatting.None,
-                ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-                PreserveReferencesHandling = PreserveReferencesHandling.Objects
-            };
-
             public static readonly CultureInfo Formatter = new CultureInfo("en-us")
             {
                 NumberFormat =
@@ -34,33 +25,6 @@ namespace Tools
                     TimeSeparator = ":"
                 }
             };
-
-            private static readonly HashSet<Type> SimpleTypes = new HashSet<Type>
-            {
-                typeof(bool), typeof(bool?),
-                typeof(byte), typeof(byte?),
-                typeof(sbyte), typeof(sbyte?),
-                typeof(char), typeof(char?),
-                typeof(short), typeof(short?), typeof(ushort), typeof(ushort?),
-                typeof(int), typeof(int?), typeof(uint), typeof(uint?),
-                typeof(IntPtr), typeof(IntPtr?), typeof(UIntPtr), typeof(UIntPtr?),
-                typeof(long), typeof(long?), typeof(ulong), typeof(ulong?),
-                typeof(Guid), typeof(Guid?),
-                typeof(float), typeof(float?),
-                typeof(decimal), typeof(decimal?),
-                typeof(double), typeof(double?),
-                typeof(DateTime), typeof(DateTime?),
-                typeof(char[]), typeof(byte[]),
-                typeof(string), typeof(string[]),
-                typeof(FieldInfo), typeof(FieldInfo[]),
-                typeof(MethodInfo), typeof(MethodInfo[]),
-                typeof(PropertyInfo), typeof(PropertyInfo[]),
-            };
-
-            public static bool IsSimple(Type type)
-            {
-                return type != null && (type.IsEnum || SimpleTypes.Contains(type));
-            }
 
             public static string AsString(Image image)
             {
@@ -113,32 +77,6 @@ namespace Tools
                 return sb.ToString();
             }
 
-            public static string SerializeJson(object o)
-            {
-                if (o == null)
-                {
-                    return null;
-                }
-                using (var sw = new UTF8StringWriter())
-                {
-                    if (IsSimple(o.GetType())) sw.Write(o.AsString()); else JsonSerializer.Serialize(sw, o);
-                    return sw.ToString();
-                }
-            }
-
-            public static object DeserializeJson(string json, Type resultType)
-            {
-                using (var sr = new StringReader(json))
-                {
-                    return JsonSerializer.Deserialize(sr, resultType);
-                }
-            }
-
-            private class UTF8StringWriter : StringWriter
-            {
-                public override Encoding Encoding => Encoding.UTF8;
-            }
-
             public static string[] GetStringKeys(object[] keys)
             {
                 if (keys == null) return new string[0];
@@ -153,10 +91,7 @@ namespace Tools
 
             private static string GetStringKey(object key)
             {
-                if (key == null || key == DBNull.Value) return string.Empty;
-                var type = key.GetType();
-                if (!IsSimple(type) || type.IsArray) return key.ToString();
-                return key.AsString();
+                return key != null && key != DBNull.Value ? key.AsString() : string.Empty;
             }
         }
 
@@ -184,7 +119,7 @@ namespace Tools
             if (value is Icon) return Methods.AsString((Icon)value);
             if (value is Image) return Methods.AsString((Image)value);
             if (value is Exception) return Methods.GetExceptionAsString((Exception)value);
-            return Methods.SerializeJson(value);
+            return value.ToString();
         }
     }
 }

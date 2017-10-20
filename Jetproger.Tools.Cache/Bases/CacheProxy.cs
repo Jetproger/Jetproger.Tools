@@ -8,9 +8,9 @@ using System.Runtime.Serialization.Formatters;
 using System.Security.Permissions;
 using System.Security.Principal;
 
-namespace Jetproger.Tools.Metadata.Bases
+namespace Jetproger.Tools.Cache.Bases
 {
-    public class CacheLoader : MarshalByRefObject
+    public class CacheProxy : MarshalByRefObject
     {
         [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.Infrastructure)]
         public override object InitializeLifetimeService()
@@ -18,9 +18,9 @@ namespace Jetproger.Tools.Metadata.Bases
             return null;
         }
 
-        public void Add(string[] keys, object value)
+        public void Add(string[] keys, object value, int lifetime)
         {
-            CacheCore.Add(keys, value);
+            CacheCore.Add(keys, value, lifetime);
         }
 
         public bool Get(string[] keys, out object value)
@@ -28,9 +28,14 @@ namespace Jetproger.Tools.Metadata.Bases
             return CacheCore.Get(keys, out value);
         }
 
+        public void Off(string[] keys)
+        {
+            CacheCore.Off(keys);
+        }
+
         public void CreateChannel()
         {
-            var type = typeof(CacheLoader);
+            var type = typeof(CacheProxy);
             foreach (var entry in RemotingConfiguration.GetRegisteredWellKnownServiceTypes())
             {
                 if (entry.ObjectType == type) return;

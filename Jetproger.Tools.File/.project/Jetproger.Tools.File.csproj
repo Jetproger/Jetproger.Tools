@@ -35,13 +35,15 @@
     <AssemblyOriginatorKeyFile>..\..\.solution\jetproger.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\.Newtonsoft.Json\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -52,6 +54,81 @@
   <ItemGroup>
     <Compile Include="..\Bases\Dynamic.cs">
       <Link>Bases\Dynamic.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\ConvertExtensions.cs">
+      <Link>Bases\ConvertExtensions.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\Property.cs">
+      <Link>Bases\Property.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\JsonDb.cs">
+      <Link>Bases\JsonDb.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Jsons\JsonFrom.cs">
+      <Link>Jsons\JsonFrom.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Jsons\JsonWhere.cs">
+      <Link>Jsons\JsonWhere.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Jsons\JsonCondition.cs">
+      <Link>Jsons\JsonCondition.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Jsons\JsonCommand.cs">
+      <Link>Jsons\JsonCommand.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Jsons\JsonCommandType.cs">
+      <Link>Jsons\JsonCommandType.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Jsons\JsonFilter.cs">
+      <Link>Jsons\JsonFilter.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Jsons\JsonTable.cs">
+      <Link>Jsons\JsonTable.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Jsons\JsonSet.cs">
+      <Link>Jsons\JsonSet.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Jsons\JsonWork.cs">
+      <Link>Jsons\JsonWork.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Jsons\JsonFile.cs">
+      <Link>Jsons\JsonFile.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Jsons\JsonManager.cs">
+      <Link>Jsons\JsonManager.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Jsons\JsonProxy.cs">
+      <Link>Jsons\JsonProxy.cs</Link>
 	</Compile>
   </ItemGroup>
   <ItemGroup>

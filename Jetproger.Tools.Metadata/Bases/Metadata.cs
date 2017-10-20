@@ -698,7 +698,7 @@ namespace Tools
             SplitName(name, out assemblyName, out typeName, out value);
             if (string.IsNullOrWhiteSpace(value)) return CreateInstance(assemblyName, typeName, args);
             var type = GetType(assemblyName, typeName);
-            return Methods.IsSimple(type) ? Convert.As(value, type) : CreateInstance(assemblyName, typeName, args);
+            return IsSimple(type) ? Convert.As(value, type) : CreateInstance(assemblyName, typeName, args);
         }
 
         public static T CreateInstance<T>(string assemblyName, string typeName, object[] args = null)

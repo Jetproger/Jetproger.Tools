@@ -7,10 +7,12 @@ using System.Runtime.Remoting.Channels.Ipc;
 using System.Runtime.Serialization.Formatters;
 using System.Security.Permissions;
 using System.Security.Principal;
+using Tools;
 
-namespace Jetproger.Tools.Resource.Bases
+namespace Jetproger.Tools.File.Jsons
 {
-    public class CacheLoader : MarshalByRefObject
+    [Serializable]
+    public class JsonProxy : MarshalByRefObject
     {
         [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.Infrastructure)]
         public override object InitializeLifetimeService()
@@ -18,19 +20,15 @@ namespace Jetproger.Tools.Resource.Bases
             return null;
         }
 
-        public void Add(string[] keys, object value)
+        public JsonSet Execute(Type itemType, JsonWork work)
         {
-            CacheCore.Add(keys, value);
-        }
-
-        public bool Get(string[] keys, out object value)
-        {
-            return CacheCore.Get(keys, out value);
+            var jsonFile = JsonManager.GetFile(itemType);
+            return work.Execute(jsonFile);
         }
 
         public void CreateChannel()
         {
-            var type = typeof(CacheLoader);
+            var type = typeof(JsonProxy);
             foreach (var entry in RemotingConfiguration.GetRegisteredWellKnownServiceTypes())
             {
                 if (entry.ObjectType == type) return;
@@ -38,10 +36,7 @@ namespace Jetproger.Tools.Resource.Bases
             var portName = $"{(type.FullName ?? string.Empty).Replace(".", "-").ToLower()}-{Process.GetCurrentProcess().Id}";
             var objectUri = type.Name.ToLower();
             var client = new BinaryClientFormatterSinkProvider();
-            var server = new BinaryServerFormatterSinkProvider
-            {
-                TypeFilterLevel = TypeFilterLevel.Full
-            };
+            var server = new BinaryServerFormatterSinkProvider { TypeFilterLevel = TypeFilterLevel.Full };
             var config = new Hashtable
             {
                 ["name"] = string.Empty,

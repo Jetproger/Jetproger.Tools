@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace Jetproger.Tools.Xml.Bases
 {
@@ -115,14 +116,55 @@ namespace Jetproger.Tools.Xml.Bases
                 typeof(decimal), typeof(decimal?),
                 typeof(double), typeof(double?),
                 typeof(DateTime), typeof(DateTime?),
-                typeof(char[]), typeof(byte[]),
-                typeof(string),
+                typeof(char[]), typeof(byte[]), typeof(string),
             };
 
             private static bool IsSimple(Type type)
             {
                 return type != null && (type.IsEnum || SimpleTypes.Contains(type));
             }
+        }
+    }
+}
+
+namespace Tools
+{
+    public static partial class Xml
+    {
+        public static string ToXml(object o)
+        {
+            if (o == null) return null;
+            using (var sw = new UTF8StringWriter())
+            {
+                var ns = new XmlSerializerNamespaces();
+                ns.Add(string.Empty, string.Empty);
+                var xs = new XmlSerializer(o.GetType());
+                xs.Serialize(sw, o, ns);
+                return sw.ToString();
+            }
+        }
+
+        public static T OfXml<T>(string xml)
+        {
+            if (xml == null) return default(T);
+            using (var sr = new StringReader(xml))
+            {
+                return (T)(new XmlSerializer(typeof(T))).Deserialize(sr);
+            }
+        }
+
+        public static object OfXml(string xml, Type type)
+        {
+            if (xml == null) return null;
+            using (var sr = new StringReader(xml))
+            {
+                return (new XmlSerializer(type)).Deserialize(sr);
+            }
+        }
+
+        private class UTF8StringWriter : StringWriter
+        {
+            public override Encoding Encoding => Encoding.UTF8;
         }
     }
 }

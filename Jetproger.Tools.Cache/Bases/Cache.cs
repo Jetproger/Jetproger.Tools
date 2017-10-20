@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
@@ -12,37 +13,51 @@ namespace Tools
 {
     public static partial class Cache
     {
-        private static readonly CacheLoader[] CacheLoaders = { null };
+        private static readonly HashSet<Type> LocalTypes = new HashSet<Type>();
+        private static readonly CacheProxy[] GlobalCacheHolder = { null };
+        private static readonly CacheProxy[] LocalCacheHolder = { null };
 
-        private static CacheLoader Remote
+        private static CacheProxy LocalCache
         {
             get
             {
-                if (CacheLoaders[0] == null)
+                if (LocalCacheHolder[0] == null)
                 {
-                    lock (CacheLoaders)
+                    lock (LocalCacheHolder)
                     {
-                        if (CacheLoaders[0] == null)
-                        {
-                            CacheLoaders[0] = GetLoader();
-                        }
+                        if (LocalCacheHolder[0] == null) LocalCacheHolder[0] = new CacheProxy();
                     }
                 }
-                return CacheLoaders[0];
+                return LocalCacheHolder[0];
             }
         }
 
-        private static CacheLoader GetLoader()
+        private static CacheProxy GlobalCache
+        {
+            get
+            {
+                if (GlobalCacheHolder[0] == null)
+                {
+                    lock (GlobalCacheHolder)
+                    {
+                        if (GlobalCacheHolder[0] == null) GlobalCacheHolder[0] = GetProxy();
+                    }
+                }
+                return GlobalCacheHolder[0];
+            }
+        }
+
+        private static CacheProxy GetProxy()
         {
             CreateChannel();
-            var type = typeof(CacheLoader);
+            var type = typeof(CacheProxy);
             var portName = $"{(type.FullName ?? string.Empty).Replace(".", "-").ToLower()}-{Process.GetCurrentProcess().Id}";
             var objectUri = type.Name.ToLower();
             var uri = $"ipc://{portName}/{objectUri}";
-            var loader = TryGetExistsLoader(type, uri);
-            if (loader != null) return loader;
+            var proxy = TryGetExistsProxy(type, uri);
+            if (proxy != null) return proxy;
             CreateCache();
-            return (CacheLoader)Activator.GetObject(type, uri);
+            return (CacheProxy)Activator.GetObject(type, uri);
         }
 
         private static void CreateChannel()
@@ -59,8 +74,7 @@ namespace Tools
             {
                 TypeFilterLevel = TypeFilterLevel.Full
             };
-            var config = new Hashtable
-            {
+            var config = new Hashtable {
                 ["name"] = string.Empty,
                 ["portName"] = portName,
                 ["tokenImpersonationLevel"] = TokenImpersonationLevel.Impersonation,
@@ -74,13 +88,13 @@ namespace Tools
             RemotingConfiguration.RegisterWellKnownServiceType(type, objectUri, WellKnownObjectMode.SingleCall);
         }
 
-        private static CacheLoader TryGetExistsLoader(Type type, string uri)
+        private static CacheProxy TryGetExistsProxy(Type type, string uri)
         {
             try
             {
-                var loader = (CacheLoader)Activator.GetObject(type, uri);
-                loader.CreateChannel();
-                return loader;
+                var proxy = (CacheProxy)Activator.GetObject(type, uri);
+                proxy.CreateChannel();
+                return proxy;
             }
             catch
             {
@@ -90,8 +104,7 @@ namespace Tools
 
         private static void CreateCache()
         {
-            var setup = new AppDomainSetup
-            {
+            var setup = new AppDomainSetup {
                 ConfigurationFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile,
                 ApplicationBase = AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
                 LoaderOptimization = LoaderOptimization.SingleDomain,
@@ -99,10 +112,10 @@ namespace Tools
             };
             var name = $"f__{(typeof(CacheCore)).AssemblyQualifiedName}";
             var domain = AppDomain.CreateDomain(name, AppDomain.CurrentDomain.Evidence, setup);
-            var type = typeof(CacheLoader);
+            var type = typeof(CacheProxy);
             var assemblyName = type.Assembly.GetName().Name;
             var typeName = type.FullName ?? string.Empty;
-            var instance = domain.CreateInstanceAndUnwrap(assemblyName, typeName) as CacheLoader;
+            var instance = domain.CreateInstanceAndUnwrap(assemblyName, typeName) as CacheProxy;
             instance?.CreateChannel();
         }
 
@@ -327,29 +340,17 @@ namespace Tools
         {
             if (keys == null || keys.Length == 0) return;
             var stringKeys = Methods.GetStringKeys(keys);
-            Remote.Off(stringKeys);
-        }
-
-        public static void TryAdd<T>(object[] keys, T value, int lifetime)
-        {
-            if (keys == null || keys.Length == 0) return;
-            var type = value != null ? value.GetType() : typeof(T);
-            object obj = value;
-            if (obj != null && !Methods.IsSimple(type)) obj = Methods.SerializeJson(value);
-            var stringKeys = Methods.GetStringKeys(keys);
-            Remote.Add(stringKeys, obj, lifetime);
+            GlobalCache.Off(stringKeys);
+            LocalCache.Off(stringKeys);
         }
 
         public static T TryGetOrAdd<T>(object[] keys, Func<T> func, int lifetime)
         {
+            if (keys == null || keys.Length == 0) return default(T);
             T value;
             if (TryGet(keys, out value)) return value;
             value = func();
-            var type = value != null ? value.GetType() : typeof(T);
-            object obj = value;
-            if (obj != null && !Methods.IsSimple(type)) obj = Methods.SerializeJson(value);
-            var stringKeys = Methods.GetStringKeys(keys);
-            Remote.Add(stringKeys, obj, lifetime);
+            TryAdd(keys, value, lifetime);
             return value;
         }
 
@@ -361,15 +362,44 @@ namespace Tools
             return result;
         }
 
+        public static void TryAdd<T>(object[] keys, T value, int lifetime)
+        {
+            if (keys == null || keys.Length == 0) return;
+            var type = value != null ? value.GetType() : typeof(T);
+            var genericArgumentType = GetGenericArgumentType(type);
+            var stringKeys = Methods.GetStringKeys(keys);
+            if (LocalTypes.Contains(type) || (genericArgumentType != null && LocalTypes.Contains(genericArgumentType)))
+            {
+                LocalCache.Add(stringKeys, value, lifetime);
+                return;
+            }
+            try
+            {
+                GlobalCache.Add(stringKeys, value, lifetime);
+            }
+            catch (Exception)
+            {
+                if (genericArgumentType != null && !LocalTypes.Contains(genericArgumentType)) LocalTypes.Add(genericArgumentType);
+                if (!LocalTypes.Contains(type)) LocalTypes.Add(type);
+                LocalCache.Add(stringKeys, value, lifetime);
+            }
+        }
+
         public static bool TryGet(object[] keys, Type resultType, out object value)
         {
             value = null;
             if (keys == null || keys.Length == 0) return false;
             var stringKeys = Methods.GetStringKeys(keys);
-            var result = Remote.Get(stringKeys, out value);
-            if (value == DBNull.Value) value = null;
-            if (value != null && !Methods.IsSimple(resultType)) value = Methods.DeserializeJson(value.ToString(), resultType);
-            return result;
+            var genericArgumentType = GetGenericArgumentType(resultType);
+            var cache = LocalTypes.Contains(resultType) || (genericArgumentType != null && LocalTypes.Contains(genericArgumentType)) ? LocalCache : GlobalCache;
+            return cache.Get(stringKeys, out value);
+        }
+
+        private static Type GetGenericArgumentType(Type type)
+        {
+            var types = type.GetGenericArguments();
+            if (types.Length > 0) return types[0];
+            return type.HasElementType ? type.GetElementType() : null;
         }
     }
 }

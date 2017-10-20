@@ -35,9 +35,6 @@
     <AssemblyOriginatorKeyFile>..\..\.solution\jetproger.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\.Newtonsoft.Json\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -55,8 +52,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\CacheLoader.cs">
-      <Link>Bases\CacheLoader.cs</Link>
+    <Compile Include="..\Bases\CacheProxy.cs">
+      <Link>Bases\CacheProxy.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

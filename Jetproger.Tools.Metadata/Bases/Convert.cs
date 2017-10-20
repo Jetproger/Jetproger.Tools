@@ -242,7 +242,7 @@ namespace Tools
                 if (value is DateTime) return (byte) ((DateTime) value).ToOADate();
                 if (value is Guid) return (byte) BitConverter.ToUInt16(((Guid) value).ToByteArray(), 0);
                 if (value is byte[]) return (byte) BitConverter.ToUInt16((byte[]) value, 0);
-                if (value is char[]) return byte.TryParse(value.AsString(), NumberStyles.Any, Formatter, out result) ? result : default(byte);
+                if (value is char[]) return byte.TryParse(AsString(value), NumberStyles.Any, Formatter, out result) ? result : default(byte);
                 if (value.GetType().IsClass) return (byte) value.GetHashCode();
                 return Cast<byte>(value);
             }
@@ -257,7 +257,7 @@ namespace Tools
                 if (value is DateTime) return (sbyte) ((DateTime) value).ToOADate();
                 if (value is Guid) return (sbyte) BitConverter.ToInt16(((Guid) value).ToByteArray(), 0);
                 if (value is byte[]) return (sbyte) BitConverter.ToInt16((byte[]) value, 0);
-                if (value is char[]) return sbyte.TryParse(value.AsString(), NumberStyles.Any, Formatter, out result) ? result : default(sbyte);
+                if (value is char[]) return sbyte.TryParse(AsString(value), NumberStyles.Any, Formatter, out result) ? result : default(sbyte);
                 if (value.GetType().IsClass) return (sbyte) value.GetHashCode();
                 return Cast<sbyte>(value);
             }
@@ -287,7 +287,7 @@ namespace Tools
                 if (value is DateTime) return (short) ((DateTime) value).ToOADate();
                 if (value is Guid) return BitConverter.ToInt16(((Guid) value).ToByteArray(), 0);
                 if (value is byte[]) return BitConverter.ToInt16((byte[]) value, 0);
-                if (value is char[]) return short.TryParse(value.AsString(), NumberStyles.Any, Formatter, out result) ? result : default(short);
+                if (value is char[]) return short.TryParse(AsString(value), NumberStyles.Any, Formatter, out result) ? result : default(short);
                 if (value.GetType().IsClass) return (short) value.GetHashCode();
                 return Cast<short>(value);
             }
@@ -302,7 +302,7 @@ namespace Tools
                 if (value is DateTime) return (ushort) ((DateTime) value).ToOADate();
                 if (value is Guid) return BitConverter.ToUInt16(((Guid) value).ToByteArray(), 0);
                 if (value is byte[]) return BitConverter.ToUInt16((byte[]) value, 0);
-                if (value is char[]) return ushort.TryParse(value.AsString(), NumberStyles.Any, Formatter, out result) ? result : default(ushort);
+                if (value is char[]) return ushort.TryParse(AsString(value), NumberStyles.Any, Formatter, out result) ? result : default(ushort);
                 if (value.GetType().IsClass) return (ushort) value.GetHashCode();
                 return Cast<ushort>(value);
             }
@@ -317,7 +317,7 @@ namespace Tools
                 if (value is DateTime) return (int) ((DateTime) value).ToOADate();
                 if (value is Guid) return BitConverter.ToInt32(((Guid) value).ToByteArray(), 0);
                 if (value is byte[]) return BitConverter.ToInt32((byte[]) value, 0);
-                if (value is char[]) return int.TryParse(value.AsString(), NumberStyles.Any, Formatter, out result) ? result : default(int);
+                if (value is char[]) return int.TryParse(AsString(value), NumberStyles.Any, Formatter, out result) ? result : default(int);
                 if (value.GetType().IsClass) return value.GetHashCode();
                 return Cast<int>(value);
             }
@@ -332,7 +332,7 @@ namespace Tools
                 if (value is DateTime) return (uint) ((DateTime) value).ToOADate();
                 if (value is Guid) return BitConverter.ToUInt32(((Guid) value).ToByteArray(), 0);
                 if (value is byte[]) return BitConverter.ToUInt32((byte[]) value, 0);
-                if (value is char[]) return uint.TryParse(value.AsString(), NumberStyles.Any, Formatter, out result) ? result : default(uint);
+                if (value is char[]) return uint.TryParse(AsString(value), NumberStyles.Any, Formatter, out result) ? result : default(uint);
                 if (value.GetType().IsClass) return (uint) value.GetHashCode();
                 return Cast<uint>(value);
             }
@@ -347,7 +347,7 @@ namespace Tools
                 if (value is DateTime) return (int) ((DateTime) value).ToOADate();
                 if (value is Guid) return BitConverter.ToInt64(((Guid) value).ToByteArray(), 0);
                 if (value is byte[]) return BitConverter.ToInt64((byte[]) value, 0);
-                if (value is char[]) return long.TryParse(value.AsString(), NumberStyles.Any, Formatter, out result) ? result : default(long);
+                if (value is char[]) return long.TryParse(AsString(value), NumberStyles.Any, Formatter, out result) ? result : default(long);
                 if (value.GetType().IsClass) return value.GetHashCode();
                 return Cast<long>(value);
             }
@@ -362,7 +362,7 @@ namespace Tools
                 if (value is DateTime) return (ulong) ((DateTime) value).ToOADate();
                 if (value is Guid) return BitConverter.ToUInt64(((Guid) value).ToByteArray(), 0);
                 if (value is byte[]) return BitConverter.ToUInt64((byte[]) value, 0);
-                if (value is char[]) return ulong.TryParse(value.AsString(), NumberStyles.Any, Formatter, out result) ? result : default(ulong);
+                if (value is char[]) return ulong.TryParse(AsString(value), NumberStyles.Any, Formatter, out result) ? result : default(ulong);
                 if (value.GetType().IsClass) return (ulong) value.GetHashCode();
                 return Cast<ulong>(value);
             }
@@ -377,7 +377,7 @@ namespace Tools
                 if (value is DateTime) return (float) ((DateTime) value).ToOADate();
                 if (value is Guid) return BitConverter.ToSingle(((Guid) value).ToByteArray(), 0);
                 if (value is byte[]) return BitConverter.ToSingle((byte[]) value, 0);
-                if (value is char[]) return float.TryParse(value.AsString(), NumberStyles.Any, Formatter, out result) ? result : default(float);
+                if (value is char[]) return float.TryParse(AsString(value), NumberStyles.Any, Formatter, out result) ? result : default(float);
                 if (value.GetType().IsClass) return value.GetHashCode();
                 return Cast<float>(value);
             }
@@ -392,7 +392,7 @@ namespace Tools
                 if (value is DateTime) return (decimal) ((DateTime) value).ToOADate();
                 if (value is Guid) return (decimal) BitConverter.ToDouble(((Guid) value).ToByteArray(), 0);
                 if (value is byte[]) return (decimal) BitConverter.ToDouble((byte[]) value, 0);
-                if (value is char[]) return decimal.TryParse(value.AsString(), NumberStyles.Any, Formatter, out result) ? result : default(decimal);
+                if (value is char[]) return decimal.TryParse(AsString(value), NumberStyles.Any, Formatter, out result) ? result : default(decimal);
                 if (value.GetType().IsClass) return value.GetHashCode();
                 return Cast<decimal>(value);
             }
@@ -407,7 +407,7 @@ namespace Tools
                 if (value is DateTime) return ((DateTime) value).ToOADate();
                 if (value is Guid) return BitConverter.ToDouble(((Guid) value).ToByteArray(), 0);
                 if (value is byte[]) return BitConverter.ToDouble((byte[]) value, 0);
-                if (value is char[]) return double.TryParse(value.AsString(), NumberStyles.Any, Formatter, out result) ? result : default(double);
+                if (value is char[]) return double.TryParse(AsString(value), NumberStyles.Any, Formatter, out result) ? result : default(double);
                 if (value.GetType().IsClass) return value.GetHashCode();
                 return Cast<double>(value);
             }
@@ -441,7 +441,7 @@ namespace Tools
                 if (value == null || value == DBNull.Value) return default(byte[]);
                 if (value is byte[]) return (byte[]) value;
                 if (value is string) return GetStringAsBytes((string) value);
-                if (value is char[]) return GetStringAsBytes(value.AsString());
+                if (value is char[]) return GetStringAsBytes(AsString(value));
                 if (value is Guid) return ((Guid) value).ToByteArray();
                 if (value is DateTime) return BitConverter.GetBytes(((DateTime) value).ToOADate());
                 if (value is bool) return BitConverter.GetBytes((bool) value);
@@ -480,7 +480,7 @@ namespace Tools
                 if (value == null || value == DBNull.Value) return default(DateTime);
                 if (value is DateTime) return (DateTime) value;
                 if (value is string) return DateTime.TryParse((string) value, Formatter, DateTimeStyles.None, out result) ? result : default(DateTime);
-                if (value is char[]) return DateTime.TryParse(value.AsString(), Formatter, DateTimeStyles.None, out result) ? result : default(DateTime);
+                if (value is char[]) return DateTime.TryParse(AsString(value), Formatter, DateTimeStyles.None, out result) ? result : default(DateTime);
                 if (value is byte[]) return DateTime.FromOADate(BitConverter.ToDouble((byte[]) value, 0));
                 if (value is Guid) return DateTime.FromOADate(BitConverter.ToDouble(((Guid) value).ToByteArray(), 0));
                 if (value is bool) return DateTime.FromOADate((bool) value ? 1 : 0);
@@ -505,7 +505,7 @@ namespace Tools
                 if (value == null || value == DBNull.Value) return default(Guid);
                 if (value is Guid) return (Guid) value;
                 if (value is string) return Guid.TryParse((string) value, out result) ? result : default(Guid);
-                if (value is char[]) return Guid.TryParse(value.AsString(), out result) ? result : default(Guid);
+                if (value is char[]) return Guid.TryParse(AsString(value), out result) ? result : default(Guid);
                 if (value is byte[]) return new Guid(SetLen((byte[]) value, 16));
                 if (value is DateTime) return new Guid(SetLen(AsBytes(((DateTime)value).ToOADate()), 16));
                 if (value is bool) return new Guid(SetLen(AsBytes(value), 16));
@@ -565,7 +565,7 @@ namespace Tools
             
             public static char[] AsChars(object value)
             {
-                var stringValue = value.AsString();
+                var stringValue = AsString(value);
                 return stringValue != default(string) ? stringValue.ToCharArray() : default(char[]);
             }
             
