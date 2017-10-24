@@ -13,7 +13,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jetproger.Tools.Metadata", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jetproger.Tools.Native", "..\Jetproger.Tools.Native\.project\Jetproger.Tools.Native.csproj", "{635C1C60-606C-43A1-919C-DD4908057912}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jetproger.Tools.Plugin", "..\Jetproger.Tools.Plugin\.project\Jetproger.Tools.Plugin.csproj", "{65A6524A-A322-468B-BF0B-A69064F8C8F5}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jetproger.Tools.Resource", "..\Jetproger.Tools.Resource\.project\Jetproger.Tools.Resource.csproj", "{942718E0-35B1-4E52-900E-1709B6808968}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jetproger.Tools.Structure", "..\Jetproger.Tools.Structure\.project\Jetproger.Tools.Structure.csproj", "{F2644829-D8F4-4CFF-BF32-46745BEF2638}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jetproger.Tools.Trace", "..\Jetproger.Tools.Trace\.project\Jetproger.Tools.Trace.csproj", "{ADE5BFBB-508C-4A3B-BF93-A9BA4570E4E1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jetproger.Tools.Xml", "..\Jetproger.Tools.Xml\.project\Jetproger.Tools.Xml.csproj", "{A1908074-B91E-4FC2-9945-7FC9CA927AB0}"
 EndProject
@@ -58,6 +64,18 @@ Global
 		{A1908074-B91E-4FC2-9945-7FC9CA927AB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1908074-B91E-4FC2-9945-7FC9CA927AB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1908074-B91E-4FC2-9945-7FC9CA927AB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADE5BFBB-508C-4A3B-BF93-A9BA4570E4E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADE5BFBB-508C-4A3B-BF93-A9BA4570E4E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADE5BFBB-508C-4A3B-BF93-A9BA4570E4E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADE5BFBB-508C-4A3B-BF93-A9BA4570E4E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2644829-D8F4-4CFF-BF32-46745BEF2638}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2644829-D8F4-4CFF-BF32-46745BEF2638}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2644829-D8F4-4CFF-BF32-46745BEF2638}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2644829-D8F4-4CFF-BF32-46745BEF2638}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65A6524A-A322-468B-BF0B-A69064F8C8F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65A6524A-A322-468B-BF0B-A69064F8C8F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65A6524A-A322-468B-BF0B-A69064F8C8F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65A6524A-A322-468B-BF0B-A69064F8C8F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
