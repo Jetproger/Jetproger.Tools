@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
@@ -133,6 +134,11 @@ namespace Tools
         public static string AppDir()
         {
             return (HttpContext.Current == null ? AppDomain.CurrentDomain.BaseDirectory : HttpContext.Current.Server.MapPath("~"));
+        }
+
+        public static string AppFile()
+        {
+            return (HttpContext.Current == null ? Process.GetCurrentProcess().MainModule.FileName : null);
         }
 
         public static string TempFile()
@@ -350,7 +356,6 @@ namespace Tools
             '\\',
             '/'
         };
-
         private static readonly HashSet<char> InvalidPathChars = new HashSet<char> {
             '"',
             '<',

@@ -13,5 +13,10 @@ namespace Jetproger.Tools.Resource.Bases
         {
             return Res.GetConfigurationValue<int>("HostPort", 1234).Value;
         }
+
+        public static string Culture(this IAppConfiguration config)
+        {
+            return Res.GetConfigurationValue<string>("Culture", "en-US").Value;
+        }
     }
 }

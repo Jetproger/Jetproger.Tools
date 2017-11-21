@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Web;
+
 namespace Tools
 {
     public static partial class Metadata
@@ -568,6 +570,26 @@ namespace Tools
             });
         }
 
+        public static string GetMemberName(LambdaExpression memberSelector)
+        {
+            if (memberSelector == null) return null;
+            var currentExpression = memberSelector.Body;
+            while (true)
+            {
+                switch (currentExpression.NodeType)
+                {
+                    case ExpressionType.ArrayLength: return "Length";
+                    case ExpressionType.Parameter: return ((ParameterExpression)currentExpression).Name;
+                    case ExpressionType.Call: return ((MethodCallExpression)currentExpression).Method.Name;
+                    case ExpressionType.MemberAccess: return ((MemberExpression)currentExpression).Member.Name;
+                    case ExpressionType.Convert:
+                    case ExpressionType.ConvertChecked: currentExpression = ((UnaryExpression)currentExpression).Operand; break;
+                    case ExpressionType.Invoke: currentExpression = ((InvocationExpression)currentExpression).Expression; break;
+                    default: return null;
+                }
+            }
+        }
+
         public static Type GetType(string name)
         {
             string assemblyName, typeName, value;
@@ -575,7 +597,7 @@ namespace Tools
             return GetType(assemblyName, typeName);
         }
 
-        private static void SplitName(string name, out string assemblyName, out string typeName, out string value)
+        public static void SplitName(string name, out string assemblyName, out string typeName, out string value)
         {
             var names = (name ?? "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             assemblyName = names.Length > 0 ? names[0] : string.Empty;
@@ -773,9 +795,7 @@ namespace Tools
 
         private static string AppDir()
         {
-            var httpContext = HttpContext.Current;
-            var path = httpContext == null ? AppDomain.CurrentDomain.BaseDirectory : httpContext.Server.MapPath("~");
-            return path ?? "";
+            return (HttpContext.Current == null ? AppDomain.CurrentDomain.BaseDirectory : HttpContext.Current.Server.MapPath("~")) ?? string.Empty;
         }
 
         public static object GetValue(object instance, string propertyName)
