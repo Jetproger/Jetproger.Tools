@@ -8,18 +8,18 @@ using System.Security.Principal;
 using Jetproger.Tools.Convert.Bases;
 using Jetproger.Tools.Resource.Bases;
 using TP = Tools.Plugin;
-using DI = Tools.DI;
+using TDI = Tools.DI;
 using MD = Tools.Metadata;
+using TNLog = Tools.Trace;
 
 namespace Jetproger.Tools.Plugin.Commands
 {
-    public class CommandWorker
+    public class CommandWorker : MarshalByRefObject
     {
         public static string DomainName => !string.IsNullOrWhiteSpace(_domainName) ? _domainName : AppDomain.CurrentDomain.FriendlyName;
         private static IpcChannel _channel;
-        private static Type _channelType;
         private static string _domainName;
-
+        private static Type _channelType;
         private Command _command;
         private bool _isStopped;
         private string _result;
@@ -53,6 +53,11 @@ namespace Jetproger.Tools.Plugin.Commands
         public string GetSource()
         {
             return TP.Name;
+        }
+
+        public void Initialize()
+        {
+            TNLog.Run();
         }
 
         public AppDomain GetDomain()
@@ -134,7 +139,7 @@ namespace Jetproger.Tools.Plugin.Commands
                     System.Diagnostics.Trace.WriteLine(_error);
                     return null;
                 }
-                type = DI.TypeOf(type);
+                type = TDI.TypeOf(type);
                 var command = request.Json.As(type);
                 var commandIsolate = command as ICommandIsolate;
                 if (command != null && commandIsolate == null)

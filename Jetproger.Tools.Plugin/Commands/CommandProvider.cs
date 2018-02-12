@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using Microsoft.Practices.Unity.Utility;
-using DI = Tools.DI;
+using TDI = Tools.DI;
 
 namespace Jetproger.Tools.Plugin.Commands
 {
@@ -135,7 +135,7 @@ namespace Jetproger.Tools.Plugin.Commands
 
         public virtual CommandProvider<T> Prepare<T>() where T : Command
         {
-            var command = DI.Resolve<T>();
+            var command = TDI.Resolve<T>();
             var agent = new CommandAgent(command);
             agent.Parent = Agent;
             Agent?.Items.Add(agent);

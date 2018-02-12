@@ -1,11 +1,12 @@
+using System;
 using Jetproger.Tools.Trace.Bases;
 
 namespace Jetproger.Tools.Plugin.Commands
 {
-    public abstract class CommandServerToClientMessage : TypedMessage
+    public class CommandServerToClientMessage : TypedMessage
     {
-        protected CommandServerToClientMessage(string message) : base(message)
-        {
-        }
+        public CommandServerToClientMessage(string message, Exception exception) : base(message, exception) { }
+        public CommandServerToClientMessage(Exception exception) : this(null, exception) { }
+        public CommandServerToClientMessage(string message) : this(message, null) { }
     }
 }

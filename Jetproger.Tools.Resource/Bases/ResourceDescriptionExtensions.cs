@@ -50,5 +50,15 @@ namespace Jetproger.Tools.Resource.Bases
         public static string Del(this IResourceDescriptions resourceDescriptions) { return Res.GetResourceDescription("Del").Value; }
         public static string New(this IResourceDescriptions resourceDescriptions) { return Res.GetResourceDescription("New").Value; }
         public static string Proc(this IResourceDescriptions resourceDescriptions) { return Res.GetResourceDescription("Proc").Value; }
+        public static string StartAppLang(this IResourceDescriptions resourceDescriptions) { return Res.GetResourceDescription("StartAppLang").Value; }
+        public static string StartCmdArgs(this IResourceDescriptions resourceDescriptions) { return Res.GetResourceDescription("StartCmdArgs").Value; }
+        public static string StartCmdPool(this IResourceDescriptions resourceDescriptions) { return Res.GetResourceDescription("StartCmdPool").Value; }
+        public static string StartDI(this IResourceDescriptions resourceDescriptions) { return Res.GetResourceDescription("StartDI").Value; }
+        public static string StartEnd(this IResourceDescriptions resourceDescriptions) { return Res.GetResourceDescription("StartEnd").Value; }
+        public static string StartNLogBase(this IResourceDescriptions resourceDescriptions) { return Res.GetResourceDescription("StartNLogBase").Value; }
+        public static string StartNLogTyped(this IResourceDescriptions resourceDescriptions) { return Res.GetResourceDescription("StartNLogTyped").Value; }
+        public static string StartReadConf(this IResourceDescriptions resourceDescriptions) { return Res.GetResourceDescription("StartReadConf").Value; }
+        public static string StartRes(this IResourceDescriptions resourceDescriptions) { return Res.GetResourceDescription("StartRes").Value; }
+        public static string StartTrace(this IResourceDescriptions resourceDescriptions) { return Res.GetResourceDescription("StartTrace").Value; }
     }
 }

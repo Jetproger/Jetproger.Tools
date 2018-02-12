@@ -333,4 +333,34 @@
   <data name="Proc" xml:space="preserve">
     <value>Proccessed</value>
   </data>
+  <data name="StartAppLang" xml:space="preserve">
+    <value>Set language: {0}</value>
+  </data>
+  <data name="StartCmdArgs" xml:space="preserve">
+    <value>Start parse command line arguments</value>
+  </data>
+  <data name="StartCmdPool" xml:space="preserve">
+    <value>Start initialize command pool</value>
+  </data>
+  <data name="StartDI" xml:space="preserve">
+    <value>Initialize dependency injection container</value>
+  </data>
+  <data name="StartEnd" xml:space="preserve">
+    <value>End preparing</value>
+  </data>
+  <data name="StartNLogBase" xml:space="preserve">
+    <value>Start trace listener NLog [base]</value>
+  </data>
+  <data name="StartNLogTyped" xml:space="preserve">
+    <value>Start trace listener NLog [{0}]</value>
+  </data>
+  <data name="StartReadConf" xml:space="preserve">
+    <value>Start read configuration</value>
+  </data>
+  <data name="StartRes" xml:space="preserve">
+    <value>Connecting resource</value>
+  </data>
+  <data name="StartTrace" xml:space="preserve">
+    <value>Start trace listener [{0}]</value>
+  </data>
 </root>

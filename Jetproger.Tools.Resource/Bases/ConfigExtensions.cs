@@ -18,5 +18,10 @@ namespace Jetproger.Tools.Resource.Bases
         {
             return Res.GetConfigurationValue<string>("Culture", "en-US").Value;
         }
+
+        public static int MaxReservedDomains(this IAppConfiguration config)
+        {
+            return Res.GetConfigurationValue<int>("MaxReservedDomains", 0).Value;
+        }
     }
 }

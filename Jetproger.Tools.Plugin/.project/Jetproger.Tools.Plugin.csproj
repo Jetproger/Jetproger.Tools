@@ -76,8 +76,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\StartAppConfig.cs">
-      <Link>Bases\StartAppConfig.cs</Link>
+    <Compile Include="..\Bases\ProgramStarter.cs">
+      <Link>Bases\ProgramStarter.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -195,23 +195,23 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Aspects\DI.cs">
-      <Link>Aspects\DI.cs</Link>
+    <Compile Include="..\Aspects\CacheCallHandler.cs">
+      <Link>Aspects\CacheCallHandler.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Aspects\InmemoryUnityConfigurationSection.cs">
-      <Link>Aspects\InmemoryUnityConfigurationSection.cs</Link>
+    <Compile Include="..\Aspects\DurationCallHandler.cs">
+      <Link>Aspects\DurationCallHandler.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Aspects\UnityConfigProxy.cs">
-      <Link>Aspects\UnityConfigProxy.cs</Link>
+    <Compile Include="..\Aspects\ExceptionCallHandler.cs">
+      <Link>Aspects\ExceptionCallHandler.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Aspects\UnityConfigXml.cs">
-      <Link>Aspects\UnityConfigXml.cs</Link>
+    <Compile Include="..\Aspects\SecurityCallHandler.cs">
+      <Link>Aspects\SecurityCallHandler.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -232,6 +232,14 @@
     <ProjectReference Include="..\..\Jetproger.Tools.Convert\.project\Jetproger.Tools.Convert.csproj">
       <Project>{600AA7DC-EA39-4609-AB2A-3546BB5F8B72}</Project>
       <Name>Jetproger.Tools.Convert</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Jetproger.Tools.DI\.project\Jetproger.Tools.DI.csproj">
+      <Project>{A210FC06-1EA3-4206-B466-B730D19C738C}</Project>
+      <Name>Jetproger.Tools.DI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Jetproger.Tools.File\.project\Jetproger.Tools.File.csproj">
+      <Project>{7A3F5D37-B9BE-4C40-8C31-AD181D16FF43}</Project>
+      <Name>Jetproger.Tools.File</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Jetproger.Tools.Metadata\.project\Jetproger.Tools.Metadata.csproj">
       <Project>{304C9CBB-080C-4BD5-8AE9-C61B202294EA}</Project>

@@ -8,7 +8,6 @@ using System.Runtime.Remoting.Channels.Ipc;
 using System.Runtime.Serialization.Formatters;
 using System.Security.Principal;
 using System.Threading;
-using TP = Tools.Plugin;
 
 namespace Jetproger.Tools.Plugin.Commands
 {
@@ -18,10 +17,7 @@ namespace Jetproger.Tools.Plugin.Commands
         private readonly string _assemblyName;
         private readonly string _typeName;
         private readonly int _size;
-
-        public CommandPool() : this(0)
-        {
-        }
+        public CommandPool() : this(0) { }
 
         public CommandPool(int size)
         {
@@ -45,40 +41,11 @@ namespace Jetproger.Tools.Plugin.Commands
             return _instances.TryDequeue(out instance) ? instance : CreateInstance();
         }
 
-        public void CreateChannel()
-        {
-            var type = typeof(CommandPool);
-            foreach (var entry in RemotingConfiguration.GetRegisteredWellKnownServiceTypes())
-            {
-                if (entry.ObjectType == type) return;
-            }
-            var portName = $"{(type.FullName ?? string.Empty).Replace(".", "-").ToLower()}-{Process.GetCurrentProcess().Id}";
-            var objectUri = type.Name.ToLower();
-            var client = new BinaryClientFormatterSinkProvider();
-            var server = new BinaryServerFormatterSinkProvider
-            {
-                TypeFilterLevel = TypeFilterLevel.Full
-            };
-            var config = new Hashtable
-            {
-                ["name"] = string.Empty,
-                ["portName"] = portName,
-                ["tokenImpersonationLevel"] = TokenImpersonationLevel.Impersonation,
-                ["impersonate"] = true,
-                ["useDefaultCredentials"] = true,
-                ["secure"] = true,
-                ["typeFilterLevel"] = TypeFilterLevel.Full
-            };
-            var ipcChannel = new IpcChannel(config, client, server);
-            ChannelServices.RegisterChannel(ipcChannel, true);
-            RemotingConfiguration.RegisterWellKnownServiceType(type, objectUri, WellKnownObjectMode.SingleCall);
-        }
-
         private void BeginGenerateDomains()
         {
             while (true)
             {
-                if (!TP.IsHost)
+                if (_size == int.MaxValue)
                 {
                     return;
                 }
@@ -110,8 +77,54 @@ namespace Jetproger.Tools.Plugin.Commands
             var name = $"f__{Guid.NewGuid().ToString().Replace("-", string.Empty)}";
             var domain = AppDomain.CreateDomain(name, AppDomain.CurrentDomain.Evidence, setup);
             var instance = domain.CreateInstanceAndUnwrap(_assemblyName, _typeName) as CommandWorker;
-            //instance?.InitializeEnvironment(CoreMethods.Program.ExecutingAssemblyLocation);
+            instance?.Initialize();
             return instance;
+        }
+    }
+
+    public class CommandPoolProxy : MarshalByRefObject
+    {
+        private static readonly CommandPool[] PoolHolder = { null };
+
+        public CommandPool GetPool(int size)
+        {
+            if (PoolHolder[0] == null)
+            {
+                lock (PoolHolder)
+                {
+                    if (PoolHolder[0] == null) PoolHolder[0] = new CommandPool(size);
+                }
+            }
+            return PoolHolder[0];
+        }
+
+        public void CreateChannel()
+        {
+            var type = typeof(CommandPoolProxy);
+            foreach (var entry in RemotingConfiguration.GetRegisteredWellKnownServiceTypes())
+            {
+                if (entry.ObjectType == type) return;
+            }
+            var portName = $"{(type.FullName ?? string.Empty).Replace(".", "-").ToLower()}-{Process.GetCurrentProcess().Id}";
+            var objectUri = type.Name.ToLower();
+            var client = new BinaryClientFormatterSinkProvider();
+            var server = new BinaryServerFormatterSinkProvider
+            {
+                TypeFilterLevel = TypeFilterLevel.Full
+            };
+            var config = new Hashtable
+            {
+                ["name"] = string.Empty,
+                ["portName"] = portName,
+                ["tokenImpersonationLevel"] = TokenImpersonationLevel.Impersonation,
+                ["impersonate"] = true,
+                ["useDefaultCredentials"] = true,
+                ["secure"] = true,
+                ["typeFilterLevel"] = TypeFilterLevel.Full
+            };
+            var ipcChannel = new IpcChannel(config, client, server);
+            ChannelServices.RegisterChannel(ipcChannel, true);
+            RemotingConfiguration.RegisterWellKnownServiceType(type, objectUri, WellKnownObjectMode.SingleCall);
         }
     }
 }

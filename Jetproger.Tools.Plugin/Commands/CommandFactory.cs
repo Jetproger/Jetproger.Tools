@@ -6,16 +6,43 @@ using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
 using System.Runtime.Serialization.Formatters;
 using System.Security.Principal;
+using System.Threading;
+using Jetproger.Tools.Resource.Bases;
 
 namespace Jetproger.Tools.Plugin.Commands
 {
     public static class CommandFactory
     {
-        private static readonly CommandPool[] PoolHolder = {null};
+        private static readonly CommandPool[] PoolHolder = { null };
 
         public static CommandWorker GetWorker()
         {
             return Pool.Get();
+        }
+
+        public static void InitCommandPool(int size)
+        {
+            InitCommandPool(GetPool(size));
+        }
+
+        private static void InitCommandPool(CommandPool pool)
+        {
+            while (!pool.IsFull)
+            {
+                Thread.Sleep(111);
+            }
+        }
+
+        private static CommandPool GetPool(int size)
+        {
+            if (PoolHolder[0] == null)
+            {
+                lock (PoolHolder)
+                {
+                    if (PoolHolder[0] == null) PoolHolder[0] = GetProxy(size);
+                }
+            }
+            return PoolHolder[0];
         }
 
         private static CommandPool Pool
@@ -26,24 +53,28 @@ namespace Jetproger.Tools.Plugin.Commands
                 {
                     lock (PoolHolder)
                     {
-                        if (PoolHolder[0] == null) PoolHolder[0] = GetProxy();
+                        if (PoolHolder[0] == null) PoolHolder[0] = GetProxy(4);
                     }
                 }
                 return PoolHolder[0];
             }
         }
 
-        private static CommandPool GetProxy()
+        private static CommandPool GetProxy(int size)
         {
             CreateChannel();
-            var type = typeof(CommandPool);
+            var type = typeof(CommandPoolProxy);
             var portName = $"{(type.FullName ?? string.Empty).Replace(".", "-").ToLower()}-{Process.GetCurrentProcess().Id}";
             var objectUri = type.Name.ToLower();
             var uri = $"ipc://{portName}/{objectUri}";
+            var maxReservedDomains = Toolx.Conf.MaxReservedDomains();
+            if (maxReservedDomains < 1) maxReservedDomains = size;
+            if (maxReservedDomains < 1) maxReservedDomains = 1;
             var proxy = TryGetExistsProxy(type, uri);
-            if (proxy != null) return proxy;
-            CreatePool();
-            return (CommandPool)Activator.GetObject(type, uri);
+            if (proxy != null) return proxy.GetPool(maxReservedDomains);
+            CreateProxy();
+            proxy = (CommandPoolProxy)Activator.GetObject(type, uri);
+            return proxy.GetPool(maxReservedDomains);
         }
 
         private static void CreateChannel()
@@ -60,8 +91,7 @@ namespace Jetproger.Tools.Plugin.Commands
             {
                 TypeFilterLevel = TypeFilterLevel.Full
             };
-            var config = new Hashtable
-            {
+            var config = new Hashtable {
                 ["name"] = string.Empty,
                 ["portName"] = portName,
                 ["tokenImpersonationLevel"] = TokenImpersonationLevel.Impersonation,
@@ -75,11 +105,11 @@ namespace Jetproger.Tools.Plugin.Commands
             RemotingConfiguration.RegisterWellKnownServiceType(type, objectUri, WellKnownObjectMode.SingleCall);
         }
 
-        private static CommandPool TryGetExistsProxy(Type type, string uri)
+        private static CommandPoolProxy TryGetExistsProxy(Type type, string uri)
         {
             try
             {
-                var proxy = (CommandPool)Activator.GetObject(type, uri);
+                var proxy = (CommandPoolProxy)Activator.GetObject(type, uri);
                 proxy.CreateChannel();
                 return proxy;
             }
@@ -89,7 +119,7 @@ namespace Jetproger.Tools.Plugin.Commands
             }
         }
 
-        private static void CreatePool()
+        private static void CreateProxy()
         {
             var setup = new AppDomainSetup
             {
@@ -98,12 +128,12 @@ namespace Jetproger.Tools.Plugin.Commands
                 LoaderOptimization = LoaderOptimization.SingleDomain,
                 ShadowCopyFiles = "true"
             };
-            var name = $"f__{(typeof(CommandPool)).AssemblyQualifiedName}";
+            var name = $"f__{(typeof(CommandPoolProxy)).AssemblyQualifiedName}";
             var domain = AppDomain.CreateDomain(name, AppDomain.CurrentDomain.Evidence, setup);
-            var type = typeof(CommandPool);
+            var type = typeof(CommandPoolProxy);
             var assemblyName = type.Assembly.GetName().Name;
             var typeName = type.FullName ?? string.Empty;
-            var instance = domain.CreateInstanceAndUnwrap(assemblyName, typeName) as CommandPool;
+            var instance = domain.CreateInstanceAndUnwrap(assemblyName, typeName) as CommandPoolProxy;
             instance?.CreateChannel();
         }
     }

@@ -619,6 +619,96 @@ namespace Jetproger.Tools.Resource.Resx {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Set language: {0}.
+        /// </summary>
+        internal static string StartAppLang {
+            get {
+                return ResourceManager.GetString("StartAppLang", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start parse command line arguments.
+        /// </summary>
+        internal static string StartCmdArgs {
+            get {
+                return ResourceManager.GetString("StartCmdArgs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start initialize command pool.
+        /// </summary>
+        internal static string StartCmdPool {
+            get {
+                return ResourceManager.GetString("StartCmdPool", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Initialize dependency injection container.
+        /// </summary>
+        internal static string StartDI {
+            get {
+                return ResourceManager.GetString("StartDI", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to End preparing.
+        /// </summary>
+        internal static string StartEnd {
+            get {
+                return ResourceManager.GetString("StartEnd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start trace listener NLog [base].
+        /// </summary>
+        internal static string StartNLogBase {
+            get {
+                return ResourceManager.GetString("StartNLogBase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start trace listener NLog [{0}].
+        /// </summary>
+        internal static string StartNLogTyped {
+            get {
+                return ResourceManager.GetString("StartNLogTyped", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start read configuration.
+        /// </summary>
+        internal static string StartReadConf {
+            get {
+                return ResourceManager.GetString("StartReadConf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connecting resource.
+        /// </summary>
+        internal static string StartRes {
+            get {
+                return ResourceManager.GetString("StartRes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start trace listener [{0}].
+        /// </summary>
+        internal static string StartTrace {
+            get {
+                return ResourceManager.GetString("StartTrace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to String.
         /// </summary>
         internal static string String {

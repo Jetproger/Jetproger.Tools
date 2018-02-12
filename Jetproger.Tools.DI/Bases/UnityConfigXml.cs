@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Xml;
 
-namespace Jetproger.Tools.Plugin.Aspects
+namespace Jetproger.Tools.Plugin.DI
 {
     public static class UnityConfigXml
     {
@@ -30,7 +30,7 @@ namespace Jetproger.Tools.Plugin.Aspects
             fileName = Path.GetFileNameWithoutExtension(fileName.Replace(".vshost", string.Empty));
             var names = fileName.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
             fileName = $"unity-{names[names.Length - 1]}.config";
-            var s = File.ReadAllText(fileName);
+            var s = System.IO.File.ReadAllText(fileName);
             var doc = new XmlDocument();
             doc.LoadXml(s);
             var root = doc.GetElementsByTagName("unity")[0];

@@ -23,7 +23,8 @@ namespace Jetproger.Tools.Trace.Bases
             var typedMessage = message as TypedMessage;
             if (typedMessage != null)
             {
-                Log.GlobalTrace.Trace(typedMessage.Message, message.GetType().Name);
+                if (!string.IsNullOrWhiteSpace(typedMessage.Message)) Log.GlobalTrace.Trace(typedMessage.Message, message.GetType().Name);
+                if (!string.IsNullOrWhiteSpace(typedMessage.Error)) Log.GlobalTrace.Error(typedMessage.Error, message.GetType().Name);
                 return;
             }
             Log.GlobalTrace.Trace(message.ToString(), NlogConfig.GetMainTraceName());
@@ -39,7 +40,7 @@ namespace Jetproger.Tools.Trace.Bases
             Log.GlobalTrace.Trace(message, NlogConfig.GetMainTraceName());
         }
 
-        private static string GetExceptionAsString(Exception e)
+        public static string GetExceptionAsString(Exception e)
         {
             var sb = new StringBuilder();
             sb.AppendLine(e.ToString());

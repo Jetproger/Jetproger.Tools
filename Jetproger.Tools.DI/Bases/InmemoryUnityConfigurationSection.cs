@@ -2,7 +2,7 @@ using System.IO;
 using System.Xml;
 using Microsoft.Practices.Unity.Configuration;
 
-namespace Jetproger.Tools.Plugin.Aspects
+namespace Jetproger.Tools.Plugin.DI
 {
     public class InmemoryUnityConfigurationSection : UnityConfigurationSection
     {

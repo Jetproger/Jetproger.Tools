@@ -255,4 +255,34 @@
   <data name="Proc" xml:space="preserve">
     <value>Обработан</value>
   </data>
+  <data name="StartAppLang" xml:space="preserve">
+    <value>Установлен язык: {0}</value>
+  </data>
+  <data name="StartCmdArgs" xml:space="preserve">
+    <value>Разбор аргументов командной строки</value>
+  </data>
+  <data name="StartCmdPool" xml:space="preserve">
+    <value>Заполнение кеша доменов</value>
+  </data>
+  <data name="StartDI" xml:space="preserve">
+    <value>Инициализация DI-контейнера</value>
+  </data>
+  <data name="StartEnd" xml:space="preserve">
+    <value>Подготовка завершена</value>
+  </data>
+  <data name="StartNLogBase" xml:space="preserve">
+    <value>Запуск основного NLog-трассировщика</value>
+  </data>
+  <data name="StartNLogTyped" xml:space="preserve">
+    <value>Запуск NLog-трассировщика [{0}]</value>
+  </data>
+  <data name="StartReadConf" xml:space="preserve">
+    <value>Загрузка файла конфигурации</value>
+  </data>
+  <data name="StartRes" xml:space="preserve">
+    <value>Подключение файла ресурсов</value>
+  </data>
+  <data name="StartTrace" xml:space="preserve">
+    <value>Запуск трассировщика [{0}]</value>
+  </data>
 </root>

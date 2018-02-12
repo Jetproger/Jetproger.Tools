@@ -4,13 +4,15 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Plugin.Aspects;
 using Jetproger.Tools.Plugin.Bases;
+using Jetproger.Tools.Plugin.DI;
 using Jetproger.Tools.Plugin.Services;
 using MD = Tools.Metadata;
 
 namespace Jetproger.Tools.Plugin.Commands
 {
-    public abstract class Command : TraceListener, ICommand, ICommandIsolate
+    public abstract class Command : TraceListener, ICommand, ICommandIsolate, IDependencyInjectionItem
     {
         private static readonly ConcurrentDictionary<Guid, CommandWorker> Workers = new ConcurrentDictionary<Guid, CommandWorker>();
         private readonly ConcurrentQueue<string> _messages;
@@ -402,14 +404,18 @@ namespace Jetproger.Tools.Plugin.Commands
     public interface ICommandIsolate
     {
         string Unexecute();
+
         string Execute();
+
         string Enabled();
     }
 
     public interface ICommand
     {
         void Unexecute();
+
         void Execute();
+
         bool Enabled();
     }
 }

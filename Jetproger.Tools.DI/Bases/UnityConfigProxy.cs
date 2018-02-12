@@ -8,7 +8,7 @@ using System.Runtime.Serialization.Formatters;
 using System.Security.Permissions;
 using System.Security.Principal;
 
-namespace Jetproger.Tools.Plugin.Aspects
+namespace Jetproger.Tools.Plugin.DI
 {
     public class UnityConfigProxy : MarshalByRefObject
     {
