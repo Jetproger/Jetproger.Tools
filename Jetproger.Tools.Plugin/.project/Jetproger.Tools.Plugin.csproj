@@ -81,6 +81,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Bases\StructureExtensions.cs">
+      <Link>Bases\StructureExtensions.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="..\Commands\Command.cs">
       <Link>Commands\Command.cs</Link>
     </Compile>
@@ -248,6 +253,10 @@
     <ProjectReference Include="..\..\Jetproger.Tools.Resource\.project\Jetproger.Tools.Resource.csproj">
       <Project>{942718E0-35B1-4E52-900E-1709B6808968}</Project>
       <Name>Jetproger.Tools.Resource</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Jetproger.Tools.Structure\.project\Jetproger.Tools.Structure.csproj">
+      <Project>{F2644829-D8F4-4CFF-BF32-46745BEF2638}</Project>
+      <Name>Jetproger.Tools.Structure</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Jetproger.Tools.Trace\.project\Jetproger.Tools.Trace.csproj">
       <Project>{ADE5BFBB-508C-4A3B-BF93-A9BA4570E4E1}</Project>

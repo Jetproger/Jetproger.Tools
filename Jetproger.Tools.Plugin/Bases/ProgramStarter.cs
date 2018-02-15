@@ -87,6 +87,7 @@ namespace Jetproger.Tools.Plugin.Bases
         public IParseCommandLineArguments OnUnhandledException(UnhandledExceptionEventHandler handler)
         {
             _actions.Add(new Tuple<object, Action<object>>(handler, x => {
+                TNLog.Run();
                 var y = (UnhandledExceptionEventHandler)x;
                 AppDomain.CurrentDomain.UnhandledException -= y;
                 AppDomain.CurrentDomain.UnhandledException += y;
@@ -134,8 +135,7 @@ namespace Jetproger.Tools.Plugin.Bases
                 }
                 (x as Action)?.Invoke();
             }));
-            Task.Factory.StartNew(() =>
-            {
+            Task.Factory.StartNew(() => {
                 foreach (Tuple<object, Action<object>> tuple in _actions)
                 {
                     ExecuteAction(tuple.Item2, tuple.Item1);

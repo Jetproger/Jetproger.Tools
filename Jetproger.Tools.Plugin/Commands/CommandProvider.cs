@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
+using Jetproger.Tools.Plugin.Bases;
+using Jetproger.Tools.Structure.Bases;
 using Microsoft.Practices.Unity.Utility;
 using TDI = Tools.DI;
 
@@ -12,6 +14,7 @@ namespace Jetproger.Tools.Plugin.Commands
     {
         public CommandProvider(CommandAgent agent) : base(agent)
         {
+
         }
 
         public CommandProvider<T> Set<TSource>(Expression<Func<T, object>> target, Expression<Func<TSource, object>> source)
@@ -68,29 +71,29 @@ namespace Jetproger.Tools.Plugin.Commands
             return base.Operation(command);
         }
 
-        //public override CommandProvider Operation(Task task)
-        //{
-        //    Agent?.Parent?.Run();
-        //    return base.Operation(task);
-        //}
-        //
-        //public override CommandProvider Operation(Tree tree)
-        //{
-        //    Agent?.Parent?.Run();
-        //    return base.Operation(tree);
-        //}
-        //
-        //public override CommandProvider Operation(TreeItem treeItem)
-        //{
-        //    Agent?.Parent?.Run();
-        //    return base.Operation(treeItem);
-        //}
-        //
-        //public override CommandProvider Operation(IList<TreeItem> treeItems)
-        //{
-        //    Agent?.Parent?.Run();
-        //    return base.Operation(treeItems);
-        //}
+        public override CommandProvider Operation(Task task)
+        {
+            Agent?.Parent?.Run();
+            return base.Operation(task);
+        }
+        
+        public override CommandProvider Operation(Tree tree)
+        {
+            Agent?.Parent?.Run();
+            return base.Operation(tree);
+        }
+        
+        public override CommandProvider Operation(TreeItem treeItem)
+        {
+            Agent?.Parent?.Run();
+            return base.Operation(treeItem);
+        }
+        
+        public override CommandProvider Operation(IList<TreeItem> treeItems)
+        {
+            Agent?.Parent?.Run();
+            return base.Operation(treeItems);
+        }
 
         public override CommandProvider Operation(CommandStrategy strategy)
         {
@@ -174,31 +177,32 @@ namespace Jetproger.Tools.Plugin.Commands
             return new CommandProvider(agent);
         }
 
-        //public virtual CommandProvider Operation(Task task)
-        //{
-        //    Agent?.Run();
-        //    if (task == null) return this;
-        //    var agent = task.AsCommandAgent();
-        //    agent.Parent = Agent;
-        //    agent.Run();
-        //    Agent?.Items.Add(agent);
-        //    return new CommandProvider(agent);
-        //}
-        //
-        //public virtual CommandProvider Operation(Tree tree)
-        //{
-        //    return tree?.Items != null && tree.Items.Count > 0 ? Operation(tree.AsCommandAgents()) : this;
-        //}
-        //
-        //public virtual CommandProvider Operation(TreeItem treeItem)
-        //{
-        //    return treeItem != null ? Operation((new[] {treeItem}).AsCommandAgents()) : this;
-        //}
-        //
-        //public virtual CommandProvider Operation(IList<TreeItem> treeItems)
-        //{
-        //    return treeItems != null && treeItems.Count > 0 ? Operation(treeItems.AsCommandAgents()) : this;
-        //}
+        public virtual CommandProvider Operation(Task task)
+        {
+            Agent?.Run();
+            if (task == null) return this;
+            var agent = task.AsCommandAgent();
+            agent.Parent = Agent;
+            agent.Run();
+            Agent?.Items.Add(agent);
+            return new CommandProvider(agent);
+            return this;
+        }
+        
+        public virtual CommandProvider Operation(Tree tree)
+        {
+            return tree?.Items != null && tree.Items.Count > 0 ? Operation(tree.AsCommandAgents()) : this;
+        }
+        
+        public virtual CommandProvider Operation(TreeItem treeItem)
+        {
+            return treeItem != null ? Operation((new[] {treeItem}).AsCommandAgents()) : this;
+        }
+        
+        public virtual CommandProvider Operation(IList<TreeItem> treeItems)
+        {
+            return treeItems != null && treeItems.Count > 0 ? Operation(treeItems.AsCommandAgents()) : this;
+        }
 
         public virtual CommandProvider Operation(CommandStrategy strategy)
         {

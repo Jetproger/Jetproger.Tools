@@ -58,6 +58,7 @@ namespace Jetproger.Tools.Plugin.Commands
         public void Initialize()
         {
             TNLog.Run();
+            TDI.Init();
         }
 
         public AppDomain GetDomain()
@@ -172,8 +173,7 @@ namespace Jetproger.Tools.Plugin.Commands
             var objectUri = type.Name.ToLower();
             var client = new BinaryClientFormatterSinkProvider();
             var server = new BinaryServerFormatterSinkProvider { TypeFilterLevel = TypeFilterLevel.Full };
-            var config = new Hashtable
-            {
+            var config = new Hashtable {
                 ["name"] = string.Empty,
                 ["portName"] = portName,
                 ["tokenImpersonationLevel"] = TokenImpersonationLevel.Impersonation,

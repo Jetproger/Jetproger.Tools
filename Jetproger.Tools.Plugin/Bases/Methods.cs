@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.ServiceModel;
@@ -13,13 +12,14 @@ using Jetproger.Tools.Plugin.Commands;
 using Jetproger.Tools.Plugin.Services;
 using Newtonsoft.Json;
 using Tools;
-using DI = Tools.DI;
 
 namespace Jetproger.Tools.Plugin.Bases
 {
     internal static class Methods
     {
+        private static readonly JsonSerializer JsonSerializer = new JsonSerializer { Formatting = Formatting.None, ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.Objects };
         private static readonly CultureInfo FormatProvider = new CultureInfo("en-us") { NumberFormat = { NumberGroupSeparator = string.Empty, NumberDecimalSeparator = "." }, DateTimeFormat = { DateSeparator = "-", TimeSeparator = ":" } };
+
         private static Dictionary<string, string> ConfigKeys => GetOne(ConfigKeysHolder, GetConfigurationKeys);
         private static readonly Dictionary<string, string>[] ConfigKeysHolder = { null };
 
@@ -148,13 +148,48 @@ namespace Jetproger.Tools.Plugin.Bases
             {
                 Console.CancelKeyPress += (o, e) => service.Stop();
                 service.Start();
-                Console.WriteLine("Running service, press a key to stop");
+                Console.WriteLine(@"Running service, press a key to stop");
                 Console.ReadKey();
                 service.Stop();
-                Console.WriteLine("Service stopped. Goodbye.");
+                Console.WriteLine(@"Service stopped. Goodbye.");
                 return;
             }
             ServiceBase.Run(new ServiceBase[] { service });
+        }
+
+        public static string SerializeJson(object o)
+        {
+            if (o == null)
+            {
+                return null;
+            }
+            using (var sw = new UTF8StringWriter())
+            {
+                if (o.GetType().IsSimple()) sw.Write(o.AsString()); else JsonSerializer.Serialize(sw, o);
+                return sw.ToString();
+            }
+        }
+
+        public static T DeserializeJson<T>(string json)
+        {
+            return (T)DeserializeJson(json, typeof(T));
+        }
+
+        public static object DeserializeJson(string json, Type resultType)
+        {
+            if (resultType.IsSimple())
+            {
+                return json.As(resultType);
+            }
+            using (var sr = new StringReader(json))
+            {
+                return JsonSerializer.Deserialize(sr, resultType);
+            }
+        }
+
+        private class UTF8StringWriter : StringWriter
+        {
+            public override Encoding Encoding => Encoding.UTF8;
         }
     }
 }
