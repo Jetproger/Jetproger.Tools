@@ -18,4 +18,13 @@ namespace Jetproger.Tools.Trace.Bases
             return string.Empty;
         }
     }
+
+    public class AspectMessage : TypedMessage
+    {
+        public AspectMessage(string message, Exception exception) : base(message, exception) { }
+
+        public AspectMessage(Exception exception) : this(null, exception) { }
+
+        public AspectMessage(string message) : this(message, null) { }
+    }
 }

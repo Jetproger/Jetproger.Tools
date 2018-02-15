@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Plugin.DI;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using Newtonsoft.Json;
 using TDI = Tools.DI;
@@ -43,11 +44,11 @@ namespace Jetproger.Tools.Plugin.Aspects
             keys.Add(methodId);
             keys.AddRange(GetKeys(input.Target, type));
             var parameters = keys.ToArray();
-            string stringValue;
-            if (TC.TryGet(parameters, out stringValue))
+            object objectValue;
+            if (TC.TryGet(parameters, out objectValue))
             {
                 var returnType = ((MethodInfo)input.MethodBase).ReturnType;
-                var returnValue = returnType.IsSimple() ? stringValue.As(returnType) : DeserializeJson(stringValue, returnType);
+                var returnValue = returnType.IsSimple() ? objectValue.As(returnType) : DeserializeJson(objectValue.ToString(), returnType);
                 return input.CreateMethodReturn(returnValue);
             }
             var value = TDI.AOPExecute(input, getNext).ReturnValue;
@@ -81,11 +82,19 @@ namespace Jetproger.Tools.Plugin.Aspects
             }
         }
 
-        private static readonly JsonSerializer JsonSerializer = new JsonSerializer
-        {
+        private static readonly JsonSerializer JsonSerializer = new JsonSerializer {
             Formatting = Formatting.None,
             ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
             PreserveReferencesHandling = PreserveReferencesHandling.Objects
         };
+    }
+
+    public class CacheAspectAttribute : AspectAttribute
+    {
+        public CacheAspectAttribute() : base(typeof(CacheCallHandler)) { }
+        public string AssemblyName { get; set; }
+        public string TypeName { get; set; }
+        public string Properties { get; set; }
+        public int LifeTime { get; set; }
     }
 }

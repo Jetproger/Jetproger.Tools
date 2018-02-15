@@ -42,8 +42,13 @@ namespace Jetproger.Tools.Trace.Bases
 
         public static string GetExceptionAsString(Exception e)
         {
+            if (e == null)
+            {
+                return null;
+            }
             var sb = new StringBuilder();
             sb.AppendLine(e.ToString());
+
             while (e != null)
             {
                 sb.AppendLine(e.Message);

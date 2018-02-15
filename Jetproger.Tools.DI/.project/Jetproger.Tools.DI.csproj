@@ -63,6 +63,11 @@
     <Reference Include="System.Runtime.Remoting" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Bases\Attributes.cs">
+      <Link>Bases\Attributes.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="..\Bases\DI.cs">
       <Link>Bases\DI.cs</Link>
     </Compile>

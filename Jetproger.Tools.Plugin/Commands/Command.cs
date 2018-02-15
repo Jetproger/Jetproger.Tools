@@ -35,11 +35,7 @@ namespace Jetproger.Tools.Plugin.Commands
         protected virtual string Host => null;
         protected virtual int Port => 0;
 
-        public string CommandName
-        {
-            get;
-            set;
-        }
+        public string CommandName { get; set; }
 
         public CommandState State
         {
@@ -93,7 +89,7 @@ namespace Jetproger.Tools.Plugin.Commands
 
         string ICommandIsolate.Unexecute()
         {
-            return UnexecuteAspect(new [] { false });
+            return UnexecuteAction(new [] { false });
         }
 
         public static CommandResponse UnexecuteService(CommandRequest request)
@@ -101,9 +97,10 @@ namespace Jetproger.Tools.Plugin.Commands
             return BaseService(request, CommandType.Unexecute);
         }
 
-        protected virtual string UnexecuteAspect(bool[] useServiceToken)
+        [DurationAspect(Enabled = false, Order = 3, TraceType = "Jetproger.Tools.Trace, Jetproger.Tools.Trace.Bases.AspectMessage")]
+        protected virtual string UnexecuteAction(bool[] useServiceToken)
         {
-            return BaseAspect(useServiceToken, CommandType.Unexecute);
+            return BaseAction(useServiceToken, CommandType.Unexecute);
         }
 
         protected virtual void UnexecuteCustom()
@@ -121,7 +118,7 @@ namespace Jetproger.Tools.Plugin.Commands
 
         string ICommandIsolate.Execute()
         {
-            return ExecuteAspect(new [] { false });
+            return ExecuteAction(new [] { false });
         }
 
         public static CommandResponse ExecuteService(CommandRequest request)
@@ -129,9 +126,10 @@ namespace Jetproger.Tools.Plugin.Commands
             return BaseService(request, CommandType.Execute);
         }
 
-        protected virtual string ExecuteAspect(bool[] useServiceToken)
+        [DurationAspect(Enabled = false, Order = 3, TraceType = "Jetproger.Tools.Trace, Jetproger.Tools.Trace.Bases.AspectMessage")]
+        protected virtual string ExecuteAction(bool[] useServiceToken)
         {
-            return BaseAspect(useServiceToken, CommandType.Execute);
+            return BaseAction(useServiceToken, CommandType.Execute);
         }
 
         protected virtual void ExecuteCustom()
@@ -149,7 +147,7 @@ namespace Jetproger.Tools.Plugin.Commands
 
         string ICommandIsolate.Enabled()
         {
-            return EnabledAspect(new [] { false });
+            return EnabledAction(new [] { false });
         }
 
         public static CommandResponse EnabledService(CommandRequest request)
@@ -157,9 +155,10 @@ namespace Jetproger.Tools.Plugin.Commands
             return BaseService(request, CommandType.Enabled);
         }
 
-        protected virtual string EnabledAspect(bool[] useServiceToken)
+        [DurationAspect(Enabled = false, Order = 3, TraceType = "Jetproger.Tools.Trace, Jetproger.Tools.Trace.Bases.AspectMessage")]
+        protected virtual string EnabledAction(bool[] useServiceToken)
         {
-            return BaseAspect(useServiceToken, CommandType.Enabled);
+            return BaseAction(useServiceToken, CommandType.Enabled);
         }
 
         protected virtual bool EnabledCustom()
@@ -213,7 +212,7 @@ namespace Jetproger.Tools.Plugin.Commands
                     || (commandType != CommandType.Enabled && IsExecuteRemote)
                     || (commandType != CommandType.Enabled && IsExecuteIsolate);
                 var useServiceToken = new[] { useService };
-                var json = MethodAspect(useServiceToken, commandType);
+                var json = MethodAction(useServiceToken, commandType);
                 if (!string.IsNullOrWhiteSpace(json) && commandType != CommandType.Enabled && (useService || useService == useServiceToken[0]))
                 {
                     SetPropertyValues(json.As(GetType()));
@@ -240,7 +239,7 @@ namespace Jetproger.Tools.Plugin.Commands
             }
         }
 
-        private string BaseAspect(bool[] useServiceToken, CommandType commandType)
+        private string BaseAction(bool[] useServiceToken, CommandType commandType)
         {
             var useService = useServiceToken[0];
             useServiceToken[0] = !useServiceToken[0];
@@ -320,13 +319,13 @@ namespace Jetproger.Tools.Plugin.Commands
             }
         }
 
-        private string MethodAspect(bool[] useServiceToken, CommandType commandType)
+        private string MethodAction(bool[] useServiceToken, CommandType commandType)
         {
             switch (commandType)
             {
-                case CommandType.Unexecute: return UnexecuteAspect(useServiceToken);
-                case CommandType.Enabled: return EnabledAspect(useServiceToken);
-                default: return ExecuteAspect(useServiceToken);
+                case CommandType.Unexecute: return UnexecuteAction(useServiceToken);
+                case CommandType.Enabled: return EnabledAction(useServiceToken);
+                default: return ExecuteAction(useServiceToken);
             }
         }
 

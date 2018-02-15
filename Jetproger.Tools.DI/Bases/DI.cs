@@ -1,9 +1,6 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
@@ -11,7 +8,7 @@ using System.Runtime.Remoting.Channels.Ipc;
 using System.Runtime.Serialization.Formatters;
 using System.Security.Principal;
 using System.Text;
-using System.Web;
+using System.Threading;
 using Jetproger.Tools.Plugin.DI;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
@@ -21,8 +18,6 @@ namespace Tools
     public static class DI
     {
         private static readonly UnityConfigProxy[] UnityConfigHolder = { null };
-        private static readonly string[] CurrentAssemblyNameHolder = { null };
-        private static readonly Assembly[] CurrentAssemblyHolder = { null };
         private static readonly IUnityContainer[] ContainerHolder = { null };
 
         public static Type TypeOf<T>()
@@ -59,6 +54,16 @@ namespace Tools
             return Container.Resolve(type);
         }
 
+        public static void Init()
+        {
+            InnerInit(Container);
+        }
+
+        private static void InnerInit(IUnityContainer container)
+        {
+            if (container == null) Thread.Sleep(111);
+        }
+
         public static IMethodReturn AOPExecute(IMethodInvocation input, GetNextHandlerDelegate getNext)
         {
             var next = getNext();
@@ -74,7 +79,7 @@ namespace Tools
             var method = (MethodInfo)input.MethodBase;
             var parameters = method.GetParameters();
             var sb = new StringBuilder();
-            sb.AppendFormat("{0} {1}.{2}(", method.ReturnType, method.ReflectedType.FullName, method.Name);
+            sb.AppendFormat("{0} {1}.{2}(", method.ReturnType, method.ReflectedType?.FullName, method.Name);
             for (int i = 0; i < parameters.Length; i++)
             {
                 sb.AppendFormat("{0}{1} {2}", (i > 0 ? ", " : ""), parameters[i].ParameterType, parameters[i].Name);
@@ -89,7 +94,7 @@ namespace Tools
             var parameters = method.GetParameters();
             var arguments = input.Arguments;
             var sb = new StringBuilder();
-            sb.AppendFormat("{0} {1}.{2}(", method.ReturnType, method.ReflectedType.FullName, method.Name);
+            sb.AppendFormat("{0} {1}.{2}(", method.ReturnType, method.ReflectedType?.FullName, method.Name);
             for (int i = 0; i < parameters.Length; i++)
             {
                 var value = i < arguments.Count ? (arguments[i] != null ? arguments[i].ToString() : "<null>") : "<>";
@@ -129,10 +134,7 @@ namespace Tools
                 {
                     lock (UnityConfigHolder)
                     {
-                        if (UnityConfigHolder[0] == null)
-                        {
-                            UnityConfigHolder[0] = GetProxy();
-                        }
+                        if (UnityConfigHolder[0] == null) UnityConfigHolder[0] = GetProxy();
                     }
                 }
                 return UnityConfigHolder[0];
@@ -162,8 +164,7 @@ namespace Tools
             var portName = $"{AppDomain.CurrentDomain.FriendlyName.Replace(".", "-").ToLower()}-{Process.GetCurrentProcess().Id}";
             var objectUri = type.Name.ToLower();
             var client = new BinaryClientFormatterSinkProvider();
-            var server = new BinaryServerFormatterSinkProvider
-            {
+            var server = new BinaryServerFormatterSinkProvider {
                 TypeFilterLevel = TypeFilterLevel.Full
             };
             var config = new Hashtable {
@@ -209,148 +210,6 @@ namespace Tools
             var typeName = type.FullName ?? string.Empty;
             var instance = domain.CreateInstanceAndUnwrap(assemblyName, typeName) as UnityConfigProxy;
             instance?.CreateChannel();
-        }
-
-        public static string GetUnityConfigXml()
-        {
-            var configuration = new UnityConfiguration();
-            foreach (var assembly in GetAssemblies())
-            {
-                configuration.unity.AddAssembly(assembly.GetName().Name);
-            }
-            foreach (var type in GetTypes())
-            {
-                configuration.unity.AddNamespace(type.Namespace);
-                var register = new Register { type = type.Name };
-                var typeLifetime = GetLifetime(type);
-                if (!string.IsNullOrWhiteSpace(typeLifetime)) register.lifetime = new UnityLifeTimeItem { type = typeLifetime };
-                var mapOf = GetMapOf(type);
-                if (!string.IsNullOrWhiteSpace(mapOf) && configuration.unity.container.Registers.All(x => x.type != mapOf))
-                {
-                    register.type = mapOf;
-                    register.mapTo = type.Name;
-                }
-                configuration.unity.container.Registers.Add(register);
-            }
-            return configuration.ToXml();
-        }
-
-        private static IEnumerable<Type> GetTypes()
-        {
-            var dependencyInjectionItemType = typeof(IDependencyInjectionItem);
-            foreach (var assembly in GetAssemblies())
-            {
-                foreach (var type in assembly.GetTypes())
-                {
-                    if (type.IsInterface || type.IsAbstract) continue;
-                    if (dependencyInjectionItemType.IsAssignableFrom(type)) yield return type;
-                }
-            }
-        }
-
-        private static IEnumerable<Assembly> GetAssemblies()
-        {
-            yield return CurrentAssembly;
-            foreach (var fileName in Directory.GetFiles(AppDir(), "*.dll"))
-            {
-                var assembly = TryLoadAssembly(fileName);
-                if (assembly == null) continue;
-                if (!HasReferenceOnCurrentAssembly(assembly)) continue;
-                yield return assembly;
-            }
-        }
-
-        private static Assembly TryLoadAssembly(string fileName)
-        {
-            var assembly = TryLoadAssemblyWithExtension(fileName);
-            if (assembly != null) return assembly;
-            var ext = ".dll";
-            if (fileName.EndsWith(ext)) fileName = fileName.Substring(0, fileName.Length - ext.Length);
-            return TryLoadAssemblyWithoutExtension(fileName);
-        }
-
-        private static Assembly TryLoadAssemblyWithExtension(string assemblyName)
-        {
-            try
-            {
-                return System.IO.File.Exists(assemblyName) ? Assembly.LoadFrom(assemblyName) : null;
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        private static Assembly TryLoadAssemblyWithoutExtension(string assemblyName)
-        {
-            try
-            {
-                return Assembly.Load(assemblyName);
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        private static bool HasReferenceOnCurrentAssembly(Assembly assembly)
-        {
-            return assembly.GetReferencedAssemblies().Any(x => x.Name == CurrentAssemblyName);
-        }
-
-        private static string GetMapOf(Type type)
-        {
-            foreach (var item in type.GetCustomAttributes(true))
-            {
-                var attribute = item as MapOfDependencyInjectionAttribute;
-                if (attribute != null) return !string.IsNullOrWhiteSpace(attribute.MapOf) ? attribute.MapOf : null;
-            }
-            return null;
-        }
-
-        private static string GetLifetime(Type type)
-        {
-            foreach (var item in type.GetCustomAttributes(true))
-            {
-                var attribute = item as LifetimeDependencyInjectionAttribute;
-                if (attribute != null) return !string.IsNullOrWhiteSpace(attribute.Lifetime) ? attribute.Lifetime : null;
-            }
-            return null;
-        }
-
-        private static string CurrentAssemblyName
-        {
-            get
-            {
-                if (CurrentAssemblyNameHolder[0] == null)
-                {
-                    lock (CurrentAssemblyNameHolder)
-                    {
-                        if (CurrentAssemblyNameHolder[0] == null) CurrentAssemblyNameHolder[0] = CurrentAssembly.GetName().Name;
-                    }
-                }
-                return CurrentAssemblyNameHolder[0];
-            }
-        }
-
-        private static Assembly CurrentAssembly
-        {
-            get
-            {
-                if (CurrentAssemblyHolder[0] == null)
-                {
-                    lock (CurrentAssemblyHolder)
-                    {
-                        if (CurrentAssemblyHolder[0] == null) CurrentAssemblyHolder[0] = typeof(DI).Assembly;
-                    }
-                }
-                return CurrentAssemblyHolder[0];
-            }
-        }
-
-        private static string AppDir()
-        {
-            return (HttpContext.Current == null ? AppDomain.CurrentDomain.BaseDirectory : HttpContext.Current.Server.MapPath("~"));
         }
     }
 }

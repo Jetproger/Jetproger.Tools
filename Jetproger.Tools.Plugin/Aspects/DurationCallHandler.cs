@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Diagnostics;
+using Jetproger.Tools.Plugin.DI;
+using Jetproger.Tools.Trace.Bases;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using TDI = Tools.DI;
+using MD = Tools.Metadata;
 
 namespace Jetproger.Tools.Plugin.Aspects
 {
     public class DurationCallHandler : ICallHandler
     {
         public string TraceType { get; set; }
+
         public bool Enabled { get; set; }
+
         public int Order { get; set; }
 
         public IMethodReturn Invoke(IMethodInvocation input, GetNextHandlerDelegate getNext)
@@ -29,8 +34,42 @@ namespace Jetproger.Tools.Plugin.Aspects
             finally
             {
                 watch.Stop();
-                System.Diagnostics.Trace.WriteLine($"{methodName}: {result}{Environment.NewLine}Duration: {watch.ElapsedMilliseconds} мс{Environment.NewLine}");
+                Write($"{methodName}: {result}{Environment.NewLine}Duration: {watch.ElapsedMilliseconds} мс{Environment.NewLine}");
             }
         }
+
+        private void Write(string durationMessage)
+        {
+            try
+            {
+                if (!WriteTyped(durationMessage)) System.Diagnostics.Trace.WriteLine(durationMessage);
+            }
+            catch
+            {
+                System.Threading.Thread.Sleep(111);
+            }
+        }
+
+        private bool WriteTyped(string durationMessage)
+        {
+            try
+            {
+                var typedMessage = MD.CreateInstance(TraceType, new object[] { durationMessage, null }) as TypedMessage;
+                if (typedMessage == null) return false;
+                System.Diagnostics.Trace.WriteLine(typedMessage);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+    }
+
+    public class DurationAspectAttribute : AspectAttribute
+    {
+        public DurationAspectAttribute() : base(typeof(DurationCallHandler)) { }
+
+        public string TraceType { get; set; }
     }
 }

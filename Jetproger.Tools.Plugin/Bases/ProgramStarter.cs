@@ -13,6 +13,7 @@ using Jetproger.Tools.Trace.Bases;
 using TNLog = Tools.Trace;
 using TF = Tools.File;
 using Res = Tools.Resource;
+using TDI = Tools.DI;
 using DTrace = System.Diagnostics.Trace;
 
 namespace Tools
@@ -33,10 +34,8 @@ namespace Tools
             {
                 DTrace.Listeners.Add((TraceListener)x);
                 DTrace.WriteLine(new ProgramStarterMessage("Loading resources"));
-                TNLog.Run();
                 AppDomain.CurrentDomain.UnhandledException -= OnUnhandledException;
                 AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
-
                 var lang = ConfigurationManager.AppSettings["Culture"];
                 if (string.IsNullOrWhiteSpace(lang)) lang = "en-US";
                 Thread.CurrentThread.CurrentUICulture = new CultureInfo(lang);
@@ -111,7 +110,7 @@ namespace Jetproger.Tools.Plugin.Bases
         {
             _actions.Add(new Tuple<object, Action<object>>(null, x => {
                 DTrace.WriteLine(new ProgramStarterMessage(Toolx.Note.StartDI()));
-                //StartDI
+                TDI.Init();
 
                 DTrace.WriteLine(new ProgramStarterMessage(Toolx.Note.StartCmdPool()));
                 CommandFactory.InitCommandPool(size);

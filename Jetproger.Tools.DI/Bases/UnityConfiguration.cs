@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Web;
 using System.Xml.Serialization;
 
 namespace Jetproger.Tools.Plugin.DI
@@ -14,24 +16,65 @@ namespace Jetproger.Tools.Plugin.DI
         {
             unity = new Unity();
             configSections = new List<Section>();
-            configSections.Add(new Section { name = "unity", type = "Microsoft.Practices.Unity.Configuration.UnityConfigurationSection, Microsoft.Practices.Unity.Configuration" });
         }
 
+        [XmlArrayItem("section")]
         public List<Section> configSections { get; set; }
 
         [XmlElement(Namespace = "http://schemas.microsoft.com/practices/2010/unity")]
         public Unity unity { get; set; }
 
-        public string ToXml()
+        public void ToXml()
         {
-            using (var sw = new StringWriter())
+            var fileName = GetUnityConfigurationFileName();
+            using (var sw = new StreamWriter(fileName, false, Encoding.UTF8))
             {
                 var ns = new XmlSerializerNamespaces();
                 ns.Add(string.Empty, string.Empty);
                 var xs = new XmlSerializer(GetType());
                 xs.Serialize(sw, this, ns);
-                return sw.ToString();
             }
+        }
+
+        public void OfXml()
+        {
+            var fileName = GetUnityConfigurationFileName();
+            if (!File.Exists(fileName))
+            {
+                if (unity.SectionExtensions.Count == 0) unity.SectionExtensions.Add(new SectionExtension { type = "Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionConfigurationExtension, Microsoft.Practices.Unity.Interception.Configuration" });
+                if (configSections.Count == 0) configSections.Add(new Section { name = "unity", type = "Microsoft.Practices.Unity.Configuration.UnityConfigurationSection, Microsoft.Practices.Unity.Configuration" });
+                SetIgnoreCase();
+                return;
+            }
+            using (var sr = new StreamReader(fileName, Encoding.UTF8))
+            {
+                var unityConfiguration = (UnityConfiguration)(new XmlSerializer(GetType())).Deserialize(sr);
+                configSections = unityConfiguration.configSections;
+                unity = unityConfiguration.unity;
+                if (unity.SectionExtensions.Count == 0) unity.SectionExtensions.Add(new SectionExtension { type = "Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionConfigurationExtension, Microsoft.Practices.Unity.Interception.Configuration" });
+                if (configSections.Count == 0) configSections.Add(new Section { name = "unity", type = "Microsoft.Practices.Unity.Configuration.UnityConfigurationSection, Microsoft.Practices.Unity.Configuration" });
+                SetIgnoreCase();
+            }
+        }
+
+        private void SetIgnoreCase()
+        {
+            foreach (var policy in unity.container.interception.Policies)
+            {
+                foreach (var matchingRule in policy.MatchingRules)
+                {
+                    if (matchingRule.constructor.Params.All(x => x.name != "ignoreCase")) matchingRule.constructor.Params.Add(new Param { name = "ignoreCase", value = "false" });
+                }
+            }
+        }
+
+        public static string GetUnityConfigurationFileName()
+        {
+            var appDir = (HttpContext.Current == null ? AppDomain.CurrentDomain.BaseDirectory : HttpContext.Current.Server.MapPath("~"));
+            var fileName = Process.GetCurrentProcess().MainModule.FileName.ToLower();
+            fileName = Path.GetFileNameWithoutExtension(fileName.Replace(".vshost", string.Empty));
+            fileName = $"{fileName}.unity.config";
+            return Path.Combine(appDir, fileName);
         }
     }
 
@@ -52,7 +95,6 @@ namespace Jetproger.Tools.Plugin.DI
             Assemblies = new List<UnityAssembly>();
             Namespaces = new List<UnityNamespace>();
             SectionExtensions = new List<SectionExtension>();
-            SectionExtensions.Add(new SectionExtension { type = "Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionConfigurationExtension, Microsoft.Practices.Unity.Interception.Configuration" });
         }
 
         [XmlElement("assembly")]
@@ -174,38 +216,91 @@ namespace Jetproger.Tools.Plugin.DI
 
     public class Interception
     {
-        public Interception()
-        {
-            Policies = new List<Policy>();
-        }
+        [XmlIgnore]
+        private readonly Dictionary<string, Policy> _policies = new Dictionary<string, Policy>();
 
         [XmlElement("policy")]
-        public List<Policy> Policies { get; set; }
+        public Policy[] Policies
+        {
+            get
+            {
+                return _policies.Values.ToArray();
+            }
+            set
+            {
+                _policies.Clear();
+                foreach (var policy in value)
+                {
+                    if (!_policies.ContainsKey(policy.name)) _policies.Add(policy.name, policy);
+                }
+            }
+        }
+
+        public void AddPolicies(Policy policy)
+        {
+            AddPolicies(new [] { policy });
+        }
+
+        public void AddPolicies(IEnumerable<Policy> policies)
+        {
+            foreach (var policy in policies)
+            {
+                if (!_policies.ContainsKey(policy.name))
+                {
+                    _policies.Add(policy.name, policy);
+                }
+                else
+                {
+                    var existsPolicy = _policies[policy.name];
+                    existsPolicy.AddProperties(policy.callHandler.Properties);
+                }
+            }
+        }
     }
 
     public class Policy
     {
         public Policy()
         {
-            MatchingRules = new List<MatchingRule>();
         }
+
+        public Policy(string typeName, string methodName, string callHandlerTypeName, IEnumerable<UnityPropertyItem> properties)
+        {
+            var key = $"{typeName.ToLower().Replace(".", "-")}-{methodName.ToLower()}-{callHandlerTypeName.ToLower()}";
+            name = $"{key}-policy";
+            MatchingRules = new List<MatchingRule>();
+
+            var rule = new MatchingRule { name = $"{key}-type-name", type = "TypeMatchingRule" };
+            rule.constructor.Params.Clear();
+            rule.constructor.Params.Add(new Param { name = "typeName", value = typeName });
+            rule.constructor.Params.Add(new Param { name = "ignoreCase", value = "false" });
+            MatchingRules.Add(rule);
+
+            rule = new MatchingRule { name = $"{key}-method-name", type = "MemberNameMatchingRule" };
+            rule.constructor.Params.Clear();
+            rule.constructor.Params.Add(new Param { name = "nameToMatch", value = methodName });
+            rule.constructor.Params.Add(new Param { name = "ignoreCase", value = "false" });
+            MatchingRules.Add(rule);
+
+            callHandler = new CallHandler { name = $"{key}-call-handler", type = callHandlerTypeName };
+            AddProperties(properties);
+        }
+
+        public void AddProperties(IEnumerable<UnityPropertyItem> properties)
+        {
+            foreach (UnityPropertyItem item in properties)
+            {
+                if (callHandler.Properties.All(x => item.name != x.name)) callHandler.Properties.Add(item);
+            }
+        }
+
+        [XmlAttribute]
+        public string name { get; set; }
 
         [XmlElement("matchingRule")]
         public List<MatchingRule> MatchingRules { get; set; }
 
-        public void AddRule(Type type)
-        {
-            var rule = new MatchingRule { name = "type-name", type = "TypeMatchingRule" };
-            rule.constructor.Params.Add(new Param { name = "typeName", value = type.FullName });
-            MatchingRules.Add(rule);
-        }
-
-        public void AddRule(string methodName)
-        {
-            var rule = new MatchingRule { name = "method-name", type = "MemberNameMatchingRule" };
-            rule.constructor.Params.Add(new Param { name = "nameToMatch", value = methodName });
-            MatchingRules.Add(rule);
-        }
+        public CallHandler callHandler { get; set; }
     }
 
     public class MatchingRule
@@ -229,7 +324,6 @@ namespace Jetproger.Tools.Plugin.DI
         public Constructor()
         {
             Params = new List<Param>();
-            Params.Add(new Param { name = "ignoreCase", value = "false" });
         }
 
         [XmlElement("param")]
@@ -245,17 +339,32 @@ namespace Jetproger.Tools.Plugin.DI
         public string value { get; set; }
     }
 
-    [AttributeUsage(AttributeTargets.Class)]
-    public class MapOfDependencyInjectionAttribute : Attribute
+    public class CallHandler
     {
-        public string MapOf { get; private set; }
-        public MapOfDependencyInjectionAttribute(string mapOf) { MapOf = mapOf; }
+        public CallHandler()
+        {
+            lifetime = new UnityLifeTimeItem { type = "transient" };
+            Properties = new List<UnityPropertyItem>();
+        }
+
+        [XmlAttribute]
+        public string name { get; set; }
+
+        [XmlAttribute]
+        public string type { get; set; }
+
+        public UnityLifeTimeItem lifetime { get; set; }
+
+        [XmlElement("property")]
+        public List<UnityPropertyItem> Properties { get; set; }
     }
 
-    [AttributeUsage(AttributeTargets.Class)]
-    public class LifetimeDependencyInjectionAttribute : Attribute
+    public class UnityPropertyItem
     {
-        public string Lifetime { get; private set; }
-        public LifetimeDependencyInjectionAttribute(string lifetime) { Lifetime = lifetime; }
+        [XmlAttribute]
+        public string name { get; set; }
+
+        [XmlAttribute]
+        public string value { get; set; }
     }
 }
