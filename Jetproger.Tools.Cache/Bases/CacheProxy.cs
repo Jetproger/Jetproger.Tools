@@ -1,65 +1,22 @@
-using System;
-using System.Collections;
-using System.Diagnostics;
-using System.Runtime.Remoting;
-using System.Runtime.Remoting.Channels;
-using System.Runtime.Remoting.Channels.Ipc;
-using System.Runtime.Serialization.Formatters;
-using System.Security.Permissions;
-using System.Security.Principal;
+using Jetproger.Tools.Convert.Bases;
 
 namespace Jetproger.Tools.Cache.Bases
 {
-    public class CacheProxy : MarshalByRefObject
+    public class CacheProxy : OneProxy
     {
-        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.Infrastructure)]
-        public override object InitializeLifetimeService()
+        public void Write(object[] keys, object value, int lifetime)
         {
-            return null;
+            CacheCore.Write(keys, value, lifetime);
         }
 
-        public void Add(string[] keys, object value, int lifetime)
+        public bool Read(object[] keys, out object value)
         {
-            CacheCore.Add(keys, value, lifetime);
+            return CacheCore.Read(keys, out value);
         }
 
-        public bool Get(string[] keys, out object value)
+        public void Clear(object[] keys)
         {
-            return CacheCore.Get(keys, out value);
-        }
-
-        public void Off(string[] keys)
-        {
-            CacheCore.Off(keys);
-        }
-
-        public void CreateChannel()
-        {
-            var type = typeof(CacheProxy);
-            foreach (var entry in RemotingConfiguration.GetRegisteredWellKnownServiceTypes())
-            {
-                if (entry.ObjectType == type) return;
-            }
-            var portName = $"{(type.FullName ?? string.Empty).Replace(".", "-").ToLower()}-{Process.GetCurrentProcess().Id}";
-            var objectUri = type.Name.ToLower();
-            var client = new BinaryClientFormatterSinkProvider();
-            var server = new BinaryServerFormatterSinkProvider
-            {
-                TypeFilterLevel = TypeFilterLevel.Full
-            };
-            var config = new Hashtable
-            {
-                ["name"] = string.Empty,
-                ["portName"] = portName,
-                ["tokenImpersonationLevel"] = TokenImpersonationLevel.Impersonation,
-                ["impersonate"] = true,
-                ["useDefaultCredentials"] = true,
-                ["secure"] = true,
-                ["typeFilterLevel"] = TypeFilterLevel.Full
-            };
-            var ipcChannel = new IpcChannel(config, client, server);
-            ChannelServices.RegisterChannel(ipcChannel, true);
-            RemotingConfiguration.RegisterWellKnownServiceType(type, objectUri, WellKnownObjectMode.SingleCall);
+            CacheCore.Clear(keys);
         }
     }
 }

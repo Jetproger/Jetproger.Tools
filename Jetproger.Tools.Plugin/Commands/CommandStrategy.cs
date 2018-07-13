@@ -9,7 +9,7 @@ namespace Jetproger.Tools.Plugin.Commands
 
         public bool IsRunning
         {
-            get { return AllAgents().Any(item => item.State == CommandState.Running); }
+            get { return AllAgents().Any(item => item.State == CommandState.Work); }
         }
 
         public void Start()

@@ -2,16 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
-using System.IO;
 using System.ServiceModel;
 using System.ServiceProcess;
-using System.Text;
 using System.Threading;
 using Jetproger.Tools.Convert.Bases;
 using Jetproger.Tools.Plugin.Commands;
 using Jetproger.Tools.Plugin.Services;
 using Newtonsoft.Json;
-using Tools;
 
 namespace Jetproger.Tools.Plugin.Bases
 {
@@ -20,7 +17,7 @@ namespace Jetproger.Tools.Plugin.Bases
         private static readonly JsonSerializer JsonSerializer = new JsonSerializer { Formatting = Formatting.None, ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.Objects };
         private static readonly CultureInfo FormatProvider = new CultureInfo("en-us") { NumberFormat = { NumberGroupSeparator = string.Empty, NumberDecimalSeparator = "." }, DateTimeFormat = { DateSeparator = "-", TimeSeparator = ":" } };
 
-        private static Dictionary<string, string> ConfigKeys => GetOne(ConfigKeysHolder, GetConfigurationKeys);
+        private static Dictionary<string, string> ConfigKeys => Ex.GetOne(ConfigKeysHolder, GetConfigurationKeys);
         private static readonly Dictionary<string, string>[] ConfigKeysHolder = { null };
 
         public static string ConfigAsString(string key, string defaultValue)
@@ -60,51 +57,11 @@ namespace Jetproger.Tools.Plugin.Bases
             return keys;
         }
 
-        public static T Lock<T>(T[] holder)
-        {
-            lock (holder)
-            {
-                return holder[0];
-            }
-        }
-
-        public static void Lock<T>(T[] holder, T value)
-        {
-            lock (holder)
-            {
-                holder[0] = value;
-            }
-        }
-
-        public static T GetOne<T>(T[] holder, Func<T> factory) where T : class
-        {
-            if (holder[0] == null)
-            {
-                lock (holder)
-                {
-                    if (holder[0] == null) holder[0] = factory();
-                }
-            }
-            return holder[0];
-        }
-
-        public static T GetOne<T>(T?[] holder, Func<T> factory) where T : struct
-        {
-            if (holder[0] == null)
-            {
-                lock (holder)
-                {
-                    if (holder[0] == null) holder[0] = factory();
-                }
-            }
-            return holder[0].Value;
-        }
-
         public static T ReturnInvalidResult<T>(Exception e)
         {
             if (e is CommunicationObjectAbortedException) return default(T);
             if (e is CommunicationException) return default(T);
-            System.Diagnostics.Trace.WriteLine(e.AsString());
+            System.Diagnostics.Trace.WriteLine(e.As<string>());
             return (typeof(T)).IsTypeOf(typeof(Exception)) ? (T)(object)e : default(T);
         }
 
@@ -155,41 +112,6 @@ namespace Jetproger.Tools.Plugin.Bases
                 return;
             }
             ServiceBase.Run(new ServiceBase[] { service });
-        }
-
-        public static string SerializeJson(object o)
-        {
-            if (o == null)
-            {
-                return null;
-            }
-            using (var sw = new UTF8StringWriter())
-            {
-                if (o.GetType().IsSimple()) sw.Write(o.AsString()); else JsonSerializer.Serialize(sw, o);
-                return sw.ToString();
-            }
-        }
-
-        public static T DeserializeJson<T>(string json)
-        {
-            return (T)DeserializeJson(json, typeof(T));
-        }
-
-        public static object DeserializeJson(string json, Type resultType)
-        {
-            if (resultType.IsSimple())
-            {
-                return json.As(resultType);
-            }
-            using (var sr = new StringReader(json))
-            {
-                return JsonSerializer.Deserialize(sr, resultType);
-            }
-        }
-
-        private class UTF8StringWriter : StringWriter
-        {
-            public override Encoding Encoding => Encoding.UTF8;
         }
     }
 }

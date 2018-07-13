@@ -35,10 +35,15 @@
     <AssemblyOriginatorKeyFile>..\..\.solution\jetproger.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Jetproger.Tools.Convert">
+      <HintPath>..\..\.Jetproger.Tools.Convert\Jetproger.Tools.Convert.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.Web" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
@@ -57,8 +62,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\Methods.cs">
-      <Link>Bases\Methods.cs</Link>
+    <Compile Include="..\Bases\Dotnet.cs">
+      <Link>Bases\Dotnet.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\Property.cs">
+      <Link>Bases\Property.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

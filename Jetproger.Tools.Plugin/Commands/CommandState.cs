@@ -2,14 +2,14 @@
 {
     public enum CommandState
     {
-        New = 0,
+        Wait = 0,
 
-        Running = 1,
+        Work = 1,
 
-        Cancelled = 2,
+        Stop = 2,
 
-        Error = 3,
+        Fail = 3,
 
-        Successful = 4,
+        Ok = 4,
     }
 }

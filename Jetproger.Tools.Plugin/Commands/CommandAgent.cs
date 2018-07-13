@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
-using Tools;
-using MD = Tools.Metadata;
+using Jetproger.Tools.Cache.Bases;
+using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Convert.Bases;
 
 namespace Jetproger.Tools.Plugin.Commands
 {
     public class CommandAgent : MarshalByRefObject
     {
         private readonly Dictionary<string, ICommandMapper> _mappers = new Dictionary<string, ICommandMapper>();
-
+        private CommandAgent _parent;
         private Command _command;
 
         public CommandAgent() : this(null) { }
@@ -21,7 +22,11 @@ namespace Jetproger.Tools.Plugin.Commands
             Items = new List<CommandAgent>();
         }
 
-        public CommandAgent Parent { get; set; }
+        public CommandAgent Parent
+        {
+            get { return _parent; }
+            set { SetParent(value); }
+        }
 
         public List<CommandAgent> Items { get; set; }
 
@@ -31,12 +36,52 @@ namespace Jetproger.Tools.Plugin.Commands
 
         public void Reset()
         {
-            if (_command.State != CommandState.New && _command.State != CommandState.Running) _command = (Command)MD.CreateInstance(_command.GetType());
+            if (_command.State != CommandState.Wait && _command.State != CommandState.Work) _command = (Command)Ex.Dotnet.CreateInstance(_command.GetType());
+        }
+
+        public CommandAgent Copy()
+        {
+            var agent = new CommandAgent(_command);
+            lock (_mappers)
+            {
+                foreach (var pair in _mappers)
+                {
+                    agent._mappers.Add(pair.Key, pair.Value);
+                }
+            }
+            return agent;
+        }
+
+        private void SetParent(CommandAgent parentAgent)
+        {
+            if (ReferenceEquals(parentAgent, this)) return;
+            var oldIndex = _parent.IndexOf(this);
+            if (ReferenceEquals(parentAgent, _parent) && oldIndex == _parent.Items.Count - 1) return;
+            _parent.Items.RemoveAt(oldIndex);
+            _parent = parentAgent;
+            _parent.Items.Add(this);
+        }
+
+        public void Remove(CommandAgent agent)
+        {
+            var i = IndexOf(agent);
+            if (i >= 0) Items.RemoveAt(i);
+        }
+
+        public int IndexOf(CommandAgent agent)
+        {
+            var i = 0;
+            foreach (var commandAgent in Items)
+            {
+                if (ReferenceEquals(commandAgent, agent)) return i;
+                i++;
+            }
+            return -1;
         }
 
         public void Wait()
         {
-            while (_command.State == CommandState.New || _command.State == CommandState.Running) Thread.Sleep(333);
+            while (_command.State == CommandState.Wait || _command.State == CommandState.Work) Thread.Sleep(333);
         }
 
         public void Cancel()
@@ -78,8 +123,12 @@ namespace Jetproger.Tools.Plugin.Commands
         {
             try
             {
-                if (_command.State == CommandState.Running) return;
-                if (IsParentError()) return;
+                if (_command.State == CommandState.Work) return;
+                if (IsParentError())
+                {
+                    _command.Cancel();
+                    return;
+                }
                 var proc = new Action(BeginRun);
                 proc.BeginInvoke(EndRun, proc);
             }
@@ -125,7 +174,7 @@ namespace Jetproger.Tools.Plugin.Commands
             while (true)
             {
                 if (agent == null) return false;
-                if (agent._command?.State == CommandState.Error) return true;
+                if (agent._command?.State == CommandState.Fail) return true;
                 agent = agent.Parent;
             }
         }
@@ -156,8 +205,8 @@ namespace Jetproger.Tools.Plugin.Commands
                 var deleted = new List<int>();
                 foreach (var source in sources)
                 {
-                    if (source.Value.State == CommandState.New || source.Value.State == CommandState.Running) continue;
-                    if (source.Value.State == CommandState.Successful) merger.Merge(source.Value);
+                    if (source.Value.State == CommandState.Wait || source.Value.State == CommandState.Work) continue;
+                    if (source.Value.State == CommandState.Ok) merger.Merge(source.Value);
                     deleted.Add(source.Key);
                 }
                 foreach (var key in deleted)
@@ -196,8 +245,8 @@ namespace Jetproger.Tools.Plugin.Commands
                 var deleted = new List<int>();
                 foreach (var source in sources)
                 {
-                    if (source.Value.Item2.State == CommandState.New || source.Value.Item2.State == CommandState.Running) continue;
-                    if (source.Value.Item2.State == CommandState.Successful) source.Value.Item1.Map(_command, source.Value.Item2);
+                    if (source.Value.Item2.State == CommandState.Wait || source.Value.Item2.State == CommandState.Work) continue;
+                    if (source.Value.Item2.State == CommandState.Ok) source.Value.Item1.Map(_command, source.Value.Item2);
                     deleted.Add(source.Key);
                 }
                 foreach (var key in deleted)

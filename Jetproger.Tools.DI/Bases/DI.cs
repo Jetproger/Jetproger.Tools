@@ -18,6 +18,7 @@ namespace Tools
     public static class DI
     {
         private static readonly UnityConfigProxy[] UnityConfigHolder = { null };
+
         private static readonly IUnityContainer[] ContainerHolder = { null };
 
         public static Type TypeOf<T>()
@@ -74,12 +75,13 @@ namespace Tools
             throw result.Exception;
         }
 
-        public static string AOPDeclaration(IMethodInvocation input)
+        public static string AOPDeclaration(IMethodInvocation input, string typeName = null)
         {
             var method = (MethodInfo)input.MethodBase;
             var parameters = method.GetParameters();
             var sb = new StringBuilder();
-            sb.AppendFormat("{0} {1}.{2}(", method.ReturnType, method.ReflectedType?.FullName, method.Name);
+            typeName = string.IsNullOrWhiteSpace(typeName) ? method.ReflectedType?.FullName : typeName;
+            sb.AppendFormat("{0} {1}.{2}(", method.ReturnType, typeName, method.Name);
             for (int i = 0; i < parameters.Length; i++)
             {
                 sb.AppendFormat("{0}{1} {2}", (i > 0 ? ", " : ""), parameters[i].ParameterType, parameters[i].Name);
@@ -164,10 +166,12 @@ namespace Tools
             var portName = $"{AppDomain.CurrentDomain.FriendlyName.Replace(".", "-").ToLower()}-{Process.GetCurrentProcess().Id}";
             var objectUri = type.Name.ToLower();
             var client = new BinaryClientFormatterSinkProvider();
-            var server = new BinaryServerFormatterSinkProvider {
+            var server = new BinaryServerFormatterSinkProvider
+            {
                 TypeFilterLevel = TypeFilterLevel.Full
             };
-            var config = new Hashtable {
+            var config = new Hashtable
+            {
                 ["name"] = string.Empty,
                 ["portName"] = portName,
                 ["tokenImpersonationLevel"] = TokenImpersonationLevel.Impersonation,
@@ -197,7 +201,8 @@ namespace Tools
 
         private static void CreateUnityConfig()
         {
-            var setup = new AppDomainSetup {
+            var setup = new AppDomainSetup
+            {
                 ConfigurationFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile,
                 ApplicationBase = AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
                 LoaderOptimization = LoaderOptimization.SingleDomain,

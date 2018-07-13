@@ -62,6 +62,7 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Runtime.Remoting" />
   </ItemGroup>
@@ -83,6 +84,11 @@
   <ItemGroup>
     <Compile Include="..\Bases\StructureExtensions.cs">
       <Link>Bases\StructureExtensions.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\DatasetExtensions.cs">
+      <Link>Bases\DatasetExtensions.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -245,10 +251,6 @@
     <ProjectReference Include="..\..\Jetproger.Tools.File\.project\Jetproger.Tools.File.csproj">
       <Project>{7A3F5D37-B9BE-4C40-8C31-AD181D16FF43}</Project>
       <Name>Jetproger.Tools.File</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Jetproger.Tools.Metadata\.project\Jetproger.Tools.Metadata.csproj">
-      <Project>{304C9CBB-080C-4BD5-8AE9-C61B202294EA}</Project>
-      <Name>Jetproger.Tools.Metadata</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Jetproger.Tools.Resource\.project\Jetproger.Tools.Resource.csproj">
       <Project>{942718E0-35B1-4E52-900E-1709B6808968}</Project>

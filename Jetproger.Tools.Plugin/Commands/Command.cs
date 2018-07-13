@@ -3,12 +3,12 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using Jetproger.Tools.Cache.Bases;
 using Jetproger.Tools.Convert.Bases;
 using Jetproger.Tools.Plugin.Aspects;
 using Jetproger.Tools.Plugin.Bases;
 using Jetproger.Tools.Plugin.DI;
 using Jetproger.Tools.Plugin.Services;
-using MD = Tools.Metadata;
 
 namespace Jetproger.Tools.Plugin.Commands
 {
@@ -23,7 +23,7 @@ namespace Jetproger.Tools.Plugin.Commands
         protected Command(string assemblyName, string typeName)
         {
             _messages = new ConcurrentQueue<string>();
-            _stateHolder = new[] { CommandState.New };
+            _stateHolder = new[] { CommandState.Wait };
             _assemblyName = assemblyName;
             _typeName = typeName;
         }
@@ -39,8 +39,8 @@ namespace Jetproger.Tools.Plugin.Commands
 
         public CommandState State
         {
-            get { return Methods.Lock(_stateHolder); }
-            private set { Methods.Lock(_stateHolder, value); }
+            get { return Ex.ReadOne(_stateHolder); }
+            private set { Ex.WriteOne(_stateHolder, value); }
         }
 
         public override void Write(string message)
@@ -64,7 +64,7 @@ namespace Jetproger.Tools.Plugin.Commands
 
         public void Cancel()
         {
-            State = CommandState.Cancelled;
+            State = CommandState.Stop;
         }
 
         public string[] GetMessages()
@@ -202,8 +202,8 @@ namespace Jetproger.Tools.Plugin.Commands
 
         private bool Base(CommandType commandType)
         {
-            if (State == CommandState.Running) return false;
-            State = CommandState.Running;
+            if (State == CommandState.Work) return false;
+            State = CommandState.Work;
             try
             {
                 var useService = false
@@ -222,18 +222,18 @@ namespace Jetproger.Tools.Plugin.Commands
             catch (Exception e)
             {
                 System.Diagnostics.Trace.WriteLine(e);
-                State = CommandState.Error;
+                State = CommandState.Fail;
                 return false;
             }
             finally
             {
-                if (State == CommandState.Running) State = CommandState.Successful;
+                if (State == CommandState.Work) State = CommandState.Ok;
             }
         }
 
         private void SetPropertyValues(object source)
         {
-            foreach (var p in MD.GetSelfProperties(GetType()))
+            foreach (var p in Ex.Dotnet.GetSelfProperties(GetType()))
             {
                 p.SetValue(this, p.GetValue(source, null), null);
             }
@@ -248,13 +248,13 @@ namespace Jetproger.Tools.Plugin.Commands
                 try
                 {
                     var json = MethodCustom(commandType);
-                    State = CommandState.Successful;
+                    State = CommandState.Ok;
                     return json;
                 }
                 catch (Exception e)
                 {
                     System.Diagnostics.Trace.WriteLine(e);
-                    State = CommandState.Error;
+                    State = CommandState.Fail;
                     return null;
                 }
             }
@@ -263,7 +263,7 @@ namespace Jetproger.Tools.Plugin.Commands
                 SessionId = Guid.NewGuid(),
                 TypeName = _typeName,
                 AssemblyName = _assemblyName,
-                Json = this.AsString(),
+                Json = Ex.Json.Write(this),
                 Login = null,
                 Password = null,
                 IsRemote = (commandType == CommandType.Enabled && IsEnabledRemote) || IsExecuteRemote,
@@ -277,11 +277,11 @@ namespace Jetproger.Tools.Plugin.Commands
                 var response =  MethodEnd(clientService, asyncResult, commandType);
                 if (response.IsFinished)
                 {
-                    State = response.IsError ? CommandState.Error : CommandState.Successful;
+                    State = response.IsError ? CommandState.Fail : CommandState.Ok;
                     System.Diagnostics.Trace.WriteLine(response);
                     return response.Json;
                 }
-                if (State == CommandState.Cancelled)
+                if (State == CommandState.Stop)
                 {
                     var cancelRequest = new CommandRequest
                     {
@@ -313,9 +313,9 @@ namespace Jetproger.Tools.Plugin.Commands
         {
             switch (commandType)
             {
-                case CommandType.Unexecute: UnexecuteCustom(); return this.AsString();
+                case CommandType.Unexecute: UnexecuteCustom(); return Ex.Json.Write(this);
                 case CommandType.Enabled: return EnabledCustom() ? "1" : "0";
-                default: ExecuteCustom(); return this.AsString();
+                default: ExecuteCustom(); return Ex.Json.Write(this);
             }
         }
 

@@ -1,10 +1,10 @@
 ﻿using System;
+using Jetproger.Tools.Cache.Bases;
 using Jetproger.Tools.Convert.Bases;
 using Jetproger.Tools.Plugin.DI;
 using Jetproger.Tools.Trace.Bases;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using TDI = Tools.DI;
-using MD = Tools.Metadata;
 
 namespace Jetproger.Tools.Plugin.Aspects
 {
@@ -42,7 +42,7 @@ namespace Jetproger.Tools.Plugin.Aspects
             try
             {
                 if (WriteTyped(e)) return;
-                System.Diagnostics.Trace.WriteLine($"{methodName}:{Environment.NewLine}{e.Message}{Environment.NewLine}{e.AsString()}{Environment.NewLine}");
+                System.Diagnostics.Trace.WriteLine($"{methodName}:{Environment.NewLine}{e.Message}{Environment.NewLine}{e.As<string>()}{Environment.NewLine}");
             }
             catch
             {
@@ -54,7 +54,7 @@ namespace Jetproger.Tools.Plugin.Aspects
         {
             try
             {
-                var typedMessage = MD.CreateInstance(TraceType, new object[] { null, e }) as TypedMessage;
+                var typedMessage = Ex.Dotnet.CreateInstance(TraceType, new object[] { null, e }) as TypedMessage;
                 if (typedMessage == null) return false;
                 System.Diagnostics.Trace.WriteLine(typedMessage);
                 return true;

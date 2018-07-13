@@ -7,27 +7,36 @@ namespace Jetproger.Tools.Cache.Bases
 {
     public static class CacheCore
     {
-        private static readonly ConcurrentDictionary<string, object> Values = new ConcurrentDictionary<string, object>();
+        private static readonly ConcurrentDictionary<object, object> Values = new ConcurrentDictionary<object, object>();
 
-        public static void Add(string[] keys, object value, int lifetime)
+        public static void Write(object[] keys, object value, int lifetime)
         {
             if (keys == null || keys.Length == 0) return;
             var lastIndex = keys.Length - 1;
-            var currentKey = string.Empty;
+            var currentKey = (object)null;
             var dict = Values;
             var counter = 0;
             foreach (var key in keys)
             {
                 currentKey = key ?? string.Empty;
                 if (counter++ == lastIndex) break;
-                dict = (ConcurrentDictionary<string, object>)(dict.AddOrUpdate(currentKey, x => new ConcurrentDictionary<string, object>(),
-                (x, y) => y is ConcurrentDictionary<string, object> ? y : new ConcurrentDictionary<string, object>()));
+                dict = (ConcurrentDictionary<object, object>)(dict.AddOrUpdate(currentKey, AddValueFactory, UpdateValueFactory));
             }
-            dict.AddOrUpdate(currentKey, x => value, (x, y) => value);
-            if (lifetime > 0) AsyncOff(keys, lifetime);
+            dict.AddOrUpdate(currentKey ?? string.Empty, x => value, (x, y) => value);
+            if (lifetime > 0) TryClear(keys, lifetime);
         }
 
-        public static bool Get(string[] keys, out object value)
+        private static object AddValueFactory(object key)
+        {
+            return new ConcurrentDictionary<object, object>();
+        }
+
+        private static object UpdateValueFactory(object key, object value)
+        {
+            return value is ConcurrentDictionary<object, object> ? value : new ConcurrentDictionary<object, object>();
+        }
+
+        public static bool Read(object[] keys, out object value)
         {
             value = null;
             if (keys == null || keys.Length == 0) return false;
@@ -39,18 +48,18 @@ namespace Jetproger.Tools.Cache.Bases
             {
                 if (!dict.TryGetValue(key ?? string.Empty, out o)) return false;
                 if (counter++ == lastIndex) break;
-                dict = o as ConcurrentDictionary<string, object>;
+                dict = o as ConcurrentDictionary<object, object>;
                 if (dict == null) return false;
             }
             value = o;
             return true;
         }
 
-        public static void Off(string[] keys)
+        public static void Clear(object[] keys)
         {
             if (keys == null || keys.Length == 0) return;
             var lastIndex = keys.Length - 1;
-            var currentKey = string.Empty;
+            var currentKey = (object)null;
             var dict = Values;
             var counter = 0;
             foreach (var key in keys)
@@ -59,20 +68,20 @@ namespace Jetproger.Tools.Cache.Bases
                 object value;
                 if (!dict.TryGetValue(currentKey, out value)) return;
                 if (counter++ == lastIndex) break;
-                dict = value as ConcurrentDictionary<string, object>;
+                dict = value as ConcurrentDictionary<object, object>;
                 if (dict == null) return;
             }
             object o;
-            dict.TryRemove(currentKey, out o);
-            AsyncClear(o);
+            dict.TryRemove(currentKey ?? string.Empty, out o);
+            TryClearAll(o);
         }
 
-        private static void AsyncOff(string[] keys, int lifetime)
+        private static void TryClear(object[] keys, int lifetime)
         {
             try
             {
-                var proc = new Action<string[], int>(BeginOff);
-                proc.BeginInvoke(keys, lifetime, EndOff, proc);
+                var proc = new Action<object[], int>(BeginClear);
+                proc.BeginInvoke(keys, lifetime, EndClear, proc);
             }
             catch
             {
@@ -80,49 +89,12 @@ namespace Jetproger.Tools.Cache.Bases
             }
         }
 
-        private static void BeginOff(string[] keys, int lifetime)
+        private static void BeginClear(object[] keys, int lifetime)
         {
             try
             {
                 Thread.Sleep(lifetime);
-                Off(keys);
-            }
-            catch
-            {
-                Thread.Sleep(111);
-            }
-        }
-
-        private static void EndOff(IAsyncResult asyncResult)
-        {
-            try
-            {
-                ((Action<string[], int>)asyncResult.AsyncState).EndInvoke(asyncResult);
-            }
-            catch
-            {
-                Thread.Sleep(111);
-            }
-        }
-        private static void AsyncClear(object o)
-        {
-            try
-            {
-                var proc = new Action<object>(BeginClear);
-                proc.BeginInvoke(o, EndClear, proc);
-            }
-            catch
-            {
-                Thread.Sleep(111);
-            }
-        }
-
-        private static void BeginClear(object o)
-        {
-            try
-            {
-                Clear(o);
-                GarbageCollect();
+                Clear(keys);
             }
             catch
             {
@@ -134,6 +106,44 @@ namespace Jetproger.Tools.Cache.Bases
         {
             try
             {
+                ((Action<object[], int>)asyncResult.AsyncState).EndInvoke(asyncResult);
+            }
+            catch
+            {
+                Thread.Sleep(111);
+            }
+        }
+
+        private static void TryClearAll(object o)
+        {
+            try
+            {
+                var proc = new Action<object>(BeginClearAll);
+                proc.BeginInvoke(o, EndClearAll, proc);
+            }
+            catch
+            {
+                Thread.Sleep(111);
+            }
+        }
+
+        private static void BeginClearAll(object o)
+        {
+            try
+            {
+                ClearAll(o);
+                GarbageCollect();
+            }
+            catch
+            {
+                Thread.Sleep(111);
+            }
+        }
+
+        private static void EndClearAll(IAsyncResult asyncResult)
+        {
+            try
+            {
                 ((Action<object>)asyncResult.AsyncState).EndInvoke(asyncResult);
             }
             catch
@@ -142,7 +152,7 @@ namespace Jetproger.Tools.Cache.Bases
             }
         }
 
-        private static void Clear(object o)
+        private static void ClearAll(object o)
         {
             try
             {
@@ -157,7 +167,7 @@ namespace Jetproger.Tools.Cache.Bases
                 {
                     lock (list)
                     {
-                        foreach (var item in list) Clear(item);
+                        foreach (var item in list) ClearAll(item);
                         list.Clear();
                         return;
                     }
@@ -167,7 +177,7 @@ namespace Jetproger.Tools.Cache.Bases
                 {
                     lock (dict)
                     {
-                        foreach (var item in dict.Values) Clear(item);
+                        foreach (var item in dict.Values) ClearAll(item);
                         dict.Clear();
                         return;
                     }

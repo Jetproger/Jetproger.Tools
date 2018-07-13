@@ -15,7 +15,7 @@ namespace Jetproger.Tools.Plugin.Commands
         {
             if (e == null) return;
             Error = e.Message;
-            ErrorNote = e.AsString();
+            ErrorNote = e.As<string>();
         }
 
         public Guid SessionId { get; set; }

@@ -35,53 +35,54 @@
     <AssemblyOriginatorKeyFile>..\..\.solution\jetproger.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\.Newtonsoft.Json\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.Web.Extensions" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\Constants.cs">
-      <Link>Bases\Constants.cs</Link>
+    <Compile Include="..\Bases\Ex.cs">
+      <Link>Bases\Ex.cs</Link>
 	</Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\ConvertExtensions.cs">
-      <Link>Bases\ConvertExtensions.cs</Link>
+    <Compile Include="..\Bases\One.cs">
+      <Link>Bases\One.cs</Link>
 	</Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\DataReaders.cs">
-      <Link>Bases\DataReaders.cs</Link>
+    <Compile Include="..\Bases\String.cs">
+      <Link>Bases\String.cs</Link>
 	</Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\DataRows.cs">
-      <Link>Bases\DataRows.cs</Link>
+    <Compile Include="..\Bases\Xml.cs">
+      <Link>Bases\Xml.cs</Link>
 	</Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\Dictionaries.cs">
-      <Link>Bases\Dictionaries.cs</Link>
+    <Compile Include="..\Bases\Convert.cs">
+      <Link>Bases\Convert.cs</Link>
 	</Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\Graphics.cs">
-      <Link>Bases\Graphics.cs</Link>
+    <Compile Include="..\Bases\Json.cs">
+      <Link>Bases\Json.cs</Link>
 	</Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\Numerations.cs">
-      <Link>Bases\Numerations.cs</Link>
+    <Compile Include="..\Bases\Value.cs">
+      <Link>Bases\Value.cs</Link>
 	</Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\Methods.cs">
-      <Link>Bases\Methods.cs</Link>
+    <Compile Include="..\Bases\Image.cs">
+      <Link>Bases\Image.cs</Link>
 	</Compile>
   </ItemGroup>
   <ItemGroup>

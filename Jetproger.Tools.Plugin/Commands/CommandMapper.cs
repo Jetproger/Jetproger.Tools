@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
+using Jetproger.Tools.Cache.Bases;
 using Jetproger.Tools.Convert.Bases;
-using MD = Tools.Metadata;
 
 namespace Jetproger.Tools.Plugin.Commands
 {
@@ -18,11 +18,11 @@ namespace Jetproger.Tools.Plugin.Commands
             _value = value;
             SourceType = null;
             string targetAssemblyName, targetTypeName, targetPropertyName;
-            MD.SplitName(targetName, out targetAssemblyName, out targetTypeName, out targetPropertyName);
+            Ex.Dotnet.ParseName(targetName, out targetAssemblyName, out targetTypeName, out targetPropertyName);
             PropertyName = targetPropertyName;
-            var targetType = MD.GetType(targetAssemblyName, targetTypeName);
+            var targetType = Ex.Dotnet.GetType(targetAssemblyName, targetTypeName);
             if (targetType == null) return;
-            var targetProperty = MD.GetProperty(targetAssemblyName, targetTypeName, targetPropertyName);
+            var targetProperty = Ex.Dotnet.GetProperty(targetAssemblyName, targetTypeName, targetPropertyName);
             if (targetProperty == null) return;
             _propertyType = targetProperty.PropertyType;
             var targetExp = Expression.Parameter(targetType, "target");
@@ -37,8 +37,8 @@ namespace Jetproger.Tools.Plugin.Commands
             _value = value;
             SourceType = null;
             var targetType = typeof(TTarget);
-            PropertyName = MD.GetMemberName(target);
-            var property = MD.GetProperty(targetType, PropertyName);
+            PropertyName = Ex.Dotnet.GetMemberName(target);
+            var property = Ex.Dotnet.GetProperty(targetType, PropertyName);
             _propertyType = property.PropertyType;
             var targetExp = Expression.Parameter(targetType, "target");
             var valueExp = Expression.Parameter(property.PropertyType, "value");
@@ -70,20 +70,20 @@ namespace Jetproger.Tools.Plugin.Commands
         {
             SourceType = typeof(TSource);
             string sourceAssemblyName, sourceTypeName, sourcePropertyName;
-            MD.SplitName(sourceName, out sourceAssemblyName, out sourceTypeName, out sourcePropertyName);
-            var sourceType = MD.GetType(sourceAssemblyName, sourceTypeName);
+            Ex.Dotnet.ParseName(sourceName, out sourceAssemblyName, out sourceTypeName, out sourcePropertyName);
+            var sourceType = Ex.Dotnet.GetType(sourceAssemblyName, sourceTypeName);
             if (sourceType == null) return;
-            var sourceProperty = MD.GetProperty(sourceAssemblyName, sourceTypeName, sourcePropertyName);
+            var sourceProperty = Ex.Dotnet.GetProperty(sourceAssemblyName, sourceTypeName, sourcePropertyName);
             if (sourceProperty == null) return;
             var sourceExp = Expression.Parameter(sourceType, "target");
             var sourcePropertyExp = Expression.Property(sourceExp, sourceProperty);
             _getter = Expression.Lambda(sourcePropertyExp, sourceExp).Compile();
             string targetAssemblyName, targetTypeName, targetPropertyName;
-            MD.SplitName(targetName, out targetAssemblyName, out targetTypeName, out targetPropertyName);
+            Ex.Dotnet.ParseName(targetName, out targetAssemblyName, out targetTypeName, out targetPropertyName);
             PropertyName = targetPropertyName;
-            var targetType = MD.GetType(targetAssemblyName, targetTypeName);
+            var targetType = Ex.Dotnet.GetType(targetAssemblyName, targetTypeName);
             if (targetType == null) return;
-            var targetProperty = MD.GetProperty(targetAssemblyName, targetTypeName, targetPropertyName);
+            var targetProperty = Ex.Dotnet.GetProperty(targetAssemblyName, targetTypeName, targetPropertyName);
             if (targetProperty == null) return;
             _propertyType = targetProperty.PropertyType;
             var targetExp = Expression.Parameter(targetType, "target");
@@ -98,8 +98,8 @@ namespace Jetproger.Tools.Plugin.Commands
             _getter = source.Compile();
             SourceType = typeof(TSource);
             var targetType = typeof(TTarget);
-            PropertyName = MD.GetMemberName(target);
-            var property = MD.GetProperty(targetType, PropertyName);
+            PropertyName = Ex.Dotnet.GetMemberName(target);
+            var property = Ex.Dotnet.GetProperty(targetType, PropertyName);
             _propertyType = property.PropertyType;
             var targetExp = Expression.Parameter(targetType, "target");
             var valueExp = Expression.Parameter(property.PropertyType, "value");

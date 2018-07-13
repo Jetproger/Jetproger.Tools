@@ -5,11 +5,11 @@ using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
 using System.Runtime.Serialization.Formatters;
 using System.Security.Principal;
+using Jetproger.Tools.Cache.Bases;
 using Jetproger.Tools.Convert.Bases;
 using Jetproger.Tools.Resource.Bases;
 using TP = Tools.Plugin;
 using TDI = Tools.DI;
-using MD = Tools.Metadata;
 using TNLog = Tools.Trace;
 
 namespace Jetproger.Tools.Plugin.Commands
@@ -79,7 +79,7 @@ namespace Jetproger.Tools.Plugin.Commands
             }
             catch (Exception e)
             {
-                _error = e.AsString();
+                _error = e.As<string>();
             }
             finally
             {
@@ -95,7 +95,7 @@ namespace Jetproger.Tools.Plugin.Commands
             }
             catch (Exception e)
             {
-                _error = e.AsString();
+                _error = e.As<string>();
             }
             finally
             {
@@ -111,7 +111,7 @@ namespace Jetproger.Tools.Plugin.Commands
             }
             catch (Exception e)
             {
-                _error = e.AsString();
+                _error = e.As<string>();
             }
             finally
             {
@@ -133,7 +133,7 @@ namespace Jetproger.Tools.Plugin.Commands
                     Login = request.Login;
                     Password = request.Password;
                 }
-                var type = MD.GetType(request.AssemblyName, request.TypeName);
+                var type = Ex.Dotnet.GetType(request.AssemblyName, request.TypeName);
                 if (type == null)
                 {
                     _error = string.Format(Toolx.Name.MetaCreateType(), request.AssemblyName, request.TypeName);
@@ -158,7 +158,7 @@ namespace Jetproger.Tools.Plugin.Commands
             }
             catch (Exception e)
             {
-                _error = e.AsString();
+                _error = e.As<string>();
                 System.Diagnostics.Trace.WriteLine(_error);
                 return null;
             }

@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using Jetproger.Tools.Cache.Bases;
 using Jetproger.Tools.Convert.Bases;
 using Jetproger.Tools.Plugin.DI;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using Newtonsoft.Json;
 using TDI = Tools.DI;
-using TM = Tools.Metadata;
-using TC = Tools.Cache;
-using Tools;
 
 namespace Jetproger.Tools.Plugin.Aspects
 {
@@ -25,7 +23,7 @@ namespace Jetproger.Tools.Plugin.Aspects
         public IMethodReturn Invoke(IMethodInvocation input, GetNextHandlerDelegate getNext)
         {
             if (!Enabled) return TDI.AOPExecute(input, getNext);
-            var methodId = TDI.AOPDeclaration(input);
+            var methodId = TDI.AOPDeclaration(input, TypeName);
             var type = input.Target.GetType().BaseType;
             var keys = new List<object>();
             if (!string.IsNullOrWhiteSpace(AssemblyName) && !string.IsNullOrWhiteSpace(TypeName))
@@ -34,25 +32,25 @@ namespace Jetproger.Tools.Plugin.Aspects
                 keys.Add(TypeName);
                 keys.Add(methodId);
                 keys.AddRange(GetKeys(input.Target, type));
-                TC.TryRemove(keys.ToArray());
+                Cache.Bases.Cache.ClearEx(keys.ToArray());
                 return input.CreateMethodReturn(TDI.AOPExecute(input, getNext).ReturnValue);
             }
             string assemblyName, typeName;
-            TM.GetNames(type, out assemblyName, out typeName);
+            Ex.Dotnet.ParseName(type, out assemblyName, out typeName);
             keys.Add(assemblyName);
             keys.Add(typeName);
             keys.Add(methodId);
             keys.AddRange(GetKeys(input.Target, type));
             var parameters = keys.ToArray();
             object objectValue;
-            if (TC.TryGet(parameters, out objectValue))
+            if (Ex.Cache.Read(parameters, out objectValue))
             {
                 var returnType = ((MethodInfo)input.MethodBase).ReturnType;
-                var returnValue = returnType.IsSimple() ? objectValue.As(returnType) : DeserializeJson(objectValue.ToString(), returnType);
+                var returnValue = ValueExtensions.IsPrimitive(returnType) ? objectValue.As(returnType) : DeserializeJson(objectValue.ToString(), returnType);
                 return input.CreateMethodReturn(returnValue);
             }
             var value = TDI.AOPExecute(input, getNext).ReturnValue;
-            TC.TryAdd(parameters, value, LifeTime);
+            Cache.Bases.Cache.WriteEx(parameters, value, LifeTime);
             return input.CreateMethodReturn(value);
         }
 
@@ -63,7 +61,7 @@ namespace Jetproger.Tools.Plugin.Aspects
             var keys = new List<object>();
             foreach (var name in properties)
             {
-                var p = TM.GetProperty(type, name);
+                var p = Ex.Dotnet.GetProperty(type, name);
                 if (p == null) continue;
                 keys.Add(p.GetValue(source, null));
             }
@@ -72,7 +70,7 @@ namespace Jetproger.Tools.Plugin.Aspects
 
         private static object DeserializeJson(string json, Type resultType)
         {
-            if (resultType.IsSimple())
+            if (ValueExtensions.IsPrimitive(resultType))
             {
                 return json.As(resultType);
             }

@@ -249,7 +249,7 @@ namespace Jetproger.Tools.Plugin.Commands
             }
             while (true)
             {
-                if (AllAgents(agent.Items).All(x => x.State != CommandState.New && x.State != CommandState.Running)) break;
+                if (AllAgents(agent.Items).All(x => x.State != CommandState.Wait && x.State != CommandState.Work)) break;
                 Thread.Sleep(333);
             }
             return (T)(object)Agent.Command;

@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Jetproger.Tools.Cache.Bases;
 using Jetproger.Tools.Convert.Bases;
 using Jetproger.Tools.Plugin.Commands;
 using Jetproger.Tools.Structure.Bases;
-using TM = Tools.Metadata;
 using TDI = Tools.DI;
 using Res = Tools.Resource;
-using Tools;
 
 namespace Jetproger.Tools.Plugin.Bases
 {
@@ -25,7 +24,7 @@ namespace Jetproger.Tools.Plugin.Bases
             if (value != null)
             {
                 var type = value.GetType();
-                stringValue = type.IsSimple() ? value.AsString() : Methods.SerializeJson(value);
+                stringValue = ValueExtensions.IsPrimitive(type) ? value.As<string>() : Ex.Json.Write(value);
             }
             item.Value = stringValue;
         }
@@ -33,7 +32,7 @@ namespace Jetproger.Tools.Plugin.Bases
         public static Command AsCommand(this Task task)
         {
             if (task == null) return null;
-            var commandType = TM.GetType(task.AssemblyName, task.TypeName);
+            var commandType = Ex.Dotnet.GetType(task.AssemblyName, task.TypeName);
             if (commandType == null) return null;
             var command = TDI.Resolve(commandType) as Command;
             if (command == null) return null;
@@ -41,7 +40,7 @@ namespace Jetproger.Tools.Plugin.Bases
             {
                 if (item.Scope == ParameterScope.Context || item.Scope == ParameterScope.Previous) continue;
                 var value = item.Scope == ParameterScope.Constant ? item.Value : Res.GetConfigurationValue<string>(item.Value).Value;
-                foreach (var p in TM.GetSimpleProperties(commandType))
+                foreach (var p in Ex.Dotnet.GetSimpleProperties(commandType))
                 {
                     if (p.Name != item.Name) continue;
                     p.SetValue(command, value, null);
@@ -54,7 +53,7 @@ namespace Jetproger.Tools.Plugin.Bases
         public static CommandAgent AsCommandAgent(this Task task)
         {
             if (task == null) return new CommandAgent();
-            var commandType = TM.GetType(task.AssemblyName, task.TypeName);
+            var commandType = Ex.Dotnet.GetType(task.AssemblyName, task.TypeName);
             if (commandType == null) return null;
             var command = TDI.Resolve(commandType) as Command;
             if (command == null) return null;
@@ -78,7 +77,7 @@ namespace Jetproger.Tools.Plugin.Bases
 
         private static ICommandMapper CreateMapperConst(Task task, TaskItem item, object value)
         {
-            var targetType = TM.GetType(task.AssemblyName, task.TypeName);
+            var targetType = Ex.Dotnet.GetType(task.AssemblyName, task.TypeName);
             if (targetType == null) return null;
             var mapperType = typeof(Mapper<>);
             mapperType = mapperType.MakeGenericType(targetType);
@@ -88,11 +87,11 @@ namespace Jetproger.Tools.Plugin.Bases
 
         private static ICommandMapper CreateMapperContext(Task task, TaskItem item)
         {
-            var targetType = TM.GetType(task.AssemblyName, task.TypeName);
+            var targetType = Ex.Dotnet.GetType(task.AssemblyName, task.TypeName);
             if (targetType == null) return null;
             string sourceAssemblyName, sourceTypeName, sourcePropertyName;
-            TM.SplitName(item.Value, out sourceAssemblyName, out sourceTypeName, out sourcePropertyName);
-            var sourceType = TM.GetType(sourceAssemblyName, sourceTypeName);
+            Ex.Dotnet.ParseName(item.Value, out sourceAssemblyName, out sourceTypeName, out sourcePropertyName);
+            var sourceType = Ex.Dotnet.GetType(sourceAssemblyName, sourceTypeName);
             if (sourceType == null) return null;
             var mapperType = typeof(Mapper<,>);
             mapperType = mapperType.MakeGenericType(targetType, sourceType);
