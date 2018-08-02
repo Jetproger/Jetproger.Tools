@@ -4,10 +4,9 @@ using System.IO;
 using System.Reflection;
 using Jetproger.Tools.Cache.Bases;
 using Jetproger.Tools.Convert.Bases;
-using Jetproger.Tools.Plugin.DI;
+using Jetproger.Tools.Injection.Bases;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using Newtonsoft.Json;
-using TDI = Tools.DI;
 
 namespace Jetproger.Tools.Plugin.Aspects
 {
@@ -22,8 +21,8 @@ namespace Jetproger.Tools.Plugin.Aspects
 
         public IMethodReturn Invoke(IMethodInvocation input, GetNextHandlerDelegate getNext)
         {
-            if (!Enabled) return TDI.AOPExecute(input, getNext);
-            var methodId = TDI.AOPDeclaration(input, TypeName);
+            if (!Enabled) return Ex.Inject.AOPExecute(input, getNext);
+            var methodId = Ex.Inject.AOPDeclaration(input, TypeName);
             var type = input.Target.GetType().BaseType;
             var keys = new List<object>();
             if (!string.IsNullOrWhiteSpace(AssemblyName) && !string.IsNullOrWhiteSpace(TypeName))
@@ -33,7 +32,7 @@ namespace Jetproger.Tools.Plugin.Aspects
                 keys.Add(methodId);
                 keys.AddRange(GetKeys(input.Target, type));
                 Cache.Bases.Cache.ClearEx(keys.ToArray());
-                return input.CreateMethodReturn(TDI.AOPExecute(input, getNext).ReturnValue);
+                return input.CreateMethodReturn(Ex.Inject.AOPExecute(input, getNext).ReturnValue);
             }
             string assemblyName, typeName;
             Ex.Dotnet.ParseName(type, out assemblyName, out typeName);
@@ -49,7 +48,7 @@ namespace Jetproger.Tools.Plugin.Aspects
                 var returnValue = ValueExtensions.IsPrimitive(returnType) ? objectValue.As(returnType) : DeserializeJson(objectValue.ToString(), returnType);
                 return input.CreateMethodReturn(returnValue);
             }
-            var value = TDI.AOPExecute(input, getNext).ReturnValue;
+            var value = Ex.Inject.AOPExecute(input, getNext).ReturnValue;
             Cache.Bases.Cache.WriteEx(parameters, value, LifeTime);
             return input.CreateMethodReturn(value);
         }

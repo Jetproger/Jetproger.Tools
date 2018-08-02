@@ -9,7 +9,7 @@ namespace Jetproger.Tools.Trace.Bases
             var name = NlogConfig.GetMainTraceName();
             Name = name;
             MinLevel = "Trace";
-            var targetName = NlogConfig.FormatName(Name, "_");
+            var targetName = NlogConfig.BuildName(Name, "_");
             WriteTo = $"{targetName}_log";
         }
 

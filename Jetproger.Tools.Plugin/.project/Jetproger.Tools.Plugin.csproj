@@ -244,7 +244,7 @@
       <Project>{600AA7DC-EA39-4609-AB2A-3546BB5F8B72}</Project>
       <Name>Jetproger.Tools.Convert</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Jetproger.Tools.DI\.project\Jetproger.Tools.DI.csproj">
+    <ProjectReference Include="..\..\Jetproger.Tools.Injection\.project\Jetproger.Tools.Injection.csproj">
       <Project>{A210FC06-1EA3-4206-B466-B730D19C738C}</Project>
       <Name>Jetproger.Tools.DI</Name>
     </ProjectReference>

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Net;
 using System.Runtime.InteropServices;
 
-namespace Tools
+namespace Jetproger.Tools.WinApi
 {
     public static unsafe partial class Native
     {

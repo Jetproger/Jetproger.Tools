@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Resources;
 using System.Web;
 using Jetproger.Tools.Convert.Bases;
 
@@ -590,6 +592,116 @@ namespace Jetproger.Tools.Cache.Bases
             }
         }
 
+        public static object GetConsole(this IDotnetExpander expander, Type type)
+        {
+            return Ex.Cache.Read("consolesettings", type.AssemblyQualifiedName, () => {
+                var setting = (ExSetting)CreateInstance(expander, type);
+                string name;
+                setting.IsDeclare = Ex.Cache.Read("commandlinearguments", setting.Code.ToLower(), out name);
+                if (setting.IsDeclare) setting.Name = name;
+                setting.Validate();
+                return setting;
+            });
+        }
+
+        public static object GetConfig(this IDotnetExpander expander, Type type)
+        {
+            return Ex.Cache.Read("configsettings", type.AssemblyQualifiedName, () =>
+            {
+                var setting = (ExSetting)CreateInstance(expander, type);
+                string name;
+                setting.IsDeclare = Ex.Cache.Read("appconfiguration", setting.Code.ToLower(), out name);
+                if (setting.IsDeclare) setting.Name = name;
+                setting.Validate();
+                return setting;
+            });
+        }
+
+        public static object GetResource(this IDotnetExpander expander, Type type)
+        {
+            return Ex.Cache.Read("resourcesettings", type.AssemblyQualifiedName, () =>
+            {
+                var setting = (ExSetting)CreateInstance(expander, type);
+                setting.Name = GetSettingValue(setting, setting.Name, GetResourceNames(expander, setting.AssemblyName, setting.Code));
+                setting.Description = GetSettingValue(setting, setting.Description, GetResourceDescriptions(expander, setting.AssemblyName, setting.Code));
+                setting.Shortcut = GetSettingValue(setting, setting.Shortcut, GetResourceShortcuts(expander, setting.AssemblyName, setting.Code));
+                setting.SpecName = GetSettingValue(setting, setting.SpecName, GetResourceSpecifies(expander, setting.AssemblyName, setting.Code));
+                setting.Picture = System.Convert.FromBase64String(GetSettingValue(setting, ImageExtensions.DefaultImageString, GetResourcePictures(expander, setting.AssemblyName, setting.Code)));
+                setting.Validate();
+                return setting;
+            });
+        }
+
+        private static string GetSettingValue(ExSetting setting, string currentValue, string newValue)
+        {
+            if (newValue == null) return currentValue;
+            setting.IsDeclare = true;
+            return !string.IsNullOrWhiteSpace(newValue) ? newValue : currentValue;
+        }
+
+        private static string GetResourceNames(IDotnetExpander expander, string assemblyName, string resourceKey)
+        {
+            return GetResource(expander, assemblyName, "ResourceNames", resourceKey);
+        }
+
+        private static string GetResourceDescriptions(IDotnetExpander expander, string assemblyName, string resourceKey)
+        {
+            return GetResource(expander, assemblyName, "ResourceDescriptions", resourceKey);
+        }
+
+        private static string GetResourceShortcuts(IDotnetExpander expander, string assemblyName, string resourceKey)
+        {
+            return GetResource(expander, assemblyName, "ResourceShortcuts", resourceKey);
+        }
+
+        private static string GetResourceSpecifies(IDotnetExpander expander, string assemblyName, string resourceKey)
+        {
+            return GetResource(expander, assemblyName, "ResourceSpecifies", resourceKey);
+        }
+
+        private static string GetResourcePictures(IDotnetExpander expander, string assemblyName, string resourceKey)
+        {
+            return GetResource(expander, assemblyName, "ResourcePictures", resourceKey);
+        }
+
+        private static string GetResource(IDotnetExpander expander, string assemblyName, string resourceName, string resourceKey)
+        {
+            assemblyName = GetAssembly(expander, assemblyName).GetName().Name;
+            return Ex.Cache.Read("resources", (assemblyName ?? string.Empty).ToLower(), (resourceName ?? string.Empty).ToLower(), (resourceKey ?? string.Empty).ToLower(), () =>
+            {
+                var baseName = $"{assemblyName}.Resx.{resourceName}";
+                var rm = GetResourceManager(expander, baseName, assemblyName);
+                return GetResource(rm, resourceKey);
+            });
+        }
+
+        private static ResourceManager GetResourceManager(IDotnetExpander expander, string baseName, string assemblyName)
+        {
+            return Ex.Cache.Read("resourcemanagers", (assemblyName ?? string.Empty).ToLower(), (baseName ?? string.Empty).ToLower(), () =>
+            {
+                try
+                {
+                    return new ResourceManager(baseName ?? string.Empty, GetAssembly(expander, assemblyName));
+                }
+                catch
+                {
+                    return null;
+                }
+            });
+        }
+
+        private static string GetResource(ResourceManager resourceManager, string resourceKey)
+        {
+            try
+            {
+                return resourceManager.GetString(resourceKey) ?? string.Empty;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public static Type GetType(this IDotnetExpander expander, string name)
         {
             string assemblyName, typeName, value;
@@ -821,5 +933,58 @@ namespace Jetproger.Tools.Cache.Bases
             assemblyName = names.Length > 0 ? names[0] : null;
             typeName = names.Length > 1 ? names[1] : null;
         }
+
+        public static void RegisterSettings(this IDotnetExpander expander, string[] args)
+        {
+            Ex.RegisterResourceSettingFactory(new ResourceSettingFactory());
+            Ex.RegisterConsoleSettingFactory(new ConsoleSettingFactory());
+            Ex.RegisterConfigSettingFactory(new ConfigSettingFactory());
+            foreach (var key in ConfigurationManager.AppSettings.AllKeys)
+            {
+                Ex.Cache.Read("appconfiguration", key.ToLower(), () => ConfigurationManager.AppSettings[key]);
+            }
+            foreach (var arg in args)
+            {
+                string key, value;
+                if (!ParseArgument(arg, out key, out value)) continue;
+                Ex.Cache.Read("commandlinearguments", key.ToLower(), () => value);
+            }
+        }
+
+        private static bool ParseArgument(string arg, out string key, out string value)
+        {
+            key = null;
+            value = null;
+            if (string.IsNullOrWhiteSpace(arg)) return false;
+            var colonIndex = arg.IndexOf(":", StringComparison.Ordinal);
+            if (colonIndex < 0)
+            {
+                key = arg;
+                return true;
+            }
+            if (colonIndex == 0)
+            {
+                return false;
+            }
+            key = arg.Substring(0, colonIndex);
+            colonIndex++;
+            if (colonIndex < arg.Length) value = arg.Substring(colonIndex);
+            return true;
+        }
+    }
+
+    public class ResourceSettingFactory : ISettingFactory
+    {
+        public object CreateSetting(Type type) { return Ex.Dotnet.GetResource(type); }
+    }
+
+    public class ConfigSettingFactory : ISettingFactory
+    {
+        public object CreateSetting(Type type) { return Ex.Dotnet.GetConfig(type); }
+    }
+
+    public class ConsoleSettingFactory : ISettingFactory
+    {
+        public object CreateSetting(Type type) { return Ex.Dotnet.GetConsole(type); }
     }
 }

@@ -2,10 +2,8 @@
 using System.Diagnostics;
 using Jetproger.Tools.Cache.Bases;
 using Jetproger.Tools.Convert.Bases;
-using Jetproger.Tools.Plugin.DI;
-using Jetproger.Tools.Trace.Bases;
+using Jetproger.Tools.Injection.Bases;
 using Microsoft.Practices.Unity.InterceptionExtension;
-using TDI = Tools.DI;
 
 namespace Jetproger.Tools.Plugin.Aspects
 {
@@ -21,15 +19,15 @@ namespace Jetproger.Tools.Plugin.Aspects
         {
             if (!Enabled)
             {
-                return TDI.AOPExecute(input, getNext);
+                return Ex.Inject.AOPExecute(input, getNext);
             }
-            var methodName = TDI.AOPProfile(input);
+            var methodName = Ex.Inject.AOPProfile(input);
             var watch = new Stopwatch();
             IMethodReturn result = null;
             watch.Start();
             try
             {
-                result = TDI.AOPExecute(input, getNext);
+                result = Ex.Inject.AOPExecute(input, getNext);
                 return result;
             }
             finally
@@ -55,7 +53,7 @@ namespace Jetproger.Tools.Plugin.Aspects
         {
             try
             {
-                var typedMessage = Ex.Dotnet.CreateInstance(TraceType, new object[] { durationMessage, null }) as TypedMessage;
+                var typedMessage = Ex.Dotnet.CreateInstance(TraceType, new object[] { durationMessage, null }) as ExTicket;
                 if (typedMessage == null) return false;
                 System.Diagnostics.Trace.WriteLine(typedMessage);
                 return true;

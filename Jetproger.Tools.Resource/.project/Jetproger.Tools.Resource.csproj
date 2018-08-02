@@ -35,8 +35,8 @@
     <AssemblyOriginatorKeyFile>..\..\.solution\jetproger.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\.Newtonsoft.Json\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Jetproger.Tools.Convert">
+      <HintPath>..\..\.Jetproger.Tools.Convert\Jetproger.Tools.Convert.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
@@ -49,88 +49,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\Resource.cs">
-      <Link>Bases\Resource.cs</Link>
+    <Compile Include="..\Bases\ConsoleSettings.cs">
+      <Link>Bases\ConsoleSettings.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\Cache.cs">
-      <Link>Bases\Cache.cs</Link>
+    <Compile Include="..\Bases\ConfigSettings.cs">
+      <Link>Bases\ConfigSettings.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\CacheCore.cs">
-      <Link>Bases\CacheCore.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\CacheProxy.cs">
-      <Link>Bases\CacheProxy.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\Methods.cs">
-      <Link>Bases\Methods.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\ResourceItem.cs">
-      <Link>Bases\ResourceItem.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\Console.cs">
-      <Link>Bases\Console.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\Config.cs">
-      <Link>Bases\Config.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\Toolx.cs">
-      <Link>Bases\Toolx.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\ConsoleExtensions.cs">
-      <Link>Bases\ConsoleExtensions.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\ConfigExtensions.cs">
-      <Link>Bases\ConfigExtensions.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\ConvertExtensions.cs">
-      <Link>Bases\ConvertExtensions.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\ResourceNameExtensions.cs">
-      <Link>Bases\ResourceNameExtensions.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\ResourceDescriptionExtensions.cs">
-      <Link>Bases\ResourceDescriptionExtensions.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\ResourceSpecifyExtensions.cs">
-      <Link>Bases\ResourceSpecifyExtensions.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\ResourceShortcutExtensions.cs">
-      <Link>Bases\ResourceShortcutExtensions.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\ResourcePictureExtensions.cs">
-      <Link>Bases\ResourcePictureExtensions.cs</Link>
+    <Compile Include="..\Bases\ResourceSettings.cs">
+      <Link>Bases\ResourceSettings.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

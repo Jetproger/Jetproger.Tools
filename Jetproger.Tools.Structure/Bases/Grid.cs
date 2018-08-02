@@ -1,25 +1,127 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
+using Jetproger.Tools.Convert.Bases;
 
 namespace Jetproger.Tools.Structure.Bases
 {
-    public class Grid : MarshalByRefObject
+    [Serializable]
+    [DataContract]
+    public class Grid : IEntityId
     {
-        public string Code { get; set; }
-        public string Name { get; set; }
-        public string Note { get; set; }
-        public string Renderer { get; set; }
-        public string Permission { get; set; }
-        public List<GridItem> Items { get; set; }
+        private Guid _id;
+        private string _code;
+        private string _name;
+        private string _note;
+        private string _renderer;
+        private string _permission;
+        private List<GridItem> _items;
 
         public Grid()
         {
-            Items = new List<GridItem>();
+            _id = Guid.NewGuid();
+            _items = new List<GridItem>();
+        }
+
+        [DataMember]
+        public Guid Id
+        {
+            get { return _id; }
+            set { _id = value; }
+        }
+
+        [DataMember]
+        public string Code
+        {
+            get { return _code; }
+            set { _code = value; }
+        }
+
+        [DataMember]
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value; }
+        }
+
+        [DataMember]
+        public string Note
+        {
+            get { return _note; }
+            set { _note = value; }
+        }
+
+        [DataMember]
+        public string Renderer
+        {
+            get { return _renderer; }
+            set { _renderer = value; }
+        }
+
+        [DataMember]
+        public string Permission
+        {
+            get { return _permission; }
+            set { _permission = value; }
+        }
+
+        [DataMember]
+        public GridItem[] Items
+        {
+            get { return _items.ToArray(); }
+            set { _items = new List<GridItem>(value ?? new GridItem[0]); }
         }
 
         public override string ToString()
         {
-            return Code;
+            return _code;
+        }
+
+        public Guid GetEntityId()
+        {
+            return _id;
+        }
+
+        public void Add(GridItem item)
+        {
+            if (IndexOf(item) == -1) _items.Add(item);
+        }
+
+        public void Remove(GridItem item)
+        {
+            RemoveAt(IndexOf(item));
+        }
+
+        public void Remove(Guid id)
+        {
+            RemoveAt(IndexOf(id));
+        }
+
+        public void RemoveAt(int index)
+        {
+            if (index >= 0 && index < _items.Count) _items.RemoveAt(index);
+        }
+
+        public int IndexOf(GridItem item)
+        {
+            var i = 0;
+            foreach (var gridItem in (_items ?? new List<GridItem>()))
+            {
+                if (ReferenceEquals(item, gridItem)) return i;
+                i++;
+            }
+            return -1;
+        }
+
+        public int IndexOf(Guid id)
+        {
+            var i = 0;
+            foreach (var gridItem in (_items ?? new List<GridItem>()))
+            {
+                if (gridItem.Id == _id) return i;
+                i++;
+            }
+            return -1;
         }
     }
 }

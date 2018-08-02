@@ -7,10 +7,10 @@ using System.Runtime.Serialization.Formatters;
 using System.Security.Principal;
 using Jetproger.Tools.Cache.Bases;
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Injection.Bases;
 using Jetproger.Tools.Resource.Bases;
+using Jetproger.Tools.Trace.Bases;
 using TP = Tools.Plugin;
-using TDI = Tools.DI;
-using TNLog = Tools.Trace;
 
 namespace Jetproger.Tools.Plugin.Commands
 {
@@ -57,8 +57,8 @@ namespace Jetproger.Tools.Plugin.Commands
 
         public void Initialize()
         {
-            TNLog.Run();
-            TDI.Init();
+            Ex.Trace.RegisterFileLogger();
+            Ex.Inject.Init();
         }
 
         public AppDomain GetDomain()
@@ -136,16 +136,16 @@ namespace Jetproger.Tools.Plugin.Commands
                 var type = Ex.Dotnet.GetType(request.AssemblyName, request.TypeName);
                 if (type == null)
                 {
-                    _error = string.Format(Toolx.Name.MetaCreateType(), request.AssemblyName, request.TypeName);
+                    _error = string.Format(Ex.Rs<MetaCreateTypeSetting>.Name, request.AssemblyName, request.TypeName);
                     System.Diagnostics.Trace.WriteLine(_error);
                     return null;
                 }
-                type = TDI.TypeOf(type);
+                type = Ex.Inject.TypeOf(type);
                 var command = request.Json.As(type);
                 var commandIsolate = command as ICommandIsolate;
                 if (command != null && commandIsolate == null)
                 {
-                    _error = string.Format(Toolx.Name.MetaImplementInterface(), request.AssemblyName, request.TypeName, "ICommandIsolate");
+                    _error = string.Format(Ex.Rs<MetaCreateTypeSetting>.Name, request.AssemblyName, request.TypeName, "ICommandIsolate");
                     System.Diagnostics.Trace.WriteLine(_error);
                     return null;
                 }

@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
+using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Injection.Bases;
 using Jetproger.Tools.Plugin.Bases;
 using Jetproger.Tools.Structure.Bases;
 using Microsoft.Practices.Unity.Utility;
-using TDI = Tools.DI;
 
 namespace Jetproger.Tools.Plugin.Commands
 {
@@ -138,7 +139,7 @@ namespace Jetproger.Tools.Plugin.Commands
 
         public virtual CommandProvider<T> Prepare<T>() where T : Command
         {
-            var command = TDI.Resolve<T>();
+            var command = Ex.Inject.Resolve<T>();
             var agent = new CommandAgent(command);
             agent.Parent = Agent;
             Agent?.Items.Add(agent);
@@ -191,7 +192,7 @@ namespace Jetproger.Tools.Plugin.Commands
         
         public virtual CommandProvider Operation(Tree tree)
         {
-            return tree?.Items != null && tree.Items.Count > 0 ? Operation(tree.AsCommandAgents()) : this;
+            return tree?.Items != null && tree.Items.Length > 0 ? Operation(tree.AsCommandAgents()) : this;
         }
         
         public virtual CommandProvider Operation(TreeItem treeItem)

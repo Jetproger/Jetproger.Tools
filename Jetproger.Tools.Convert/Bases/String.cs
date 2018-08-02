@@ -8,7 +8,7 @@ namespace Jetproger.Tools.Convert.Bases
 {
     public static class StringExtensions
     {
-        private static readonly CultureInfo Formatter = new CultureInfo("en-us")
+        public static readonly CultureInfo Formatter = new CultureInfo("en-us")
         {
             NumberFormat =
             {

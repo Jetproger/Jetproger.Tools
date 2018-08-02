@@ -85,10 +85,10 @@ namespace Jetproger.Tools.Trace.Bases
         public bool RegisterRule(string ruleName)
         {
             if (!_canRegisterRule) return false;
-            ruleName = GetTraceName(ruleName);
+            ruleName = ParseName(ruleName);
             if (ExistsRule(ruleName)) return true;
-            var targetName = FormatName(ruleName, "_");
-            var fileName = FormatName(ruleName, "-");
+            var targetName = BuildName(ruleName, "_");
+            var fileName = BuildName(ruleName, "-");
             Rules.Add(new NlogConfigRule
             {
                 Name = ruleName,
@@ -141,12 +141,12 @@ namespace Jetproger.Tools.Trace.Bases
             return MainTraceNameHolder[0];
         }
 
-        public static string GetTraceName(string fullName)
+        public static string ParseName(string fullName)
         {
-            return fullName.Replace("TypedMessage", string.Empty).Replace("Message", string.Empty);
+            return fullName.Replace("ExTicket", string.Empty).Replace("Ticket", string.Empty);
         }
 
-        public static string FormatName(string name, string separator)
+        public static string BuildName(string name, string separator)
         {
             var sb = new StringBuilder();
             foreach (char c in (name ?? string.Empty))

@@ -5,14 +5,14 @@ using System.Diagnostics;
 using System.Threading;
 using Jetproger.Tools.Cache.Bases;
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Injection.Bases;
 using Jetproger.Tools.Plugin.Aspects;
 using Jetproger.Tools.Plugin.Bases;
-using Jetproger.Tools.Plugin.DI;
 using Jetproger.Tools.Plugin.Services;
 
 namespace Jetproger.Tools.Plugin.Commands
 {
-    public abstract class Command : TraceListener, ICommand, ICommandIsolate, IDependencyInjectionItem
+    public abstract class Command : TraceListener, ICommand, ICommandIsolate, IInjection
     {
         private static readonly ConcurrentDictionary<Guid, CommandWorker> Workers = new ConcurrentDictionary<Guid, CommandWorker>();
         private readonly ConcurrentQueue<string> _messages;
@@ -59,7 +59,7 @@ namespace Jetproger.Tools.Plugin.Commands
         public override void WriteLine(object message)
         {
             var serverToClient = message as CommandServerToClientMessage;
-            if (serverToClient != null && !string.IsNullOrWhiteSpace(serverToClient.Message)) _messages.Enqueue(serverToClient.Message);
+            if (serverToClient != null && !string.IsNullOrWhiteSpace(serverToClient.Text)) _messages.Enqueue(serverToClient.Text);
         }
 
         public void Cancel()

@@ -86,6 +86,41 @@
 	</Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Bases\ExException.cs">
+      <Link>Bases\ExException.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\ExTicket.cs">
+      <Link>Bases\ExTicket.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\ExSetting.cs">
+      <Link>Bases\ExSetting.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\Guard.cs">
+      <Link>Bases\Guard.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\Console.cs">
+      <Link>Bases\Console.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\Config.cs">
+      <Link>Bases\Config.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\Resource.cs">
+      <Link>Bases\Resource.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="..\..\.solution\AssemblyInfo.cs">
       <Link>.project\AssemblyInfo.cs</Link>
 	</Compile>

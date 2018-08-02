@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using System.Resources;
 using System.Threading;
 using Jetproger.Tools.Convert.Bases;
 
@@ -290,11 +291,10 @@ namespace Jetproger.Tools.Cache.Bases
         private static bool IsNative(object value)
         {
             var type = value != null && value != DBNull.Value ? value.GetType() : null;
-            return type == null || ValueExtensions.IsPrimitive(type) || value is ValueSet || value is Attribute ||
-                type == typeof (PropertyInfo) || type == typeof (PropertyInfo[]) ||
-                type == typeof (MethodInfo) || type == typeof (MethodInfo[]) ||
-                type == typeof (FieldInfo) || type == typeof (FieldInfo[]) ||
-                type == typeof (Type) || type == typeof (Assembly);
+            return type == null || ValueExtensions.IsPrimitive(type) || value is ValueSet || value is Attribute || value is Type || value is Assembly || value is ResourceManager ||
+                value is PropertyInfo || value is PropertyInfo[] ||
+                value is MethodInfo || value is MethodInfo[] ||
+                value is FieldInfo || value is FieldInfo[];
         }
     }
 }

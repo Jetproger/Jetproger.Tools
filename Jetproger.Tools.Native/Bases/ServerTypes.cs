@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Tools
+﻿namespace Jetproger.Tools.WinApi
 {
     public static unsafe partial class Native
     {

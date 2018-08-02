@@ -7,6 +7,7 @@ using System.Runtime.Remoting.Channels.Ipc;
 using System.Runtime.Serialization.Formatters;
 using System.Security.Principal;
 using System.Threading;
+using Jetproger.Tools.Convert.Bases;
 using Jetproger.Tools.Resource.Bases;
 
 namespace Jetproger.Tools.Plugin.Commands
@@ -67,7 +68,7 @@ namespace Jetproger.Tools.Plugin.Commands
             var portName = $"{(type.FullName ?? string.Empty).Replace(".", "-").ToLower()}-{Process.GetCurrentProcess().Id}";
             var objectUri = type.Name.ToLower();
             var uri = $"ipc://{portName}/{objectUri}";
-            var maxReservedDomains = Toolx.Conf.MaxReservedDomains();
+            var maxReservedDomains = Ex.Fi<MaxReservedDomainSetting>.Text.As<int>();
             if (maxReservedDomains < 1) maxReservedDomains = size;
             if (maxReservedDomains < 1) maxReservedDomains = 1;
             var proxy = TryGetExistsProxy(type, uri);

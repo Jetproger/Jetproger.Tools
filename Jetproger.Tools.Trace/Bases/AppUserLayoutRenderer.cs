@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using NLog;
 using NLog.LayoutRenderers;
-using Log = Tools.Trace;
 
 namespace Jetproger.Tools.Trace.Bases
 {
@@ -10,7 +9,7 @@ namespace Jetproger.Tools.Trace.Bases
     {
         protected override void Append(StringBuilder sb, LogEventInfo logEvent)
         {
-            sb.Append(!string.IsNullOrWhiteSpace(Log.AppUser) ? Log.AppUser : "<undefined>");
+            sb.Append(!string.IsNullOrWhiteSpace(TraceCore.AppUser) ? TraceCore.AppUser : "<undefined>");
         }
     }
 }

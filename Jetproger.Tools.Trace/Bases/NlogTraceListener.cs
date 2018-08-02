@@ -1,33 +1,13 @@
 using System;
 using System.Diagnostics;
-using System.Text;
-using Log = Tools.Trace;
+using Jetproger.Tools.Convert.Bases;
 
 namespace Jetproger.Tools.Trace.Bases
 {
     public class NlogTraceListener : TraceListener
     {
-        public override void Write(object message)
+        public void Write()
         {
-            WriteLine(message);
-        }
-
-        public override void WriteLine(object message)
-        {
-            var exception = message as Exception;
-            if (exception != null)
-            {
-                Log.GlobalTrace.Error(GetExceptionAsString(exception), NlogConfig.GetMainTraceName());
-                return;
-            }
-            var typedMessage = message as TypedMessage;
-            if (typedMessage != null)
-            {
-                if (!string.IsNullOrWhiteSpace(typedMessage.Message)) Log.GlobalTrace.Trace(typedMessage.Message, message.GetType().Name);
-                if (!string.IsNullOrWhiteSpace(typedMessage.Error)) Log.GlobalTrace.Error(typedMessage.Error, message.GetType().Name);
-                return;
-            }
-            Log.GlobalTrace.Trace(message.ToString(), NlogConfig.GetMainTraceName());
         }
 
         public override void Write(string message)
@@ -37,24 +17,44 @@ namespace Jetproger.Tools.Trace.Bases
 
         public override void WriteLine(string message)
         {
-            Log.GlobalTrace.Trace(message, NlogConfig.GetMainTraceName());
+            TraceExtensions.WriteToFileLogger(NlogConfig.GetMainTraceName(), new ExTicket { IsException = false, Text = message, Description = message});
         }
 
-        public static string GetExceptionAsString(Exception e)
+        public override void Write(object message)
         {
-            if (e == null)
-            {
-                return null;
-            }
-            var sb = new StringBuilder();
-            sb.AppendLine(e.ToString());
+            WriteLine(message);
+        }
 
-            while (e != null)
+        public override void WriteLine(object message)
+        {
+            var exException = message as ExException;
+            if (exException != null)
             {
-                sb.AppendLine(e.Message);
-                e = e.InnerException;
+                var ticket = new ExTicket { IsException = true, Text = exException.Text, Description = exException.Description };
+                if (string.IsNullOrWhiteSpace(ticket.Text) && string.IsNullOrWhiteSpace(ticket.Description)) return;
+                TraceExtensions.WriteToFileLogger(NlogConfig.GetMainTraceName(), ticket);
+                return;
             }
-            return sb.ToString();
+            var exception = message as Exception;
+            if (exception != null)
+            {
+                var ex = new ExException(exception);
+                var ticket = new ExTicket { IsException = true, Text = ex.Text, Description = ex.Description };
+                if (string.IsNullOrWhiteSpace(ticket.Text) && string.IsNullOrWhiteSpace(ticket.Description)) return;
+                TraceExtensions.WriteToFileLogger(NlogConfig.GetMainTraceName(), ticket);
+                return;
+            }
+            var exTicket = message as ExTicket;
+            if (exTicket != null)
+            {
+                var type = exTicket.GetType();
+                var loggerName = type == typeof(ExTicket) ? NlogConfig.GetMainTraceName() : type.Name;
+                if (string.IsNullOrWhiteSpace(exTicket.Text) && string.IsNullOrWhiteSpace(exTicket.Description)) return;
+                TraceExtensions.WriteToFileLogger(loggerName, exTicket);
+                return;
+            }
+            var text = message != null && message != DBNull.Value ? message.ToString() : null;
+            if (!string.IsNullOrWhiteSpace(text)) TraceExtensions.WriteToFileLogger(NlogConfig.GetMainTraceName(), new ExTicket { IsException = false, Text = text, Description = text });
         }
     }
 }

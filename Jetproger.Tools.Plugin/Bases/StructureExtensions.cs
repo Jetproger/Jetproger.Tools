@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Jetproger.Tools.Cache.Bases;
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Injection.Bases;
 using Jetproger.Tools.Plugin.Commands;
 using Jetproger.Tools.Structure.Bases;
-using TDI = Tools.DI;
-using Res = Tools.Resource;
 
 namespace Jetproger.Tools.Plugin.Bases
 {
@@ -18,7 +17,7 @@ namespace Jetproger.Tools.Plugin.Bases
             if (item == null)
             {
                 item = new TaskItem { Code = code, Scope = ParameterScope.Constant, Name = code, Note = code };
-                task.Items.Add(item);
+                task.Add(item);
             }
             var stringValue = string.Empty;
             if (value != null)
@@ -34,12 +33,12 @@ namespace Jetproger.Tools.Plugin.Bases
             if (task == null) return null;
             var commandType = Ex.Dotnet.GetType(task.AssemblyName, task.TypeName);
             if (commandType == null) return null;
-            var command = TDI.Resolve(commandType) as Command;
+            var command = Ex.Inject.Resolve(commandType) as Command;
             if (command == null) return null;
             foreach (var item in task.Items)
             {
                 if (item.Scope == ParameterScope.Context || item.Scope == ParameterScope.Previous) continue;
-                var value = item.Scope == ParameterScope.Constant ? item.Value : Res.GetConfigurationValue<string>(item.Value).Value;
+                var value = item.Scope == ParameterScope.Constant ? item.Value : ((ExSetting)Ex.Dotnet.GetConfig(Ex.Dotnet.GetType(item.Value))).Name;
                 foreach (var p in Ex.Dotnet.GetSimpleProperties(commandType))
                 {
                     if (p.Name != item.Name) continue;
@@ -55,7 +54,7 @@ namespace Jetproger.Tools.Plugin.Bases
             if (task == null) return new CommandAgent();
             var commandType = Ex.Dotnet.GetType(task.AssemblyName, task.TypeName);
             if (commandType == null) return null;
-            var command = TDI.Resolve(commandType) as Command;
+            var command = Ex.Inject.Resolve(commandType) as Command;
             if (command == null) return null;
             var agent = new CommandAgent(command);
             foreach (var item in task.Items)
@@ -69,7 +68,7 @@ namespace Jetproger.Tools.Plugin.Bases
         {
             switch (item.Scope)
             {
-                case ParameterScope.Configuration: return CreateMapperConst(task, item, Res.GetConfigurationValue<string>(item.Value).Value);
+                case ParameterScope.Configuration: return CreateMapperConst(task, item, ((ExSetting)Ex.Dotnet.GetConfig(Ex.Dotnet.GetType(item.Value))).Name);
                 case ParameterScope.Constant: return CreateMapperConst(task, item, item.Value);
                 default: return CreateMapperContext(task, item);
             }
@@ -125,9 +124,9 @@ namespace Jetproger.Tools.Plugin.Bases
         {
             foreach (var treeItem in treeItems)
             {
-                var agent = treeItem.Task.AsCommandAgent();
-                commandAgents.Add(agent);
-                TreeItemsAsCommandAgents(treeItem.Items, agent.Items);
+                //var agent = treeItem.Task.AsCommandAgent();
+                //commandAgents.Add(agent);
+                //TreeItemsAsCommandAgents(treeItem.Items, agent.Items);
             }
         }
     }

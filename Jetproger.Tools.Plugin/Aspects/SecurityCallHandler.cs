@@ -1,6 +1,7 @@
 ﻿using System;
+using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Injection.Bases;
 using Microsoft.Practices.Unity.InterceptionExtension;
-using TDI = Tools.DI;
 
 namespace Jetproger.Tools.Plugin.Aspects
 {
@@ -13,11 +14,11 @@ namespace Jetproger.Tools.Plugin.Aspects
 
         public IMethodReturn Invoke(IMethodInvocation input, GetNextHandlerDelegate getNext)
         {
-            if (!Enabled || string.IsNullOrWhiteSpace(PermissionCode)) return TDI.AOPExecute(input, getNext);
+            if (!Enabled || string.IsNullOrWhiteSpace(PermissionCode)) return Ex.Inject.AOPExecute(input, getNext);
             //var access = CoreMethods.SecurityContext.Access(PermissionCode);
             //if (FullOnly && access != EAccess.Full) access = EAccess.None;
             //if (access == EAccess.None) throw new Exception(CoreMethods.Enum.AsString(access));
-            return TDI.AOPExecute(input, getNext);
+            return Ex.Inject.AOPExecute(input, getNext);
         }
     }
 }

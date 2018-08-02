@@ -1,4 +1,4 @@
-using System.Diagnostics;
+using System;
 using System.Runtime.InteropServices;
 
 namespace Jetproger.Tools.Convert.Bases
@@ -11,9 +11,11 @@ namespace Jetproger.Tools.Convert.Bases
 
         public static IImageExpander Image => null;
 
+        public static IInjectionExpander Inject => null;
+
         public static IJsonExpander Json => null;
 
-        public static IErrorExpander Error => null;
+        public static IGuardExpander Guard => null;
 
         public static INativeExpander Native => null;
 
@@ -26,23 +28,6 @@ namespace Jetproger.Tools.Convert.Bases
         public static IXmlExpander Xml => null;
 
         public static IUtilsExpander Utils => null;
-
-        public static class Res
-        {
-            public static ICommandLineArgumentExpander Args => null;
-
-            public static IAppConfigurationExpander Conf => null;
-
-            public static IResourceNameExpander Name => null;
-
-            public static IResourceSpecialNameExpander Spec => null;
-
-            public static IResourceDescriptionExpander Note => null;
-
-            public static IResourcePictureExpander Icon => null;
-
-            public static IResourceShortcutExpander Keys => null;
-        }
     }
 
     public interface ICacheExpander { }
@@ -51,7 +36,7 @@ namespace Jetproger.Tools.Convert.Bases
 
     public interface IUtilsExpander { }
 
-    public interface IErrorExpander { }
+    public interface IGuardExpander { }
 
     public interface IImageExpander { }
 
@@ -67,33 +52,38 @@ namespace Jetproger.Tools.Convert.Bases
 
     public interface IValueExpander { }
 
-    public interface ICommandLineArgumentExpander { }
-
-    public interface IAppConfigurationExpander { }
-
-    public interface IResourceNameExpander { }
-
-    public interface IResourceSpecialNameExpander { }
-
-    public interface IResourceDescriptionExpander { }
-
-    public interface IResourcePictureExpander { }
-
-    public interface IResourceShortcutExpander { }
+    public interface IInjectionExpander { }
 
     public static class Extensions
     {
-        public static void Write(this ITraceExpander expander, object message)
-        {
-            Trace.WriteLine(message);
-        }
-
-        public static int GetLastError(this INativeExpander expander)
-        {
-            return GetLastError();
-        }
+        public static int GetLastError(this INativeExpander expander) { return GetLastError(); }
 
         [DllImport("kernel32.dll", EntryPoint = "GetLastError", SetLastError = true, CharSet = CharSet.Auto, ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
         public static extern int GetLastError();
+    }
+
+    public class DefaultSettingFactory : ISettingFactory
+    {
+        public object CreateSetting(Type type) { return Activator.CreateInstance(type); }
+    }
+
+    public interface ISettingFactory
+    {
+        object CreateSetting(Type type);
+    }
+
+    public interface IEntityId
+    {
+        Guid GetEntityId();
+    }
+
+    public interface IParentId
+    {
+        Guid GetParentId();
+    }
+
+    public interface IDocumentId
+    {
+        Guid GetDocumentId();
     }
 }

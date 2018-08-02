@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jetproger.Tools.Cache", "..
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jetproger.Tools.Convert", "..\Jetproger.Tools.Convert\.project\Jetproger.Tools.Convert.csproj", "{600AA7DC-EA39-4609-AB2A-3546BB5F8B72}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jetproger.Tools.DI", "..\Jetproger.Tools.DI\.project\Jetproger.Tools.DI.csproj", "{A210FC06-1EA3-4206-B466-B730D19C738C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jetproger.Tools.Injection", "..\Jetproger.Tools.Injection\.project\Jetproger.Tools.Injection.csproj", "{A210FC06-1EA3-4206-B466-B730D19C738C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jetproger.Tools.File", "..\Jetproger.Tools.File\.project\Jetproger.Tools.File.csproj", "{7A3F5D37-B9BE-4C40-8C31-AD181D16FF43}"
 EndProject

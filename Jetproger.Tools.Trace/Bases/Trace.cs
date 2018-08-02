@@ -1,140 +1,110 @@
 using System;
-using System.Collections;
-using System.Diagnostics;
-using System.Runtime.Remoting;
-using System.Runtime.Remoting.Channels;
-using System.Runtime.Remoting.Channels.Ipc;
-using System.Runtime.Serialization.Formatters;
-using System.Security.Principal;
-using Jetproger.Tools.Trace.Bases;
+using Jetproger.Tools.Convert.Bases;
 
-namespace Tools
+namespace Jetproger.Tools.Trace.Bases
 {
-    public static class Trace
+    public static class TraceExtensions
     {
-        private static readonly TraceProxy[] GlobalTraceHolder = { null };
-        private static readonly NlogTraceListener[] NlogHolder = { null };
-        internal static string AppUser;
+        private static NlogTraceListener FileLogger { get { return Ex.GetOne(FileLoggerHolder, InitializeFileLogger); } }
+        private static readonly NlogTraceListener[] FileLoggerHolder = { null };
+        private static readonly TraceProxy GlobalTrace = Ex.GetOne<TraceProxy>();
 
-        public static void SetAppUser(string appUser)
+        public static void SetAppUser(this ITraceExpander expander, string appUser)
         {
             GlobalTrace.SetAppUser(appUser);
         }
 
-        public static void Run()
+        public static void RegisterFileLogger(this ITraceExpander expander)
         {
-            RunNlog();
+            InitializeFileLogger(FileLogger);
             GlobalTrace.RegisterLogger(NlogConfig.GetMainTraceName());
         }
 
-        public static void Run<T>() where T : TypedMessage
+        public static void RegisterFileLogger<T>(this ITraceExpander expander) where T : ExTicket
         {
-            RunNlog();
+            InitializeFileLogger(FileLogger);
             GlobalTrace.RegisterLogger((typeof(T)).Name);
         }
 
-        private static void RunNlog()
+        public static void Write(this ITraceExpander expander, object message)
         {
-            if (NlogHolder[0] == null)
+            InitializeFileLogger(FileLogger);
+            var ticket = new ExTicket();
+            var exException = message as ExException;
+            if (exException != null)
             {
-                lock (NlogHolder)
-                {
-                    if (NlogHolder[0] == null)
-                    {
-                        NlogHolder[0] = new NlogTraceListener();
-                        System.Diagnostics.Trace.Listeners.Add(NlogHolder[0]);
-                    }
-                }
+                WriteTicket(ticket, true, exException.Text, exException.Description);
+                return;
             }
+            var exception = message as Exception;
+            if (exception != null)
+            {
+                var ex = new ExException(exception);
+                WriteTicket(ticket, true, ex.Text, ex.Description);
+                return;
+            }
+            var exTicket = message as ExTicket;
+            if (exTicket != null)
+            {
+                WriteTicket(ticket, exTicket.IsException, exTicket.Text, exTicket.Description);
+                return;
+            }
+            var text = message != null && message != DBNull.Value ? message.ToString() : null;
+            WriteTicket(ticket, false, text, text);
         }
 
-        internal static TraceProxy GlobalTrace
+        public static void Write<T>(this ITraceExpander expander, object message) where T : ExTicket, new()
         {
-            get
+            InitializeFileLogger(FileLogger);
+            var ticket = new T();
+            var exException = message as ExException;
+            if (exException != null)
             {
-                if (GlobalTraceHolder[0] == null)
-                {
-                    lock (GlobalTraceHolder)
-                    {
-                        if (GlobalTraceHolder[0] == null) GlobalTraceHolder[0] = GetProxy();
-                    }
-                }
-                return GlobalTraceHolder[0];
+                WriteTicket(ticket, true, exException.Text, exException.Description);
+                return;
             }
+            var exception = message as Exception;
+            if (exception != null)
+            {
+                var ex = new ExException(exception);
+                WriteTicket(ticket, true, ex.Text, ex.Description);
+                return;
+            }
+            var exTicket = message as ExTicket;
+            if (exTicket != null)
+            {
+                WriteTicket(ticket, exTicket.IsException, exTicket.Text, exTicket.Description);
+                return;
+            }
+            var text = message != null && message != DBNull.Value ? message.ToString() : null;
+            WriteTicket(ticket, false, text, text);
         }
 
-        private static TraceProxy GetProxy()
+        private static void WriteTicket(ExTicket ticket, bool isException, string text, string description)
         {
-            CreateChannel();
-            var type = typeof(TraceProxy);
-            var portName = $"{(type.FullName ?? string.Empty).Replace(".", "-").ToLower()}-{Process.GetCurrentProcess().Id}";
-            var objectUri = type.Name.ToLower();
-            var uri = $"ipc://{portName}/{objectUri}";
-            var proxy = TryGetExistsProxy(type, uri);
-            if (proxy != null) return proxy;
-            CreateTrace();
-            return (TraceProxy)Activator.GetObject(type, uri);
+            ticket.IsException = isException;
+            ticket.Text = text;
+            ticket.Description = description;
+            if (!string.IsNullOrWhiteSpace(ticket.Text) || !string.IsNullOrWhiteSpace(ticket.Description)) System.Diagnostics.Trace.WriteLine(ticket);
         }
 
-        private static void CreateChannel()
+        public static void WriteToFileLogger(string loggerName, ExTicket ticket)
         {
-            var type = typeof(Type);
-            foreach (var entry in RemotingConfiguration.GetRegisteredWellKnownServiceTypes())
-            {
-                if (entry.ObjectType == type) return;
-            }
-            var portName = $"{AppDomain.CurrentDomain.FriendlyName.Replace(".", "-").ToLower()}-{Process.GetCurrentProcess().Id}";
-            var objectUri = type.Name.ToLower();
-            var client = new BinaryClientFormatterSinkProvider();
-            var server = new BinaryServerFormatterSinkProvider
-            {
-                TypeFilterLevel = TypeFilterLevel.Full
-            };
-            var config = new Hashtable
-            {
-                ["name"] = string.Empty,
-                ["portName"] = portName,
-                ["tokenImpersonationLevel"] = TokenImpersonationLevel.Impersonation,
-                ["impersonate"] = true,
-                ["useDefaultCredentials"] = true,
-                ["secure"] = true,
-                ["typeFilterLevel"] = TypeFilterLevel.Full
-            };
-            var ipcChannel = new IpcChannel(config, client, server);
-            ChannelServices.RegisterChannel(ipcChannel, true);
-            RemotingConfiguration.RegisterWellKnownServiceType(type, objectUri, WellKnownObjectMode.SingleCall);
+            GlobalTrace.Write(loggerName, ticket);
         }
 
-        private static TraceProxy TryGetExistsProxy(Type type, string uri)
+        private static NlogTraceListener InitializeFileLogger()
         {
-            try
+            var fileLogger = new NlogTraceListener();
+            lock (System.Diagnostics.Trace.Listeners)
             {
-                var proxy = (TraceProxy)Activator.GetObject(type, uri);
-                proxy.CreateChannel();
-                return proxy;
+                System.Diagnostics.Trace.Listeners.Add(fileLogger);
             }
-            catch
-            {
-                return null;
-            }
+            return fileLogger;
         }
 
-        private static void CreateTrace()
+        private static void InitializeFileLogger(NlogTraceListener fileLogger)
         {
-            var setup = new AppDomainSetup
-            {
-                ConfigurationFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile,
-                ApplicationBase = AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
-                LoaderOptimization = LoaderOptimization.SingleDomain,
-                ShadowCopyFiles = "true"
-            };
-            var name = $"f__{(typeof(Trace)).AssemblyQualifiedName}";
-            var domain = AppDomain.CreateDomain(name, AppDomain.CurrentDomain.Evidence, setup);
-            var type = typeof(TraceProxy);
-            var assemblyName = type.Assembly.GetName().Name;
-            var typeName = type.FullName ?? string.Empty;
-            var instance = domain.CreateInstanceAndUnwrap(assemblyName, typeName) as TraceProxy;
-            instance?.CreateChannel();
         }
     }
 }

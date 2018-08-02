@@ -35,9 +35,13 @@
     <AssemblyOriginatorKeyFile>..\..\.solution\jetproger.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Jetproger.Tools.Convert">
+      <HintPath>..\..\.Jetproger.Tools.Convert\Jetproger.Tools.Convert.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Xml" />
   </ItemGroup>

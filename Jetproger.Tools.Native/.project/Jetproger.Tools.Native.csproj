@@ -36,6 +36,9 @@
     <AssemblyOriginatorKeyFile>..\..\.solution\jetproger.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Jetproger.Tools.Convert">
+      <HintPath>..\..\.Jetproger.Tools.Convert\Jetproger.Tools.Convert.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms" />
@@ -95,8 +98,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\MDICREATESTRUCT.cs">
-      <Link>Bases\MDICREATESTRUCT..cs</Link>
+    <Compile Include="..\Bases\MdiCreateStruct.cs">
+      <Link>Bases\MdiCreateStruct.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -110,13 +113,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\POINT.cs">
-      <Link>Bases\POINT.cs</Link>
+    <Compile Include="..\Bases\Point.cs">
+      <Link>Bases\Point.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\RECT.cs">
-      <Link>Bases\RECT.cs</Link>
+    <Compile Include="..\Bases\Rect.cs">
+      <Link>Bases\Rect.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -125,8 +128,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\SERVER_INFO_101.cs">
-      <Link>Bases\SERVER_INFO_101.cs</Link>
+    <Compile Include="..\Bases\ServerInfo.cs">
+      <Link>Bases\ServerInfo.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -135,8 +138,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\SHFILEINFO.cs">
-      <Link>Bases\SHFILEINFO.cs</Link>
+    <Compile Include="..\Bases\ShFileInfo.cs">
+      <Link>Bases\ShFileInfo.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -150,13 +153,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\TVINSERTSTRUCT.cs">
-      <Link>Bases\TVINSERTSTRUCT.cs</Link>
+    <Compile Include="..\Bases\TvInsertStruct.cs">
+      <Link>Bases\TvInsertStruct.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\TVITEM.cs">
-      <Link>Bases\TVITEM.cs</Link>
+    <Compile Include="..\Bases\TvItem.cs">
+      <Link>Bases\TvItem.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -192,6 +195,31 @@
   <ItemGroup>
     <Compile Include="..\Bases\WindowStyles.cs">
       <Link>Bases\WindowStyles.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\CertPublicKeyInfo.cs">
+      <Link>Bases\CertPublicKeyInfo.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\CryptAlgorithmIdentifier.cs">
+      <Link>Bases\CryptAlgorithmIdentifier.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\CryptBitBlob.cs">
+      <Link>Bases\CryptBitBlob.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\CryptObjidBlob.cs">
+      <Link>Bases\CryptObjidBlob.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\CryptCodes.cs">
+      <Link>Bases\CryptCodes.cs</Link>
     </Compile>
   </ItemGroup>
   <Target Name="RemoveDirectories" BeforeTargets="ResolveReferences">

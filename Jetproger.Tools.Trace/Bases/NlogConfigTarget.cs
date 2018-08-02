@@ -7,8 +7,8 @@ namespace Jetproger.Tools.Trace.Bases
         public NlogConfigTarget()
         {
             var name = NlogConfig.GetMainTraceName();
-            var targetName = NlogConfig.FormatName(name, "_");
-            var fileName = NlogConfig.FormatName(name, "-");
+            var targetName = NlogConfig.BuildName(name, "_");
+            var fileName = NlogConfig.BuildName(name, "-");
             Name = $"{targetName}_log";
             Type = "File";
             Encoding = "UTF-8";

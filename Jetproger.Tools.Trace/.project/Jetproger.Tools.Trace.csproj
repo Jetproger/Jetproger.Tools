@@ -41,6 +41,9 @@
     <Reference Include="NLog.Extended">
       <HintPath>..\..\.NLog\NLog.Extended.dll</HintPath>
     </Reference>
+    <Reference Include="Jetproger.Tools.Convert">
+      <HintPath>..\..\.Jetproger.Tools.Convert\Jetproger.Tools.Convert.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -100,13 +103,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\TypedMessage.cs">
-      <Link>Bases\TypedMessage.cs</Link>
+    <Compile Include="..\Bases\NlogTraceListener.cs">
+      <Link>Bases\NlogTraceListener.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\NlogTraceListener.cs">
-      <Link>Bases\NlogTraceListener.cs</Link>
+    <Compile Include="..\Bases\TraceCore.cs">
+      <Link>Bases\TraceCore.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
