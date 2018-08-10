@@ -12,7 +12,7 @@ using Jetproger.Tools.Plugin.Services;
 
 namespace Jetproger.Tools.Plugin.Commands
 {
-    public abstract class Command : TraceListener, ICommand, ICommandIsolate, IInjection
+    public abstract class Command : TraceListener, ICommand, ICommandIsolate, IUnity
     {
         private static readonly ConcurrentDictionary<Guid, CommandWorker> Workers = new ConcurrentDictionary<Guid, CommandWorker>();
         private readonly ConcurrentQueue<string> _messages;

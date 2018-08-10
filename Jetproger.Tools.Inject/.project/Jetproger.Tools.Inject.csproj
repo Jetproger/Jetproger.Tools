@@ -63,23 +63,33 @@
     <Reference Include="System.Runtime.Remoting" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\InjectionAttributes.cs">
-      <Link>Bases\InjectionAttributes.cs</Link>
+    <Compile Include="..\Bases\UnityAspect.cs">
+      <Link>Bases\UnityAspect.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\InjectionExtensions.cs">
-      <Link>Bases\InjectionExtensions.cs</Link>
+    <Compile Include="..\Bases\UnityMap.cs">
+      <Link>Bases\UnityMap.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\InjectionSection.cs">
-      <Link>Bases\InjectionSection.cs</Link>
+    <Compile Include="..\Bases\UnityLifetime.cs">
+      <Link>Bases\UnityLifetime.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\IInjection.cs">
-      <Link>Bases\IInjection.cs</Link>
+    <Compile Include="..\Bases\Unity.cs">
+      <Link>Bases\Unity.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\UnitySection.cs">
+      <Link>Bases\UnitySection.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\IUnity.cs">
+      <Link>Bases\IUnity.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -88,13 +98,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\UnityXml.cs">
-      <Link>Bases\UnityXml.cs</Link>
+    <Compile Include="..\Bases\UnityCore.cs">
+      <Link>Bases\UnityCore.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\UnityConfiguration.cs">
-      <Link>Bases\UnityConfiguration.cs</Link>
+    <Compile Include="..\Bases\UnityConfig.cs">
+      <Link>Bases\UnityConfig.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

@@ -5,33 +5,25 @@ using System.Linq;
 using System.Reflection;
 using System.Web;
 using System.Xml;
+using Jetproger.Tools.Convert.Bases;
 using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Jetproger.Tools.Injection.Bases
 {
-    public static class UnityXml
+    public static class UnityCore
     {
+        private static string CurrentAssemblyName { get { return Ex.GetOne(CurrentAssemblyNameHolder, () => CurrentAssembly.GetName().Name); } }
+        private static Assembly CurrentAssembly { get { return Ex.GetOne(CurrentAssemblyHolder, () => typeof(UnityCore).Assembly); } }
+        public static string Config => Ex.GetOne(ConfigHolder, RegisterConfig);
         private static readonly string[] CurrentAssemblyNameHolder = { null };
         private static readonly Assembly[] CurrentAssemblyHolder = { null };
+        private static readonly string[] ConfigHolder = { null };
         private static readonly string[] XmlHolder = { null };
 
-        public static string Xml
+        private static string RegisterConfig()
         {
-            get
-            {
-                if (XmlHolder[0] == null)
-                {
-                    lock (XmlHolder)
-                    {
-                        if (XmlHolder[0] == null)
-                        {
-                            WriteXmlToFile();
-                            XmlHolder[0] = ReadXmlFromFile();
-                        }
-                    }
-                }
-                return XmlHolder[0];
-            }
+            WriteXmlToFile();
+            return ReadXmlFromFile();
         }
 
         private static string ReadXmlFromFile()
@@ -53,6 +45,7 @@ namespace Jetproger.Tools.Injection.Bases
             {
                 configuration.unity.AddAssembly(assembly.GetName().Name);
             }
+
             foreach (var type in GetTypes())
             {
                 configuration.unity.AddNamespace(type.Namespace);
@@ -64,7 +57,7 @@ namespace Jetproger.Tools.Injection.Bases
                     if (!m.IsPublic && !m.IsFamily) continue;
                     foreach (var attribute in m.GetCustomAttributes(true))
                     {
-                        var aspectAttribute = attribute as AspectAttribute;
+                        var aspectAttribute = attribute as UnityAspectAttribute;
                         if (aspectAttribute == null) continue;
                         configuration.unity.container.interception.AddPolicies(new Policy(type.FullName, m.Name, aspectAttribute.GetCallHandlerTypeName(), aspectAttribute.GetUnityProperties()));
                     }
@@ -86,7 +79,7 @@ namespace Jetproger.Tools.Injection.Bases
 
         private static IEnumerable<Type> GetTypes()
         {
-            var dependencyInjectionItemType = typeof(IInjection);
+            var dependencyInjectionItemType = typeof(IUnity);
             var callHandlerType = typeof(ICallHandler);
             foreach (var assembly in GetAssemblies())
             {
@@ -114,10 +107,7 @@ namespace Jetproger.Tools.Injection.Bases
         private static Assembly TryLoadAssembly(string fileName)
         {
             var assembly = TryLoadAssemblyWithExtension(fileName);
-            if (assembly != null)
-            {
-                return assembly;
-            }
+            if (assembly != null) return assembly;
             var ext = ".dll";
             if (fileName.EndsWith(ext)) fileName = fileName.Substring(0, fileName.Length - ext.Length);
             return TryLoadAssemblyWithoutExtension(fileName);
@@ -156,7 +146,7 @@ namespace Jetproger.Tools.Injection.Bases
         {
             foreach (var item in type.GetCustomAttributes(true))
             {
-                var attribute = item as MapOfDependencyInjectionAttribute;
+                var attribute = item as UnityMapAttribute;
                 if (attribute != null) return !string.IsNullOrWhiteSpace(attribute.MapOf) ? attribute.MapOf : null;
             }
             return null;
@@ -166,40 +156,10 @@ namespace Jetproger.Tools.Injection.Bases
         {
             foreach (var item in type.GetCustomAttributes(true))
             {
-                var attribute = item as LifetimeDependencyInjectionAttribute;
+                var attribute = item as UnityLifetimeAttribute;
                 if (attribute != null) return !string.IsNullOrWhiteSpace(attribute.Lifetime) ? attribute.Lifetime : null;
             }
             return null;
-        }
-
-        private static string CurrentAssemblyName
-        {
-            get
-            {
-                if (CurrentAssemblyNameHolder[0] == null)
-                {
-                    lock (CurrentAssemblyNameHolder)
-                    {
-                        if (CurrentAssemblyNameHolder[0] == null) CurrentAssemblyNameHolder[0] = CurrentAssembly.GetName().Name;
-                    }
-                }
-                return CurrentAssemblyNameHolder[0];
-            }
-        }
-
-        private static Assembly CurrentAssembly
-        {
-            get
-            {
-                if (CurrentAssemblyHolder[0] == null)
-                {
-                    lock (CurrentAssemblyHolder)
-                    {
-                        if (CurrentAssemblyHolder[0] == null) CurrentAssemblyHolder[0] = typeof(InjectionExtensions).Assembly;
-                    }
-                }
-                return CurrentAssemblyHolder[0];
-            }
         }
     }
 }

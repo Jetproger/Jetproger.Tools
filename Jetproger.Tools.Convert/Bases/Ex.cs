@@ -5,6 +5,8 @@ namespace Jetproger.Tools.Convert.Bases
 {
     public static partial class Ex
     {
+        public static IAppExpander App => null;
+
         public static ICacheExpander Cache => null;
 
         public static IDotnetExpander Dotnet => null;
@@ -17,6 +19,8 @@ namespace Jetproger.Tools.Convert.Bases
 
         public static IGuardExpander Guard => null;
 
+        public static IMssqlExpander Mssql => null;
+
         public static INativeExpander Native => null;
 
         public static IStringExpander String => null;
@@ -24,6 +28,8 @@ namespace Jetproger.Tools.Convert.Bases
         public static ITraceExpander Trace => null;
 
         public static IValueExpander Value => null;
+
+        public static IRestExpander Rest => null;
 
         public static IXmlExpander Xml => null;
 
@@ -53,6 +59,14 @@ namespace Jetproger.Tools.Convert.Bases
     public interface IValueExpander { }
 
     public interface IInjectionExpander { }
+
+    public interface IAppExpander { }
+
+    public interface ICmdExpander { }
+
+    public interface IMssqlExpander { }
+
+    public interface IRestExpander { }
 
     public static class Extensions
     {

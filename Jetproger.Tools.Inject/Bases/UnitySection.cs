@@ -4,7 +4,7 @@ using Microsoft.Practices.Unity.Configuration;
 
 namespace Jetproger.Tools.Injection.Bases
 {
-    public class InjectionSection : UnityConfigurationSection
+    public class ExUnitySection : UnityConfigurationSection
     {
         public void DeserializeSection(string xml)
         {

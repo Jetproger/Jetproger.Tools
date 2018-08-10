@@ -19,15 +19,15 @@ namespace Jetproger.Tools.Plugin.Aspects
         {
             if (!Enabled)
             {
-                return Ex.Inject.AOPExecute(input, getNext);
+                return Ex.Inject.Call(input, getNext);
             }
-            var methodName = Ex.Inject.AOPProfile(input);
+            var methodName = Ex.Inject.InfoEx(input);
             var watch = new Stopwatch();
             IMethodReturn result = null;
             watch.Start();
             try
             {
-                result = Ex.Inject.AOPExecute(input, getNext);
+                result = Ex.Inject.Call(input, getNext);
                 return result;
             }
             finally
@@ -65,7 +65,7 @@ namespace Jetproger.Tools.Plugin.Aspects
         }
     }
 
-    public class DurationAspectAttribute : AspectAttribute
+    public class DurationAspectAttribute : UnityAspectAttribute
     {
         public DurationAspectAttribute() : base(typeof(DurationCallHandler)) { }
 

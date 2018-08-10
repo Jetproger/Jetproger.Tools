@@ -1,48 +1,18 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 
 namespace Jetproger.Tools.Injection.Bases
 {
-    [AttributeUsage(AttributeTargets.Class)]
-    public class MapOfDependencyInjectionAttribute : Attribute
-    {
-        public string MapOf
-        {
-            get; private set;
-        }
-
-        public MapOfDependencyInjectionAttribute(string mapOf)
-        {
-            MapOf = mapOf;
-        }
-    }
-
-    [AttributeUsage(AttributeTargets.Class)]
-    public class LifetimeDependencyInjectionAttribute : Attribute
-    {
-        public string Lifetime
-        {
-            get; private set;
-        }
-
-        public LifetimeDependencyInjectionAttribute(string lifetime)
-        {
-            Lifetime = lifetime;
-        }
-    }
-
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-    public abstract class AspectAttribute : Attribute
+    public abstract class UnityAspectAttribute : Attribute
     {
         private readonly string _callHandlerTypeName;
 
         public int Order { get; set; }
-
         public bool Enabled { get; set; }
 
-        protected AspectAttribute(Type callHandlerType)
+        protected UnityAspectAttribute(Type callHandlerType)
         {
             _callHandlerTypeName = callHandlerType.Name;
         }

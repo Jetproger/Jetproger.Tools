@@ -58,7 +58,7 @@ namespace Jetproger.Tools.Plugin.Commands
         public void Initialize()
         {
             Ex.Trace.RegisterFileLogger();
-            Ex.Inject.Init();
+            Ex.Inject.Register();
         }
 
         public AppDomain GetDomain()

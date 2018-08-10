@@ -105,7 +105,7 @@ namespace Jetproger.Tools.Plugin.Bases
         {
             _actions.Add(new Tuple<object, Action<object>>(null, x => {
                 Ex.Trace.Write(new ProgramStarterMessage(Ex.Rs<StartDISetting>.Description));
-                Ex.Inject.Init();
+                Ex.Inject.Register();
 
                 Ex.Trace.Write(new ProgramStarterMessage(Ex.Rs<StartCmdPoolSetting>.Description));
                 CommandFactory.InitCommandPool(size);

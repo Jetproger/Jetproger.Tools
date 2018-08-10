@@ -121,6 +121,11 @@
 	</Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Bases\Starter.cs">
+      <Link>Bases\Starter.cs</Link>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="..\..\.solution\AssemblyInfo.cs">
       <Link>.project\AssemblyInfo.cs</Link>
 	</Compile>

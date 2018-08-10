@@ -4,9 +4,9 @@ namespace Jetproger.Tools.Injection.Bases
 {
     public class UnityProxy : OneProxy
     {
-        public string GetUnityConfigXml()
+        public string GetConfig()
         {
-            return UnityXml.Xml;
+            return UnityCore.Config;
         }
     }
 }

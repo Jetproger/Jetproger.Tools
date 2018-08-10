@@ -18,13 +18,13 @@ namespace Jetproger.Tools.Plugin.Aspects
         {
             if (!Enabled)
             {
-                return Ex.Inject.AOPExecute(input, getNext);
+                return Ex.Inject.Call(input, getNext);
             }
-            var methodName = Ex.Inject.AOPProfile(input);
+            var methodName = Ex.Inject.InfoEx(input);
             IMethodReturn result;
             try
             {
-                result = Ex.Inject.AOPExecute(input, getNext);
+                result = Ex.Inject.Call(input, getNext);
                 return result;
             }
             catch (Exception e)
@@ -64,7 +64,7 @@ namespace Jetproger.Tools.Plugin.Aspects
         }
     }
 
-    public class ExceptionAspectAttribute : AspectAttribute
+    public class ExceptionAspectAttribute : UnityAspectAttribute
     {
         public ExceptionAspectAttribute() : base(typeof (ExceptionCallHandler)) { }
 

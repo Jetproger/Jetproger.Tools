@@ -14,11 +14,11 @@ namespace Jetproger.Tools.Plugin.Aspects
 
         public IMethodReturn Invoke(IMethodInvocation input, GetNextHandlerDelegate getNext)
         {
-            if (!Enabled || string.IsNullOrWhiteSpace(PermissionCode)) return Ex.Inject.AOPExecute(input, getNext);
+            if (!Enabled || string.IsNullOrWhiteSpace(PermissionCode)) return Ex.Inject.Call(input, getNext);
             //var access = CoreMethods.SecurityContext.Access(PermissionCode);
             //if (FullOnly && access != EAccess.Full) access = EAccess.None;
             //if (access == EAccess.None) throw new Exception(CoreMethods.Enum.AsString(access));
-            return Ex.Inject.AOPExecute(input, getNext);
+            return Ex.Inject.Call(input, getNext);
         }
     }
 }
