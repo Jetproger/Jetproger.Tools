@@ -5,36 +5,36 @@ using System.Net;
 using System.Runtime.Serialization;
 using System.Text;
 
-namespace Jetproger.Tools.Convert.Bases
+namespace Jc
 {
-    public class ExException : Exception
+    public class Exception : System.Exception
     {
         private readonly string _webExceptionString;
-        private readonly Exception _exception;
+        private readonly System.Exception _exception;
         private string _description;
         private string _text;
 
-        public ExException(ExTicket ticket)
+        public Exception(Ticket ticket)
         {
-            _exception = new Exception(ticket.Text);
+            _exception = new System.Exception(ticket.Text);
             _description = ticket.Description;
             _text = ticket.Text;
         }
 
-        public ExException(string errorMessage) : this(new Exception(errorMessage))
+        public Exception(string errorMessage) : this(new System.Exception(errorMessage))
         {
         }
 
-        public ExException() : this((Exception)null)
+        public Exception() : this((Exception)null)
         {
         }
 
-        public ExException(Exception exception)
+        public Exception(System.Exception exception)
         {
-            var gtinException = exception as ExException;
-            if (gtinException != null)
+            var jce = exception as Exception;
+            if (jce != null)
             {
-                _exception = gtinException.Exception;
+                _exception = jce.GetException();
                 return;
             }
             _exception = FindException(exception);
@@ -68,7 +68,7 @@ namespace Jetproger.Tools.Convert.Bases
             set { if (_exception != null) _exception.HelpLink = value; else base.HelpLink = value; }
         }
 
-        public override Exception GetBaseException()
+        public override System.Exception GetBaseException()
         {
             return _exception != null ? _exception.GetBaseException() : base.GetBaseException();
         }
@@ -93,9 +93,9 @@ namespace Jetproger.Tools.Convert.Bases
             return string.Empty;
         }
 
-        public Exception Exception
+        public System.Exception GetException()
         {
-            get { return _exception; }
+            return _exception;
         }
 
         public bool IsEmpty
@@ -140,7 +140,7 @@ namespace Jetproger.Tools.Convert.Bases
             }
         }
 
-        private static Exception FindException(object obj)
+        private static System.Exception FindException(object obj)
         {
             var ae = obj as AggregateException;
             if (ae == null) return obj as Exception;

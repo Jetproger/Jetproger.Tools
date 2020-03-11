@@ -1,11 +1,11 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Jetproger.Tools.Convert.Bases
+namespace Jc
 {
     [Serializable]
     [DataContract]
-    public class ExTicket
+    public class Ticket
     {
         private bool _isException;
         private string _text;

@@ -1,6 +1,7 @@
 ﻿using System;
 using Jetproger.Tools.Cache.Bases;
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Convert.Converts;
 using Jetproger.Tools.Injection.Bases;
 using Microsoft.Practices.Unity.InterceptionExtension;
 
@@ -52,7 +53,7 @@ namespace Jetproger.Tools.Plugin.Aspects
         {
             try
             {
-                var typedMessage = Ex.Dotnet.CreateInstance(TraceType, new object[] { null, e }) as ExTicket;
+                var typedMessage = Ex.Dotnet.CreateInstance(TraceType, new object[] { null, e }) as Jc.Ticket;
                 if (typedMessage == null) return false;
                 System.Diagnostics.Trace.WriteLine(typedMessage);
                 return true;

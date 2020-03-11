@@ -1,35 +1,11 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.Remoting;
-using System.Runtime.Remoting.Channels;
-using System.Runtime.Remoting.Channels.Ipc;
-using System.Runtime.Serialization.Formatters;
-using System.Security.Permissions;
-using System.Security.Principal;
 
 namespace Jetproger.Tools.Convert.Bases
 {
-    public static partial class Ex
+    public static class OneExtensions
     {
-        public static T ReadOne<T>(T[] holder)
-        {
-            lock (holder)
-            {
-                return holder[0];
-            }
-        }
-
-        public static void WriteOne<T>(T[] holder, T value)
-        {
-            lock (holder)
-            {
-                holder[0] = value;
-            }
-        }
-
-        public static T GetOne<T>(T[] holder, Func<T> factory) where T : class
+        public static T Get<T>(this Jc.IOneExpander exp, T[] holder, Func<T> factory) where T : class
         {
             if (holder[0] == null)
             {
@@ -41,7 +17,7 @@ namespace Jetproger.Tools.Convert.Bases
             return holder[0];
         }
 
-        public static T GetOne<T>(T?[] holder, Func<T> factory) where T : struct
+        public static T Get<T>(this Jc.IOneExpander exp, T?[] holder, Func<T> factory) where T : struct
         {
             if (holder[0] == null)
             {
@@ -50,148 +26,63 @@ namespace Jetproger.Tools.Convert.Bases
                     if (holder[0] == null) holder[0] = factory();
                 }
             }
-            return (T)holder[0];
+            return (T) holder[0];
         }
 
-        public static One<TKey, TValue> GetOne<TKey, TValue>(Func<TKey, TValue> factory)
+        public static T Get<T>(this Jc.IOneExpander exp, T[] holder) where T : class
         {
-            return new One<TKey, TValue>(factory);
-        }
-
-        public static T GetOne<T>() where T : OneProxy
-        {
-            return One<T>.Get(GetProxy<T>);
-        }
-
-        private static T GetProxy<T>() where T : OneProxy
-        {
-            CreateChannel();
-            var type = typeof(T);
-            var portName = $"{(type.FullName ?? string.Empty).Replace(".", "-").ToLower()}-{Process.GetCurrentProcess().Id}";
-            var objectUri = type.Name.ToLower();
-            var uri = $"ipc://{portName}/{objectUri}";
-            var proxy = TryGetExistsProxy<T>(type, uri);
-            if (proxy != null) return proxy;
-            CreateOne<T>();
-            return (T)Activator.GetObject(type, uri);
-        }
-
-        private static void CreateChannel()
-        {
-            var type = typeof(Type);
-            foreach (var entry in RemotingConfiguration.GetRegisteredWellKnownServiceTypes())
+            lock (holder)
             {
-                if (entry.ObjectType == type) return;
-            }
-            var portName = $"{AppDomain.CurrentDomain.FriendlyName.Replace(".", "-").ToLower()}-{Process.GetCurrentProcess().Id}";
-            var objectUri = type.Name.ToLower();
-            var client = new BinaryClientFormatterSinkProvider();
-            var server = new BinaryServerFormatterSinkProvider
-            {
-                TypeFilterLevel = TypeFilterLevel.Full
-            };
-            var config = new Hashtable
-            {
-                ["name"] = string.Empty,
-                ["portName"] = portName,
-                ["tokenImpersonationLevel"] = TokenImpersonationLevel.Impersonation,
-                ["impersonate"] = true,
-                ["useDefaultCredentials"] = true,
-                ["secure"] = true,
-                ["typeFilterLevel"] = TypeFilterLevel.Full
-            };
-            var ipcChannel = new IpcChannel(config, client, server);
-            ChannelServices.RegisterChannel(ipcChannel, true);
-            RemotingConfiguration.RegisterWellKnownServiceType(type, objectUri, WellKnownObjectMode.SingleCall);
-        }
-
-        private static T TryGetExistsProxy<T>(Type type, string uri) where T : OneProxy
-        {
-            try
-            {
-                var proxy = (T)Activator.GetObject(type, uri);
-                proxy.CreateChannel();
-                return proxy;
-            }
-            catch
-            {
-                return null;
+                return holder[0];
             }
         }
 
-        private static void CreateOne<T>() where T : OneProxy
+        public static T Get<T>(this Jc.IOneExpander exp, T?[] holder) where T : struct
         {
-            var setup = new AppDomainSetup
+            lock (holder)
             {
-                ConfigurationFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile,
-                ApplicationBase = AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
-                LoaderOptimization = LoaderOptimization.SingleDomain,
-                ShadowCopyFiles = "true"
-            };
-            var name = $"f__{(typeof(T)).AssemblyQualifiedName}";
-            var domain = AppDomain.CreateDomain(name, AppDomain.CurrentDomain.Evidence, setup);
-            var type = typeof(T);
-            var assemblyName = type.Assembly.GetName().Name;
-            var typeName = type.FullName ?? string.Empty;
-            var instance = domain.CreateInstanceAndUnwrap(assemblyName, typeName) as T;
-            instance?.CreateChannel();
+                return holder[0] ?? default(T);
+            }
+        }
+
+        public static void Reset<T>(this Jc.IOneExpander exp, T[] holder) where T : class
+        {
+            lock (holder)
+            {
+                holder[0] = null;
+            }
+        }
+
+        public static void Reset<T>(this Jc.IOneExpander exp, T?[] holder) where T : struct
+        {
+            lock (holder)
+            {
+                holder[0] = null;
+            }
         }
     }
+}
 
-    public sealed class One<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>
+namespace Jc
+{
+    public static class One<T> where T : class, new()
     {
-        private readonly Dictionary<TKey, TValue> _dictionary;
-        private readonly Func<TKey, TValue> _factory;
+        private static readonly T[] Holder = { null };
 
-        public One(Func<TKey, TValue> factory)
-        {
-            _factory = factory ?? (x => default(TValue));
-            _dictionary = new Dictionary<TKey, TValue>();
-        }
-
-        public TValue this[TKey key]
+        public static T Ge
         {
             get
             {
-                if (!_dictionary.ContainsKey(key))
+                if (Holder[0] == null)
                 {
-                    lock (_dictionary)
+                    lock (Holder)
                     {
-                        if (!_dictionary.ContainsKey(key))
-                        {
-                            _dictionary.Add(key, _factory(key));
-                        }
+                        if (Holder[0] == null) Holder[0] = new T();
                     }
                 }
-                return _dictionary[key];
+                return Holder[0];
             }
         }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
-        {
-            return GetPairs().GetEnumerator();
-        }
-
-        private IEnumerable<KeyValuePair<TKey, TValue>> GetPairs()
-        {
-            lock (_dictionary)
-            {
-                foreach (KeyValuePair<TKey, TValue> pair in _dictionary)
-                {
-                    yield return pair;
-                }
-            }
-        }
-    }
-
-    public class One<T> where T : class
-    {
-        private static readonly T[] Holder = { null };
 
         public static T Get(Func<T> factory)
         {
@@ -204,42 +95,66 @@ namespace Jetproger.Tools.Convert.Bases
             }
             return Holder[0];
         }
+
+        public static void Reset()
+        {
+            lock (Holder)
+            {
+                Holder[0] = null;
+            }
+        }
     }
 
-    public class OneProxy : MarshalByRefObject
+    public static class One<TKey, TValue>
     {
-        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.Infrastructure)]
-        public override object InitializeLifetimeService()
+        private static readonly Dictionary<TKey, TValue> Pairs = new Dictionary<TKey, TValue>();
+
+        public static bool Get(TKey key, out TValue value)
         {
-            return null;
+            lock (Pairs)
+            {
+                value = Pairs.ContainsKey(key) ? Pairs[key] : default(TValue);
+                return Pairs.ContainsKey(key);
+            }
         }
 
-        public void CreateChannel()
+        public static TValue Get(TKey key, Func<TKey, TValue> factory)
         {
-            var type = GetType();
-            foreach (var entry in RemotingConfiguration.GetRegisteredWellKnownServiceTypes())
+            if (!Pairs.ContainsKey(key))
             {
-                if (entry.ObjectType == type) return;
+                lock (Pairs)
+                {
+                    if (!Pairs.ContainsKey(key)) Pairs.Add(key, factory(key));
+                }
             }
-            var portName = $"{(type.FullName ?? string.Empty).Replace(".", "-").ToLower()}-{Process.GetCurrentProcess().Id}";
-            var objectUri = type.Name.ToLower();
-            var client = new BinaryClientFormatterSinkProvider();
-            var server = new BinaryServerFormatterSinkProvider
+            return Pairs[key];
+        }
+
+        public static IEnumerable<KeyValuePair<TKey, TValue>> Get()
+        {
+            lock (Pairs)
             {
-                TypeFilterLevel = TypeFilterLevel.Full
-            };
-            var config = new Hashtable {
-                ["name"] = string.Empty,
-                ["portName"] = portName,
-                ["tokenImpersonationLevel"] = TokenImpersonationLevel.Impersonation,
-                ["impersonate"] = true,
-                ["useDefaultCredentials"] = true,
-                ["secure"] = true,
-                ["typeFilterLevel"] = TypeFilterLevel.Full
-            };
-            var ipcChannel = new IpcChannel(config, client, server);
-            ChannelServices.RegisterChannel(ipcChannel, true);
-            RemotingConfiguration.RegisterWellKnownServiceType(type, objectUri, WellKnownObjectMode.SingleCall);
+                foreach (KeyValuePair<TKey, TValue> pair in Pairs)
+                {
+                    yield return pair;
+                }
+            }
+        }
+
+        public static void Reset(TKey key)
+        {
+            lock (Pairs)
+            {
+                if (Pairs.ContainsKey(key)) Pairs.Remove(key);
+            }
+        }
+
+        public static void Reset()
+        {
+            lock (Pairs)
+            {
+                Pairs.Clear();
+            }
         }
     }
 }

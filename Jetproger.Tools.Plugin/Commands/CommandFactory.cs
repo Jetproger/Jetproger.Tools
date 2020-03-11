@@ -8,6 +8,7 @@ using System.Runtime.Serialization.Formatters;
 using System.Security.Principal;
 using System.Threading;
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Convert.Converts;
 using Jetproger.Tools.Resource.Bases;
 
 namespace Jetproger.Tools.Plugin.Commands

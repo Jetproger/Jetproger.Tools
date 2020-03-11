@@ -12,9 +12,9 @@ namespace Jetproger.Tools.Injection.Bases
 {
     public static class UnityCore
     {
-        private static string CurrentAssemblyName { get { return Ex.GetOne(CurrentAssemblyNameHolder, () => CurrentAssembly.GetName().Name); } }
-        private static Assembly CurrentAssembly { get { return Ex.GetOne(CurrentAssemblyHolder, () => typeof(UnityCore).Assembly); } }
-        public static string Config => Ex.GetOne(ConfigHolder, RegisterConfig);
+        private static string CurrentAssemblyName { get { return Je.One.Get(CurrentAssemblyNameHolder, () => CurrentAssembly.GetName().Name); } }
+        private static Assembly CurrentAssembly { get { return Je.One.Get(CurrentAssemblyHolder, () => typeof(UnityCore).Assembly); } }
+        public static string Config => Je.One.Get(ConfigHolder, RegisterConfig);
         private static readonly string[] CurrentAssemblyNameHolder = { null };
         private static readonly Assembly[] CurrentAssemblyHolder = { null };
         private static readonly string[] ConfigHolder = { null };

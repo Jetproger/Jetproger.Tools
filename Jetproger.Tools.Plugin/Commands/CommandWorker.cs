@@ -7,6 +7,7 @@ using System.Runtime.Serialization.Formatters;
 using System.Security.Principal;
 using Jetproger.Tools.Cache.Bases;
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Convert.Converts;
 using Jetproger.Tools.Injection.Bases;
 using Jetproger.Tools.Resource.Bases;
 using Jetproger.Tools.Trace.Bases;

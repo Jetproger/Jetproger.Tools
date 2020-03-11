@@ -8,8 +8,9 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Jetproger.Tools.File</RootNamespace>
     <AssemblyName>Jetproger.Tools.File</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -49,103 +50,103 @@
   <ItemGroup>
     <Compile Include="..\Bases\File.cs">
       <Link>Bases\File.cs</Link>
-	</Compile>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Bases\Dynamic.cs">
       <Link>Bases\Dynamic.cs</Link>
-	</Compile>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Bases\ConvertExtensions.cs">
       <Link>Bases\ConvertExtensions.cs</Link>
-	</Compile>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Bases\Property.cs">
       <Link>Bases\Property.cs</Link>
-	</Compile>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Bases\JsonDb.cs">
       <Link>Bases\JsonDb.cs</Link>
-	</Compile>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Jsons\JsonFrom.cs">
       <Link>Jsons\JsonFrom.cs</Link>
-	</Compile>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Jsons\JsonWhere.cs">
       <Link>Jsons\JsonWhere.cs</Link>
-	</Compile>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Jsons\JsonCondition.cs">
       <Link>Jsons\JsonCondition.cs</Link>
-	</Compile>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Jsons\JsonCommand.cs">
       <Link>Jsons\JsonCommand.cs</Link>
-	</Compile>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Jsons\JsonCommandType.cs">
       <Link>Jsons\JsonCommandType.cs</Link>
-	</Compile>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Jsons\JsonFilter.cs">
       <Link>Jsons\JsonFilter.cs</Link>
-	</Compile>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Jsons\JsonTable.cs">
       <Link>Jsons\JsonTable.cs</Link>
-	</Compile>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Jsons\JsonSet.cs">
       <Link>Jsons\JsonSet.cs</Link>
-	</Compile>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Jsons\JsonWork.cs">
       <Link>Jsons\JsonWork.cs</Link>
-	</Compile>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Jsons\JsonFile.cs">
       <Link>Jsons\JsonFile.cs</Link>
-	</Compile>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Jsons\JsonManager.cs">
       <Link>Jsons\JsonManager.cs</Link>
-	</Compile>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Jsons\JsonProxy.cs">
       <Link>Jsons\JsonProxy.cs</Link>
-	</Compile>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\.solution\AssemblyInfo.cs">
       <Link>.project\AssemblyInfo.cs</Link>
-	</Compile>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\.solution\jetproger.pfx">
       <Link>.project\jetproger.pfx</Link>
-	</None>
+    </None>
   </ItemGroup>
   <Target Name="RemoveDirectories" BeforeTargets="ResolveReferences">
-      <Exec Command = 'for /d %%p in ("$(ProjectDir)"\*) do if /I "%%p" neq "$(ProjectDir)\obj" (rd /Q /S "%%p")' />
+    <Exec Command="for /d %%p in (&quot;$(ProjectDir)&quot;\*) do if /I &quot;%%p&quot; neq &quot;$(ProjectDir)\obj&quot; (rd /Q /S &quot;%%p&quot;)" />
   </Target>
   <Target Name="RemoveObj" AfterTargets="Rebuild">
-      <Exec Command = 'rd /Q /S "$(ProjectDir)\obj"' />
+    <Exec Command="rd /Q /S &quot;$(ProjectDir)\obj&quot;" />
   </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

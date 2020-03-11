@@ -1,35 +1,61 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Web.Script.Serialization;
+using Jetproger.Tools.Convert.Bases;
 
-namespace Jetproger.Tools.Convert.Bases
+namespace Jc
 {
-    public static class JsonExtensions
+    public static class Json<T> where T : BaseJson, new()
     {
-        private static JavaScriptSerializer JsonDeserializer { get { return Ex.GetOne(JsonDeserializerHolder, () => new JavaScriptSerializer()); } }
+        public static string Of(object value)
+        {
+            return One<T>.Ge.Of(value);
+        }
+
+        public static TOut To<TOut>(string json)
+        {
+            return One<T>.Ge.To<TOut>(json);
+        }
+
+        public static object To(string json, Type type)
+        {
+            return One<T>.Ge.To(json, type);
+        }
+    }
+
+    public class BaseJson
+    {
         private static readonly JavaScriptSerializer[] JsonDeserializerHolder = { null };
 
-        private static JavaScriptSerializer JsonSerializer { get { return Ex.GetOne(JsonSerializerHolder, CreateJavaScriptSerializer); } }
         private static readonly JavaScriptSerializer[] JsonSerializerHolder = { null };
 
-        public static string Write(this IJsonExpander expander, object o)
+        public virtual string Of(object o)
         {
-            var result = JsonSerializer.Serialize(o);
-            return result;
+            return GetJsonSerializer().Serialize(o);
         }
 
-        public static T Read<T>(this IJsonExpander expander, string json)
+        public virtual T To<T>(string json)
         {
-            return JsonDeserializer.Deserialize<T>(json);
+            return GetJsonDeserializer().Deserialize<T>(json);
         }
 
-        public static object Read(this IJsonExpander expander, string json, Type type)
+        public virtual object To(string json, Type type)
         {
-            return JsonDeserializer.Deserialize(json, type);
+            return GetJsonDeserializer().Deserialize(json, type);
         }
 
-        private static JavaScriptSerializer CreateJavaScriptSerializer()
+        private static JavaScriptSerializer GetJsonDeserializer()
+        {
+            return Je.One.Get(JsonDeserializerHolder, () => new JavaScriptSerializer());
+        }
+
+        private static JavaScriptSerializer GetJsonSerializer()
+        {
+            return Je.One.Get(JsonSerializerHolder, CreateJsonSerializer);
+        }
+
+        private static JavaScriptSerializer CreateJsonSerializer()
         {
             var serializer = new JavaScriptSerializer();
             serializer.RegisterConverters(new JavaScriptConverter[] { new NullPropertiesConverter() });
@@ -38,7 +64,6 @@ namespace Jetproger.Tools.Convert.Bases
 
         private class NullPropertiesConverter : JavaScriptConverter
         {
-
             public override object Deserialize(IDictionary<string, object> dictionary, Type type, JavaScriptSerializer serializer)
             {
                 throw new NotImplementedException();

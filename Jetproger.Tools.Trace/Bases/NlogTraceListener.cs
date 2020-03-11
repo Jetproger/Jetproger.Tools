@@ -17,7 +17,7 @@ namespace Jetproger.Tools.Trace.Bases
 
         public override void WriteLine(string message)
         {
-            TraceExtensions.WriteToFileLogger(NlogConfig.GetMainTraceName(), new ExTicket { IsException = false, Text = message, Description = message});
+            TraceExtensions.WriteToFileLogger(NlogConfig.GetMainTraceName(), new Jc.Ticket { IsException = false, Text = message, Description = message});
         }
 
         public override void Write(object message)
@@ -27,10 +27,11 @@ namespace Jetproger.Tools.Trace.Bases
 
         public override void WriteLine(object message)
         {
-            var exException = message as ExException;
-            if (exException != null)
+            Jc.Ticket ticket;
+            var jce = message as Jc.Exception;
+            if (jce != null)
             {
-                var ticket = new ExTicket { IsException = true, Text = exException.Text, Description = exException.Description };
+                ticket = new Jc.Ticket { IsException = true, Text = jce.Text, Description = jce.Description };
                 if (string.IsNullOrWhiteSpace(ticket.Text) && string.IsNullOrWhiteSpace(ticket.Description)) return;
                 TraceExtensions.WriteToFileLogger(NlogConfig.GetMainTraceName(), ticket);
                 return;
@@ -38,23 +39,22 @@ namespace Jetproger.Tools.Trace.Bases
             var exception = message as Exception;
             if (exception != null)
             {
-                var ex = new ExException(exception);
-                var ticket = new ExTicket { IsException = true, Text = ex.Text, Description = ex.Description };
+                var ex = new Jc.Exception(exception);
+                ticket = new Jc.Ticket { IsException = true, Text = ex.Text, Description = ex.Description };
                 if (string.IsNullOrWhiteSpace(ticket.Text) && string.IsNullOrWhiteSpace(ticket.Description)) return;
                 TraceExtensions.WriteToFileLogger(NlogConfig.GetMainTraceName(), ticket);
                 return;
             }
-            var exTicket = message as ExTicket;
-            if (exTicket != null)
-            {
-                var type = exTicket.GetType();
-                var loggerName = type == typeof(ExTicket) ? NlogConfig.GetMainTraceName() : type.Name;
-                if (string.IsNullOrWhiteSpace(exTicket.Text) && string.IsNullOrWhiteSpace(exTicket.Description)) return;
-                TraceExtensions.WriteToFileLogger(loggerName, exTicket);
+            ticket = message as Jc.Ticket;
+            if (ticket != null) {
+                var type = ticket.GetType();
+                var loggerName = type == typeof(Jc.Ticket) ? NlogConfig.GetMainTraceName() : type.Name;
+                if (string.IsNullOrWhiteSpace(ticket.Text) && string.IsNullOrWhiteSpace(ticket.Description)) return;
+                TraceExtensions.WriteToFileLogger(loggerName, ticket);
                 return;
             }
             var text = message != null && message != DBNull.Value ? message.ToString() : null;
-            if (!string.IsNullOrWhiteSpace(text)) TraceExtensions.WriteToFileLogger(NlogConfig.GetMainTraceName(), new ExTicket { IsException = false, Text = text, Description = text });
+            if (!string.IsNullOrWhiteSpace(text)) TraceExtensions.WriteToFileLogger(NlogConfig.GetMainTraceName(), new Jc.Ticket { IsException = false, Text = text, Description = text });
         }
     }
 }

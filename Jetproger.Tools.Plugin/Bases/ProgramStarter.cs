@@ -69,7 +69,7 @@ namespace Jetproger.Tools.Plugin.Bases
             return this;
         }
 
-        public IRunNLog RunNLog<T>() where T : ExTicket
+        public IRunNLog RunNLog<T>() where T : Jc.Ticket
         {
             _actions.Add(new Tuple<object, Action<object>>(null, x => {
                 Ex.Trace.Write(new ProgramStarterMessage(string.Format(Ex.Rs<StartNLogTypedSetting>.Description, typeof(T).FullName)));
@@ -174,7 +174,7 @@ namespace Jetproger.Tools.Plugin.Bases
         }
     }
 
-    public class ProgramStarterMessage : ExTicket
+    public class ProgramStarterMessage : Jc.Ticket
     {
         public ProgramStarterMessage(string message)
         {
@@ -191,12 +191,12 @@ namespace Jetproger.Tools.Plugin.Bases
     public interface IRunTrace
     {
         IRunTrace RunTrace(TraceListener traceListener);
-        IRunNLog RunNLog<T>() where T : ExTicket;
+        IRunNLog RunNLog<T>() where T : Jc.Ticket;
     }
 
     public interface IRunNLog
     {
-        IRunNLog RunNLog<T>() where T : ExTicket;
+        IRunNLog RunNLog<T>() where T : Jc.Ticket;
         IParseCommandLineArguments OnUnhandledException(UnhandledExceptionEventHandler handler);
     }
 

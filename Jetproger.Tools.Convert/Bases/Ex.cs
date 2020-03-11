@@ -11,13 +11,9 @@ namespace Jetproger.Tools.Convert.Bases
 
         public static IDotnetExpander Dotnet => null;
 
-        public static IImageExpander Image => null;
-
         public static IInjectionExpander Inject => null;
 
         public static IJsonExpander Json => null;
-
-        public static IGuardExpander Guard => null;
 
         public static IMssqlExpander Mssql => null;
 
@@ -41,10 +37,6 @@ namespace Jetproger.Tools.Convert.Bases
     public interface IDotnetExpander { }
 
     public interface IUtilsExpander { }
-
-    public interface IGuardExpander { }
-
-    public interface IImageExpander { }
 
     public interface IJsonExpander { }
 

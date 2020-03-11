@@ -24,7 +24,7 @@ namespace Jetproger.Tools.Resource.Bases
             try
             {
                 int x;
-                IsValid = int.TryParse(Name, NumberStyles.Any, StringExtensions.Formatter, out x);
+                IsValid = int.TryParse(Name, NumberStyles.Any, null/*StringExtensions.Formatter*/, out x);
             }
             catch
             {
@@ -45,7 +45,7 @@ namespace Jetproger.Tools.Resource.Bases
             try
             {
                 int x;
-                IsValid = int.TryParse(Name, NumberStyles.Any, StringExtensions.Formatter, out x);
+                IsValid = int.TryParse(Name, NumberStyles.Any, null/*StringExtensions.Formatter*/, out x);
             }
             catch
             {
@@ -81,8 +81,9 @@ namespace Jetproger.Tools.Resource.Bases
                     cnc.Open();
                     using (var cmd = new SqlCommand("SELECT 1", cnc))
                     {
-                        int result = cmd.ExecuteScalar().As<int>();
-                        IsValid = result == 1;
+                        //int result = cmd.ExecuteScalar().As<int>();
+                        //IsValid = result == 1;
+                        IsValid = true;
                     }
                 }
             }

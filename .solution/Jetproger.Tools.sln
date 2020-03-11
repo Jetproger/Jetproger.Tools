@@ -24,6 +24,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".solution", ".solution", "{D00285CB-5C5E-413D-BFA9-112453C8B174}"
 	ProjectSection(SolutionItems) = preProject
 		AssemblyInfo.cs = AssemblyInfo.cs
+		post-build.bat = post-build.bat
 		jetproger.pfx = jetproger.pfx
 		LICENSE = LICENSE
 	EndProjectSection

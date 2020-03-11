@@ -188,17 +188,17 @@ namespace Jetproger.Tools.Plugin.Commands
             if (merger == null) return;
             var mergerType = typeof(IMerger<>);
             var commandType = _command.GetType();
-            var genericType = commandType.GetGenericArgumentType();
+            var genericType = Je.Meta.GenericOf(commandType);
             if (genericType == null) return;
             mergerType = mergerType.MakeGenericType(genericType);
-            if (!commandType.IsTypeOf(mergerType)) return;
+            if (!Je.Meta.IsTypeOf(commandType, mergerType)) return;
             var sources = new Dictionary<int, Command>();
             var counter = 0;
             foreach (var agent in Parent.Items)
             {
                 if (agent == this) continue;
                 if (agent._command == null) continue;
-                if (agent._command.GetType().IsTypeOf(genericType)) sources.Add(counter++, agent._command);
+                if (Je.Meta.IsTypeOf(agent._command.GetType(), genericType)) sources.Add(counter++, agent._command);
             }
             while (true)
             {
@@ -270,7 +270,7 @@ namespace Jetproger.Tools.Plugin.Commands
                 if (agent._command != null)
                 {
                     var type = agent._command.GetType();
-                    if (type.IsTypeOf(sourceType)) return agent._command;
+                    if (Je.Meta.IsTypeOf(type, sourceType)) return agent._command;
                 }
                 agent = agent.Parent;
             }

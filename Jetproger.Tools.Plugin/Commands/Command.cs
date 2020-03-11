@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Threading;
 using Jetproger.Tools.Cache.Bases;
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Convert.Converts;
 using Jetproger.Tools.Injection.Bases;
 using Jetproger.Tools.Plugin.Aspects;
 using Jetproger.Tools.Plugin.Bases;
@@ -16,14 +17,14 @@ namespace Jetproger.Tools.Plugin.Commands
     {
         private static readonly ConcurrentDictionary<Guid, CommandWorker> Workers = new ConcurrentDictionary<Guid, CommandWorker>();
         private readonly ConcurrentQueue<string> _messages;
-        private readonly CommandState[] _stateHolder;
+        private readonly CommandState?[] _stateHolder;
         private readonly string _assemblyName;
         private readonly string _typeName;
 
         protected Command(string assemblyName, string typeName)
         {
+            _stateHolder = new CommandState?[] { CommandState.Wait };
             _messages = new ConcurrentQueue<string>();
-            _stateHolder = new[] { CommandState.Wait };
             _assemblyName = assemblyName;
             _typeName = typeName;
         }
@@ -39,8 +40,8 @@ namespace Jetproger.Tools.Plugin.Commands
 
         public CommandState State
         {
-            get { return Ex.ReadOne(_stateHolder); }
-            private set { Ex.WriteOne(_stateHolder, value); }
+            get { return Je.One.Get(_stateHolder); }
+            private set { Je.One.Reset(_stateHolder); Je.One.Get(_stateHolder, () => value); }
         }
 
         public override void Write(string message)
@@ -263,7 +264,7 @@ namespace Jetproger.Tools.Plugin.Commands
                 SessionId = Guid.NewGuid(),
                 TypeName = _typeName,
                 AssemblyName = _assemblyName,
-                Json = Ex.Json.Write(this),
+                Json = Je.Json.Of(this),
                 Login = null,
                 Password = null,
                 IsRemote = (commandType == CommandType.Enabled && IsEnabledRemote) || IsExecuteRemote,
@@ -313,9 +314,9 @@ namespace Jetproger.Tools.Plugin.Commands
         {
             switch (commandType)
             {
-                case CommandType.Unexecute: UnexecuteCustom(); return Ex.Json.Write(this);
+                case CommandType.Unexecute: UnexecuteCustom(); return Je.Json.Of(this);
                 case CommandType.Enabled: return EnabledCustom() ? "1" : "0";
-                default: ExecuteCustom(); return Ex.Json.Write(this);
+                default: ExecuteCustom(); return Je.Json.Of(this);
             }
         }
 

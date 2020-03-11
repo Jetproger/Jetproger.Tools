@@ -8,8 +8,9 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Jetproger.Tools.Cache</RootNamespace>
     <AssemblyName>Jetproger.Tools.Cache</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -35,8 +36,9 @@
     <AssemblyOriginatorKeyFile>..\..\.solution\jetproger.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Jetproger.Tools.Convert">
-      <HintPath>..\..\.Jetproger.Tools.Convert\Jetproger.Tools.Convert.dll</HintPath>
+    <Reference Include="Jetproger.Tools.Convert, Version=0.0.0.0, Culture=neutral, PublicKeyToken=4eafed14cbc2d493, processorArchitecture=MSIL">
+      <HintPath>..\..\.solution\packages\Jetproger.Tools.Convert.1.1.0\lib\4.0\Jetproger.Tools.Convert.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -58,8 +60,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\CacheProxy.cs">
-      <Link>Bases\CacheProxy.cs</Link>
+    <Compile Include="..\Bases\CacheRemote.cs">
+      <Link>Bases\CacheRemote.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -81,11 +83,18 @@
     <None Include="..\..\.solution\jetproger.pfx">
       <Link>.project\jetproger.pfx</Link>
     </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Jetproger.Tools.Cache.nuspec">
+      <Link>.project\Jetproger.Tools.Cache.nuspec</Link>
+    </None>
   </ItemGroup>
   <Target Name="RemoveDirectories" BeforeTargets="ResolveReferences">
     <Exec Command="for /d %%p in (&quot;$(ProjectDir)&quot;\*) do if /I &quot;%%p&quot; neq &quot;$(ProjectDir)\obj&quot; (rd /Q /S &quot;%%p&quot;)" />
   </Target>
   <Target Name="RemoveObj" AfterTargets="Rebuild">
+    <Exec Command="call $(SolutionDir)post-build.bat $(SolutionDir) $(ProjectDir) $(TargetDir) $(ProjectName)" />
     <Exec Command="rd /Q /S &quot;$(ProjectDir)\obj&quot;" />
   </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

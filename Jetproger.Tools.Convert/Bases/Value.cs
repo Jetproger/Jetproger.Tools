@@ -5,12 +5,12 @@ using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
+using Jetproger.Tools.Convert.Converts;
 
 namespace Jetproger.Tools.Convert.Bases
 {
     public static class ValueExtensions
     {
-        private static readonly One<Type, type_info> TypeDescriptions = Ex.GetOne<Type, type_info>(x => new type_info(x));
         private static readonly Type DataTableType = typeof(DataTable);
         private static readonly Type DataSetType = typeof(DataSet);
         private static readonly Type GuidType = typeof(Guid);
@@ -36,7 +36,7 @@ namespace Jetproger.Tools.Convert.Bases
             foreach (var valueTable in vs.Tables)
             {
                 var currentType = types[tableIndex];
-                var currentInfo = TypeDescriptions[currentType];
+                var currentInfo = Jc.One<Type, type_info>.Get(currentType, x => new type_info(x));
                 foreach (object[] row in valueTable.Values)
                 {
                     var obj = currentInfo.GetObject(row);
@@ -104,7 +104,7 @@ namespace Jetproger.Tools.Convert.Bases
         {
             var vs = new ValueSet();
             var type = typeof(T);
-            var info = TypeDescriptions[type];
+            var info = Jc.One<Type, type_info>.Get(type, x => new type_info(x));
             var n = 0;
             vs.Tables = Write0(items, type, info, -1, ref n);
             return vs;
@@ -124,7 +124,7 @@ namespace Jetproger.Tools.Convert.Bases
             var type = typeof(T);
             if (!IsPrimitive(type))
             {
-                var info = TypeDescriptions[type];
+                var info = Jc.One<Type, type_info>.Get(type, x => new type_info(x));
                 var n = 0;
                 vs.Tables = Write0(items, type, info, -1, ref n);
                 return vs;
@@ -159,7 +159,7 @@ namespace Jetproger.Tools.Convert.Bases
                 var elements = itemGroups[i];
                 var elementRows = rowGroups[i++];
                 var elementType = tuple.Item2;
-                var elementInfo = TypeDescriptions[elementType];
+                var elementInfo = Jc.One<Type, type_info>.Get(elementType, x => new type_info(x));
                 tables.Add(new ValueTable { Columns = elementInfo.Columns, Types = elementInfo.Codes, Values = elementRows.ToArray() });
                 tables.AddRange(Write1(elements, elementRows, elementType, elementInfo, ref n));
             }
@@ -184,7 +184,7 @@ namespace Jetproger.Tools.Convert.Bases
                 var elements = itemGroups[i];
                 var elementRows = rowGroups[i++];
                 var elementType = tuple.Item2;
-                var elementInfo = TypeDescriptions[elementType];
+                var elementInfo = Jc.One<Type, type_info>.Get(elementType, x => new type_info(x));
                 tables.Add(new ValueTable { Columns = elementInfo.Columns, Types = elementInfo.Codes, Values = elementRows.ToArray() });
                 tables.AddRange(Write2(elements, elementRows, elementType, elementInfo, ref n));
             }
@@ -208,7 +208,7 @@ namespace Jetproger.Tools.Convert.Bases
                 var elements = itemGroups[i];
                 var elementRows = rowGroups[i++];
                 var elementType = tuple.Item2;
-                var elementInfo = TypeDescriptions[elementType];
+                var elementInfo = Jc.One<Type, type_info>.Get(elementType, x => new type_info(x));
                 tables.Add(new ValueTable { Columns = elementInfo.Columns, Types = elementInfo.Codes, Values = elementRows.ToArray() });
                 tables.AddRange(Write3(elements, elementRows, elementType, elementInfo, ref n));
             }
@@ -232,7 +232,7 @@ namespace Jetproger.Tools.Convert.Bases
                 var elements = itemGroups[i];
                 var elementRows = rowGroups[i++];
                 var elementType = tuple.Item2;
-                var elementInfo = TypeDescriptions[elementType];
+                var elementInfo = Jc.One<Type, type_info>.Get(elementType, x => new type_info(x));
                 tables.Add(new ValueTable { Columns = elementInfo.Columns, Types = elementInfo.Codes, Values = elementRows.ToArray() });
             }
             return tables.ToArray();
@@ -249,7 +249,7 @@ namespace Jetproger.Tools.Convert.Bases
                 var elementType = tuple.Item2;
                 var array = p.GetValue(item) as IEnumerable;
                 if (array == null) continue;
-                var elementInfo = TypeDescriptions[elementType];
+                var elementInfo = Jc.One<Type, type_info>.Get(elementType, x => new type_info(x));
                 foreach (var element in array)
                 {
                     var row = elementInfo.GetRow(element, ++n, nn);
@@ -357,7 +357,7 @@ namespace Jetproger.Tools.Convert.Bases
                 {
                     foreach (var type in Types)
                     {
-                        row[i++] = type.Default();
+                        row[i++] = Je.Meta.DefaultOf(type);
                     }
                     return row;
                 }
@@ -436,7 +436,7 @@ namespace Jetproger.Tools.Convert.Bases
 
         private static void GetStructure(Type type, List<Type> types)
         {
-            var info = TypeDescriptions[type];
+            var info = Jc.One<Type, type_info>.Get(type, x => new type_info(x));
             foreach (var tuple in info.Arrays)
             {
                 var elementType = tuple.Item2;
@@ -444,14 +444,14 @@ namespace Jetproger.Tools.Convert.Bases
                 types.Add(elementType);
                 GetStructure(elementType, types);
             }
-        } 
+        }
 
-        private static TypeCode TypeToCode(Type type)
+        public static TypeCode TypeToCode(Type type)
         {
             return Type.GetTypeCode(type);
         }
 
-        private static Type CodeToType(TypeCode typeCode)
+        public static Type CodeToType(TypeCode typeCode)
         {
             return typeCode != TypeCode.Object ? Type.GetType("System." + typeCode) : GuidType;
         }
@@ -462,7 +462,8 @@ namespace Jetproger.Tools.Convert.Bases
         }
     }
 
-    [DataContract][Serializable]
+    [DataContract]
+    [Serializable]
     public class ValueSet
     {
         private ValueTable[] _tables;
@@ -474,7 +475,8 @@ namespace Jetproger.Tools.Convert.Bases
             set { _tables = value; }
         }
     }
-    [DataContract][Serializable]
+    [DataContract]
+    [Serializable]
     public class ValueTable
     {
         private string[] _columns;
@@ -495,11 +497,59 @@ namespace Jetproger.Tools.Convert.Bases
             set { _types = value; }
         }
 
-        [DataMember]
         public object[][] Values
         {
             get { return _values; }
             set { _values = value; }
+        }
+
+        [DataMember]
+        public string[][] StringValues
+        {
+            get { return GetStringTable(_values); }
+            set { _values = GetObjectTable(value); }
+        }
+
+        private static string[][] GetStringTable(object[][] objectTable)
+        {
+            var stringTable = new List<string[]>();
+            foreach (object[] objectRow in (objectTable ?? new object[0][]))
+            {
+                var stringRow = GetStringRow(objectRow);
+                stringTable.Add(stringRow);
+            }
+            return stringTable.ToArray();
+        }
+
+        private object[][] GetObjectTable(string[][] stringTable)
+        {
+            var objectTable = new List<object[]>();
+            foreach (string[] stringRow in (stringTable ?? new string[0][]))
+            {
+                var objectRow = GetObjectRow(stringRow);
+                objectTable.Add(objectRow);
+            }
+            return objectTable.ToArray();
+        }
+
+        private static string[] GetStringRow(object[] objectRow)
+        {
+            if (objectRow == null) return null;
+            var stringRow = new string[objectRow.Length];
+            for (int i = 0; i < objectRow.Length; i++) stringRow[i] = Je.Txt.Of(objectRow[i]);
+            return stringRow;
+        }
+
+        private object[] GetObjectRow(string[] stringRow)
+        {
+            if (stringRow == null) return null;
+            var objectRow = new object[stringRow.Length];
+            for (int i = 0; i < stringRow.Length; i++)
+            {
+                var type = ValueExtensions.CodeToType(Types[i]);
+                objectRow[i] = Je.Txt.To(stringRow[i], type);
+            }
+            return objectRow;
         }
     }
 }

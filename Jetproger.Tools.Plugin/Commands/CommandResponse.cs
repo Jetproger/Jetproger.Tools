@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Convert.Converts;
 
 namespace Jetproger.Tools.Plugin.Commands
 {

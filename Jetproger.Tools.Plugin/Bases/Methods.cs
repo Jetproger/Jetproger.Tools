@@ -6,6 +6,7 @@ using System.ServiceModel;
 using System.ServiceProcess;
 using System.Threading;
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Convert.Converts;
 using Jetproger.Tools.Plugin.Commands;
 using Jetproger.Tools.Plugin.Services;
 using Newtonsoft.Json;
@@ -17,7 +18,7 @@ namespace Jetproger.Tools.Plugin.Bases
         private static readonly JsonSerializer JsonSerializer = new JsonSerializer { Formatting = Formatting.None, ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.Objects };
         private static readonly CultureInfo FormatProvider = new CultureInfo("en-us") { NumberFormat = { NumberGroupSeparator = string.Empty, NumberDecimalSeparator = "." }, DateTimeFormat = { DateSeparator = "-", TimeSeparator = ":" } };
 
-        private static Dictionary<string, string> ConfigKeys => Ex.GetOne(ConfigKeysHolder, GetConfigurationKeys);
+        private static Dictionary<string, string> ConfigKeys => Je.One.Get(ConfigKeysHolder, GetConfigurationKeys);
         private static readonly Dictionary<string, string>[] ConfigKeysHolder = { null };
 
         public static string ConfigAsString(string key, string defaultValue)
@@ -62,7 +63,7 @@ namespace Jetproger.Tools.Plugin.Bases
             if (e is CommunicationObjectAbortedException) return default(T);
             if (e is CommunicationException) return default(T);
             System.Diagnostics.Trace.WriteLine(e.As<string>());
-            return (typeof(T)).IsTypeOf(typeof(Exception)) ? (T)(object)e : default(T);
+            return Je.Meta.IsTypeOf(typeof(T), typeof(Exception)) ? (T)(object)e : default(T);
         }
 
         public static void GarbageCollect()

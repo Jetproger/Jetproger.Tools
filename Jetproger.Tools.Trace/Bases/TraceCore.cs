@@ -7,13 +7,13 @@ namespace Jetproger.Tools.Trace.Bases
     public static class TraceCore
     {
         private static readonly Dictionary<string, Logger> Loggers = new Dictionary<string, Logger>();
-        private static NlogConfig Config { get { return Ex.GetOne(ConfigHolder, ReadConfig); } }
+        private static NlogConfig Config { get { return Je.One.Get(ConfigHolder, ReadConfig); } }
         private static readonly NlogConfig[] ConfigHolder = { null };
         private static readonly string[] AppUserHolder = { null };
 
         public static string AppUser
         {
-            get { return Ex.ReadOne(AppUserHolder); }
+            get { return Je.One.Get(AppUserHolder); }
         }
 
         public static void SetAppUser(string appUser)
@@ -44,7 +44,7 @@ namespace Jetproger.Tools.Trace.Bases
             }
         }
 
-        public static void Write(string loggerName, ExTicket ticket)
+        public static void Write(string loggerName, Jc.Ticket ticket)
         {
             var message = !string.IsNullOrWhiteSpace(ticket.Description) ? ticket.Description : ticket.Text;
             if (string.IsNullOrWhiteSpace(message)) return;

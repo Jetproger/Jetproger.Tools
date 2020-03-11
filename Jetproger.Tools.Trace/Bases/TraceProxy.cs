@@ -1,8 +1,9 @@
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Trace.Bases;
 
-namespace Jetproger.Tools.Trace.Bases
+namespace je
 {
-    public class TraceProxy : OneProxy
+    public class TraceRemote : RemoteCaller
     {
         public void SetAppUser(string appUser)
         {

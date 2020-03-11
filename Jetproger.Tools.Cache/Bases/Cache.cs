@@ -8,7 +8,7 @@ namespace Jetproger.Tools.Cache.Bases
 {
     public static class Cache
     {
-        private static readonly CacheProxy GlobalCache = Ex.GetOne<CacheProxy>();
+        private static readonly CacheRemote GlobalCache = Jc.Rpc<CacheRemote>.Ge;
 
         #region Read
 

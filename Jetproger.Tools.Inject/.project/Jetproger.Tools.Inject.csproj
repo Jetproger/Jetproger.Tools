@@ -8,8 +8,9 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Jetproger.Tools.Injection</RootNamespace>
     <AssemblyName>Jetproger.Tools.Injection</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -93,8 +94,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\UnityProxy.cs">
-      <Link>Bases\UnityProxy.cs</Link>
+    <Compile Include="..\Bases\UnityRemote.cs">
+      <Link>Bases\UnityRemote.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -110,18 +111,18 @@
   <ItemGroup>
     <Compile Include="..\..\.solution\AssemblyInfo.cs">
       <Link>.project\AssemblyInfo.cs</Link>
-	</Compile>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\.solution\jetproger.pfx">
       <Link>.project\jetproger.pfx</Link>
-	</None>
+    </None>
   </ItemGroup>
   <Target Name="RemoveDirectories" BeforeTargets="ResolveReferences">
-      <Exec Command = 'for /d %%p in ("$(ProjectDir)"\*) do if /I "%%p" neq "$(ProjectDir)\obj" (rd /Q /S "%%p")' />
+    <Exec Command="for /d %%p in (&quot;$(ProjectDir)&quot;\*) do if /I &quot;%%p&quot; neq &quot;$(ProjectDir)\obj&quot; (rd /Q /S &quot;%%p&quot;)" />
   </Target>
   <Target Name="RemoveObj" AfterTargets="Rebuild">
-      <Exec Command = 'rd /Q /S "$(ProjectDir)\obj"' />
+    <Exec Command="rd /Q /S &quot;$(ProjectDir)\obj&quot;" />
   </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

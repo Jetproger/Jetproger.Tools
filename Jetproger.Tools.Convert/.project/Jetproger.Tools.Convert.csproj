@@ -8,8 +8,9 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Jetproger.Tools.Convert</RootNamespace>
     <AssemblyName>Jetproger.Tools.Convert</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -46,100 +47,236 @@
     <Reference Include="System.Web.Extensions" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Bases\Base.cs">
+      <Link>Bases\Base.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\Ext.cs">
+      <Link>Bases\Ext.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\Gui.cs">
+      <Link>Bases\Gui.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\Meta.cs">
+      <Link>Bases\Meta.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="..\Bases\Ex.cs">
       <Link>Bases\Ex.cs</Link>
-	</Compile>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Bases\One.cs">
       <Link>Bases\One.cs</Link>
-	</Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\String.cs">
-      <Link>Bases\String.cs</Link>
-	</Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\Xml.cs">
-      <Link>Bases\Xml.cs</Link>
-	</Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\Convert.cs">
-      <Link>Bases\Convert.cs</Link>
-	</Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\Json.cs">
-      <Link>Bases\Json.cs</Link>
-	</Compile>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Bases\Value.cs">
       <Link>Bases\Value.cs</Link>
-	</Compile>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\Image.cs">
-      <Link>Bases\Image.cs</Link>
-	</Compile>
+    <Compile Include="..\Bases\Exception.cs">
+      <Link>Bases\Exception.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\ExException.cs">
-      <Link>Bases\ExException.cs</Link>
-	</Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\ExTicket.cs">
-      <Link>Bases\ExTicket.cs</Link>
-	</Compile>
+    <Compile Include="..\Bases\Ticket.cs">
+      <Link>Bases\Ticket.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Bases\ExSetting.cs">
       <Link>Bases\ExSetting.cs</Link>
-	</Compile>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Bases\Guard.cs">
       <Link>Bases\Guard.cs</Link>
-	</Compile>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Bases\Console.cs">
       <Link>Bases\Console.cs</Link>
-	</Compile>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Bases\Config.cs">
       <Link>Bases\Config.cs</Link>
-	</Compile>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Bases\Resource.cs">
       <Link>Bases\Resource.cs</Link>
-	</Compile>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Bases\Starter.cs">
       <Link>Bases\Starter.cs</Link>
-	</Compile>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Remotes\RemoteCaller.cs">
+      <Link>Remotes\RemoteCaller.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Remotes\Rpc.cs">
+      <Link>Remotes\Rpc.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Converts\BaseTxt.cs">
+      <Link>Converts\BaseTxt.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Converts\Txt.cs">
+      <Link>Converts\Txt.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Converts\BaseBin.cs">
+      <Link>Converts\BaseBin.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Converts\Bin.cs">
+      <Link>Converts\Bin.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Converts\Convert.cs">
+      <Link>Converts\Convert.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Converts\BaseJson.cs">
+      <Link>Converts\BaseJson.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Converts\File.cs">
+      <Link>Converts\File.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Converts\Json.cs">
+      <Link>Converts\Json.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Converts\BaseXml.cs">
+      <Link>Converts\BaseXml.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Converts\Xml.cs">
+      <Link>Converts\Xml.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Datasets\DataHelp.cs">
+      <Link>Datasets\DataHelp.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Datasets\DataInfo.cs">
+      <Link>Datasets\DataInfo.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Datasets\DataTuple.cs">
+      <Link>Datasets\DataTuple.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Datasets\DataField.cs">
+      <Link>Datasets\DataField.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Datasets\DataStyle.cs">
+      <Link>Datasets\DataStyle.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Datasets\DataBlock.cs">
+      <Link>Datasets\DataBlock.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Datasets\DataScope.cs">
+      <Link>Datasets\DataScope.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Queries\QueryAnd.cs">
+      <Link>Queries\QueryAnd.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Queries\QueryData.cs">
+      <Link>Queries\QueryData.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Queries\QueryMatch.cs">
+      <Link>Queries\QueryMatch.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Queries\QueryOp.cs">
+      <Link>Queries\QueryOp.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Queries\QueryOr.cs">
+      <Link>Queries\QueryOr.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Queries\QueryScope.cs">
+      <Link>Queries\QueryScope.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Queries\QueryWhere.cs">
+      <Link>Queries\QueryWhere.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Settings\Setting.cs">
+      <Link>Settings\Setting.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\.solution\AssemblyInfo.cs">
       <Link>.project\AssemblyInfo.cs</Link>
-	</Compile>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\.solution\jetproger.pfx">
       <Link>.project\jetproger.pfx</Link>
-	</None>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Jetproger.Tools.Convert.nuspec">
+      <Link>.project\Jetproger.Tools.Convert.nuspec</Link>
+    </None>
   </ItemGroup>
   <Target Name="RemoveDirectories" BeforeTargets="ResolveReferences">
-      <Exec Command = 'for /d %%p in ("$(ProjectDir)"\*) do if /I "%%p" neq "$(ProjectDir)\obj" (rd /Q /S "%%p")' />
+    <Exec Command="for /d %%p in (&quot;$(ProjectDir)&quot;\*) do if /I &quot;%%p&quot; neq &quot;$(ProjectDir)\obj&quot; (rd /Q /S &quot;%%p&quot;)" />
   </Target>
   <Target Name="RemoveObj" AfterTargets="Rebuild">
-      <Exec Command = 'rd /Q /S "$(ProjectDir)\obj"' />
+    <Exec Command="call $(SolutionDir)post-build.bat $(SolutionDir) $(ProjectDir) $(TargetDir) $(ProjectName)" />
+    <Exec Command="rd /Q /S &quot;$(ProjectDir)\obj&quot;" />
   </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

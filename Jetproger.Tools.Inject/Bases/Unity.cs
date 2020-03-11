@@ -1,7 +1,6 @@
 using System;
 using System.Reflection;
 using System.Text;
-using System.Threading;
 using Jetproger.Tools.Convert.Bases;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
@@ -10,23 +9,19 @@ namespace Jetproger.Tools.Injection.Bases
 {
     public static class UnityExtensions
     {
-        private static IUnityContainer Container => Ex.GetOne(ContainerHolder, RegisterContainer);
-        private static readonly UnityProxy GlobalUnity = Ex.GetOne<UnityProxy>();
+        private static IUnityContainer Container => Je.One.Get(ContainerHolder, RegisterContainer);
         private static readonly IUnityContainer[] ContainerHolder = { null };
+        private static void Register(IUnityContainer container) { }
 
         public static void Register(this IInjectionExpander expander)
         {
             Register(Container);
         }
 
-        private static void Register(IUnityContainer container)
-        {
-        }
-
         private static IUnityContainer RegisterContainer()
         {
             var section = new ExUnitySection();
-            section.DeserializeSection(GlobalUnity.GetConfig());
+            section.DeserializeSection(Jc.Rpc<UnityRemote>.Ge.GetConfig());
             var container = new UnityContainer();
             section.Configure(container);
             return container;

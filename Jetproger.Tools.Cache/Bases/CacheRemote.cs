@@ -1,8 +1,6 @@
-using Jetproger.Tools.Convert.Bases;
-
 namespace Jetproger.Tools.Cache.Bases
 {
-    public class CacheProxy : OneProxy
+    public class CacheRemote : Jc.RemoteCaller
     {
         public void Write(object[] keys, object value, int lifetime)
         {

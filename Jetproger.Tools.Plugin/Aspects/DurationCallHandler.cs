@@ -53,7 +53,7 @@ namespace Jetproger.Tools.Plugin.Aspects
         {
             try
             {
-                var typedMessage = Ex.Dotnet.CreateInstance(TraceType, new object[] { durationMessage, null }) as ExTicket;
+                var typedMessage = Ex.Dotnet.CreateInstance(TraceType, new object[] { durationMessage, null }) as Jc.Ticket;
                 if (typedMessage == null) return false;
                 System.Diagnostics.Trace.WriteLine(typedMessage);
                 return true;

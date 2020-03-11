@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Jetproger.Tools.Cache.Bases;
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Convert.Converts;
 using Jetproger.Tools.Injection.Bases;
 using Jetproger.Tools.Plugin.Commands;
 using Jetproger.Tools.Structure.Bases;
@@ -23,7 +24,7 @@ namespace Jetproger.Tools.Plugin.Bases
             if (value != null)
             {
                 var type = value.GetType();
-                stringValue = ValueExtensions.IsPrimitive(type) ? value.As<string>() : Ex.Json.Write(value);
+                stringValue = ValueExtensions.IsPrimitive(type) ? value.As<string>() : Je.Json.Of(value);
             }
             item.Value = stringValue;
         }
