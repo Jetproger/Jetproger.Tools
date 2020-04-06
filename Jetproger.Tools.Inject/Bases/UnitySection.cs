@@ -2,7 +2,7 @@ using System.IO;
 using System.Xml;
 using Microsoft.Practices.Unity.Configuration;
 
-namespace Jetproger.Tools.Injection.Bases
+namespace Jetproger.Tools.Inject.Bases
 {
     public class ExUnitySection : UnityConfigurationSection
     {

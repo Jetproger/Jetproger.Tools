@@ -36,10 +36,6 @@
     <AssemblyOriginatorKeyFile>..\..\.solution\jetproger.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Jetproger.Tools.Convert, Version=0.0.0.0, Culture=neutral, PublicKeyToken=4eafed14cbc2d493, processorArchitecture=MSIL">
-      <HintPath>..\..\.solution\packages\Jetproger.Tools.Convert.1.1.0\lib\4.0\Jetproger.Tools.Convert.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.configuration" />
@@ -83,18 +79,28 @@
     <None Include="..\..\.solution\jetproger.pfx">
       <Link>.project\jetproger.pfx</Link>
     </None>
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Jetproger.Tools.Cache.nuspec">
+    <None Include="..\.setting\Jetproger.Tools.Cache.nuspec">
       <Link>.project\Jetproger.Tools.Cache.nuspec</Link>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\.setting\packages.config">
+      <Link>.project\packages.config</Link>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Jetproger.Tools.Convert\.project\Jetproger.Tools.Convert.csproj">
+      <Project>{600aa7dc-ea39-4609-ab2a-3546bb5f8b72}</Project>
+      <Name>Jetproger.Tools.Convert</Name>
+    </ProjectReference>
   </ItemGroup>
   <Target Name="RemoveDirectories" BeforeTargets="ResolveReferences">
     <Exec Command="for /d %%p in (&quot;$(ProjectDir)&quot;\*) do if /I &quot;%%p&quot; neq &quot;$(ProjectDir)\obj&quot; (rd /Q /S &quot;%%p&quot;)" />
   </Target>
   <Target Name="RemoveObj" AfterTargets="Rebuild">
-    <Exec Command="call $(SolutionDir)post-build.bat $(SolutionDir) $(ProjectDir) $(TargetDir) $(ProjectName)" />
+    <!--<Exec Command="call $(SolutionDir)post-build.bat $(SolutionDir) $(ProjectDir) $(TargetDir) $(ProjectName)" />-->
     <Exec Command="rd /Q /S &quot;$(ProjectDir)\obj&quot;" />
   </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

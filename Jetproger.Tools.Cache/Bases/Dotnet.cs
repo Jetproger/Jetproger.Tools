@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Resources;
 using System.Web;
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Convert.Converts;
 
 namespace Jetproger.Tools.Cache.Bases
 {
@@ -626,7 +627,7 @@ namespace Jetproger.Tools.Cache.Bases
                 setting.Description = GetSettingValue(setting, setting.Description, GetResourceDescriptions(expander, setting.AssemblyName, setting.Code));
                 setting.Shortcut = GetSettingValue(setting, setting.Shortcut, GetResourceShortcuts(expander, setting.AssemblyName, setting.Code));
                 setting.SpecName = GetSettingValue(setting, setting.SpecName, GetResourceSpecifies(expander, setting.AssemblyName, setting.Code));
-                setting.Picture = System.Convert.FromBase64String(GetSettingValue(setting, ImageExtensions.DefaultImageString, GetResourcePictures(expander, setting.AssemblyName, setting.Code)));
+                setting.Picture = System.Convert.FromBase64String(GetSettingValue(setting, GuiExtensions.GetDefaultImageAsString(), GetResourcePictures(expander, setting.AssemblyName, setting.Code)));
                 setting.Validate();
                 return setting;
             });

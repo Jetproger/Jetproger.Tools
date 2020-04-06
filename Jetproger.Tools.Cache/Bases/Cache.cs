@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Resources;
 using System.Threading;
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Convert.Converts;
 
 namespace Jetproger.Tools.Cache.Bases
 {

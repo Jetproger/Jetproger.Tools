@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Jetproger.Tools.File</id>
+    <version>1.2.0</version>
+    <title>Jetproger.Tools.File</title>
+    <authors>Jetproger</authors>
+    <owners>Jetproger</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Jetproger.Tools.File</description>
+    <releaseNotes>Jetproger.Tools.File</releaseNotes>
+    <copyright>Copyright 2020</copyright>
+    <tags>Jetproger.Tools File</tags>
+    <dependencies>
+      <group>
+        <dependency id="Jetproger.Tools.Convert" version="1.2.0.0" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="Jetproger.Tools.File.dll" target="lib\4.0" /> 
+  </files>
+</package>

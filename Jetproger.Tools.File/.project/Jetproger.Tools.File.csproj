@@ -142,6 +142,11 @@
       <Link>.project\jetproger.pfx</Link>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\.setting\Jetproger.Tools.File.nuspec">
+      <Link>.project\Jetproger.Tools.File.nuspec</Link>
+    </None>
+  </ItemGroup>
   <Target Name="RemoveDirectories" BeforeTargets="ResolveReferences">
     <Exec Command="for /d %%p in (&quot;$(ProjectDir)&quot;\*) do if /I &quot;%%p&quot; neq &quot;$(ProjectDir)\obj&quot; (rd /Q /S &quot;%%p&quot;)" />
   </Target>

@@ -13,11 +13,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jetproger.Tools.File", "..\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jetproger.Tools.Native", "..\Jetproger.Tools.Native\.project\Jetproger.Tools.Native.csproj", "{635C1C60-606C-43A1-919C-DD4908057912}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jetproger.Tools.Plugin", "..\Jetproger.Tools.Plugin\.project\Jetproger.Tools.Plugin.csproj", "{65A6524A-A322-468B-BF0B-A69064F8C8F5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jetproger.Tools.Process", "..\Jetproger.Tools.Process\.project\Jetproger.Tools.Process.csproj", "{65A6524A-A322-468B-BF0B-A69064F8C8F5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jetproger.Tools.Resource", "..\Jetproger.Tools.Resource\.project\Jetproger.Tools.Resource.csproj", "{942718E0-35B1-4E52-900E-1709B6808968}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jetproger.Tools.Structure", "..\Jetproger.Tools.Structure\.project\Jetproger.Tools.Structure.csproj", "{F2644829-D8F4-4CFF-BF32-46745BEF2638}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jetproger.Tools.Model", "..\Jetproger.Tools.Model\.project\Jetproger.Tools.Model.csproj", "{F2644829-D8F4-4CFF-BF32-46745BEF2638}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jetproger.Tools.Trace", "..\Jetproger.Tools.Trace\.project\Jetproger.Tools.Trace.csproj", "{ADE5BFBB-508C-4A3B-BF93-A9BA4570E4E1}"
 EndProject

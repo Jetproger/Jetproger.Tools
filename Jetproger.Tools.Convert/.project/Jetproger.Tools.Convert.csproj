@@ -267,7 +267,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Jetproger.Tools.Convert.nuspec">
+    <None Include="..\.setting\Jetproger.Tools.Convert.nuspec">
       <Link>.project\Jetproger.Tools.Convert.nuspec</Link>
     </None>
   </ItemGroup>
@@ -275,7 +275,7 @@
     <Exec Command="for /d %%p in (&quot;$(ProjectDir)&quot;\*) do if /I &quot;%%p&quot; neq &quot;$(ProjectDir)\obj&quot; (rd /Q /S &quot;%%p&quot;)" />
   </Target>
   <Target Name="RemoveObj" AfterTargets="Rebuild">
-    <Exec Command="call $(SolutionDir)post-build.bat $(SolutionDir) $(ProjectDir) $(TargetDir) $(ProjectName)" />
+    <!--<Exec Command="call $(SolutionDir)post-build.bat $(SolutionDir) $(ProjectDir) $(TargetDir) $(ProjectName)" />-->
     <Exec Command="rd /Q /S &quot;$(ProjectDir)\obj&quot;" />
   </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

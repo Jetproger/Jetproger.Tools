@@ -1,6 +1,6 @@
 using System;
 
-namespace Jetproger.Tools.Injection.Bases
+namespace Jetproger.Tools.Inject.Bases
 {
     [AttributeUsage(AttributeTargets.Class)]
     public class UnityLifetimeAttribute : Attribute

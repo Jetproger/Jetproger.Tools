@@ -1,6 +1,4 @@
-using Jetproger.Tools.Convert.Bases;
-
-namespace Jetproger.Tools.Injection.Bases
+namespace Jetproger.Tools.Inject.Bases
 {
     public class UnityRemote : Jc.RemoteCaller
     {

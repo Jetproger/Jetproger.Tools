@@ -7,7 +7,7 @@ using System.Text;
 using System.Web;
 using System.Xml.Serialization;
 
-namespace Jetproger.Tools.Injection.Bases
+namespace Jetproger.Tools.Inject.Bases
 {
     [XmlRoot("configuration")]
     public class UnityConfiguration

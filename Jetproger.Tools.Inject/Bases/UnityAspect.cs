@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Jetproger.Tools.Injection.Bases
+namespace Jetproger.Tools.Inject.Bases
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public abstract class UnityAspectAttribute : Attribute

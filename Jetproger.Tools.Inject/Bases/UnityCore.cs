@@ -8,7 +8,7 @@ using System.Xml;
 using Jetproger.Tools.Convert.Bases;
 using Microsoft.Practices.Unity.InterceptionExtension;
 
-namespace Jetproger.Tools.Injection.Bases
+namespace Jetproger.Tools.Inject.Bases
 {
     public static class UnityCore
     {
