@@ -38,6 +38,7 @@
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -54,6 +55,11 @@
   <ItemGroup>
     <Compile Include="..\Bases\Ext.cs">
       <Link>Bases\Ext.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\Entity.cs">
+      <Link>Bases\Entity.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -92,8 +98,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\ExSetting.cs">
-      <Link>Bases\ExSetting.cs</Link>
+    <Compile Include="..\Bases\Setting.cs">
+      <Link>Bases\Setting.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -122,18 +128,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Remotes\RemoteCaller.cs">
-      <Link>Remotes\RemoteCaller.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Remotes\Rpc.cs">
-      <Link>Remotes\Rpc.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Converts\BaseTxt.cs">
-      <Link>Converts\BaseTxt.cs</Link>
+    <Compile Include="..\Converts\Sz.cs">
+      <Link>Converts\Sz.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -162,8 +158,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Converts\File.cs">
-      <Link>Converts\File.cs</Link>
+    <Compile Include="..\Bases\FileStore.cs">
+      <Link>Bases\FileStore.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

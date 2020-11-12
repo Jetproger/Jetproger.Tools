@@ -1,45 +1,125 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Convert.Converts;
 
 namespace Jetproger.Tools.Convert.Bases
 {
-    public static partial class Ex
+    public abstract class ConsoleSetting<T> : MarshalByRefObject, ISetting
     {
-        private static ISettingFactory _consoleSettingFactory = new DefaultSettingFactory();
+        protected readonly IEnumerable<string> Keys;
+        public bool IsDeclared { get; private set; }
+        public T Value { get; private set; }
 
-        public static void RegisterConsoleSettingFactory(ISettingFactory settingFactory)
+        protected ConsoleSetting(T defaultValue, params string[] keys)
         {
-            _consoleSettingFactory = settingFactory;
+            var list = new List<string>();
+            list.Add(GetType().Name);
+            list.AddRange(keys);
+            for (int i = 0; i < list.Count; i++) list[i] = (list[i] ?? string.Empty).ToLower();
+            Keys = list;
+            IsDeclared = ConsoleExtensions.IsDeclared(Keys);
+            Value = GetValue(defaultValue);
         }
 
-        public static class Ln<T> where T : ExSetting
+        protected virtual T GetValue(T defaultValue)
         {
-            private static readonly T[] Holder = { null };
+            return ConsoleExtensions.GetValue(Keys, defaultValue);
+        }
 
-            public static bool IsValid => One.IsValid;
+        bool ISetting.IsDeclared()
+        {
+            return IsDeclared;
+        }
 
-            public static bool IsDeclare => One.IsDeclare;
+        string ISetting.GetValue()
+        {
+            return Value.As<string>();
+        }
+    }
 
-            public static string Key => One.Code;
+    public static class ConsoleExtensions
+    {
+        private static readonly Dictionary<string, string> Arguments = new Dictionary<string, string>();
 
-            public static string Text => One.Name;
-
-            private static T One
+        public static void ParseArguments(string[] args)
+        {
+            lock (Arguments)
             {
-                get
+                Arguments.Clear();
+                foreach (var arg in args)
                 {
-                    if (Holder[0] == null)
+                    string key, value;
+                    if (!ParseArgument(arg, out key, out value)) continue;
+                    key = key.ToLower();
+                    if (!Arguments.ContainsKey(key)) Arguments.Add(key, value);
+                }
+            }
+        }
+
+        private static bool ParseArgument(string arg, out string key, out string value)
+        {
+            key = null;
+            value = null;
+            if (string.IsNullOrWhiteSpace(arg)) return false;
+            arg = arg.ToLower();
+            var colonIndex = arg.IndexOf(":", StringComparison.Ordinal);
+            if (colonIndex < 0)
+            {
+                key = arg;
+                return true;
+            }
+            if (colonIndex == 0)
+            {
+                return false;
+            }
+            key = arg.Substring(0, colonIndex);
+            colonIndex++;
+            if (colonIndex < arg.Length)
+            {
+                value = arg.Substring(colonIndex);
+            }
+            return true;
+        }
+
+        public static bool IsDeclared(IEnumerable<string> keys)
+        {
+            lock (Arguments)
+            {
+                try
+                {
+                    return keys.Any(arg => Arguments.ContainsKey(arg));
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+        }
+
+        public static T GetValue<T>(IEnumerable<string> keys, T defaultValue)
+        {
+            lock (Arguments)
+            {
+                try
+                {
+                    foreach (var key in keys)
                     {
-                        lock (Holder)
-                        {
-                            if (Holder[0] == null)
-                            {
-                                Holder[0] = (T)_consoleSettingFactory.CreateSetting(typeof(T));
-                            }
-                        }
+                        if (Arguments.ContainsKey(key)) return Arguments[key].As<T>();
                     }
-                    return Holder[0];
+                    return defaultValue;
+                }
+                catch
+                {
+                    return defaultValue;
                 }
             }
         }
     }
+}
+namespace Jetproger.Tools.AppConsole
+{
+    public class Uninstall : ConsoleSetting<string> { public Uninstall() : base(string.Empty, "u") { } }
+    public class Install : ConsoleSetting<string> { public Install() : base(string.Empty, "i") { } }
 }

@@ -16,8 +16,8 @@ namespace Jetproger.Tools.Convert.Converts
             var typeTo = typeof(T);
             if (typeFr == typeTo) return (T)value;
             if (Je.Meta.IsTypeOf(typeFr, typeTo)) return (T)value;
-            if (value is string) return Je.Txt.To<T>((string)value);
-            if (typeTo == typeof(string)) return (T)(object)Je.Txt.Of(value);
+            if (value is string) return Je.Sz.To<T>((string)value);
+            if (typeTo == typeof(string)) return (T)(object)Je.Sz.Of(value);
             if (value is Jc.DataScope) return (new DataDeserializer<T>((Jc.DataScope)value)).Item;
             if (typeTo == typeof (Jc.DataScope)) return (T)(object)(new DataSerializer(value)).DataScope;
             if (value is Icon && typeTo == typeof(Image)) return (T)(object)Je.Gui.GetIconAsImage((Icon)value);

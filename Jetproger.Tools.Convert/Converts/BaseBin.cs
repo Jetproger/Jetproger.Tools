@@ -4,7 +4,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace Jc
+namespace Jetproger.Tools.Convert.Converts
 {
     public static class Bin<T> where T : BaseBin, new()
     {

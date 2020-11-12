@@ -9,7 +9,7 @@ namespace Jetproger.Tools.Cache.Bases
 {
     public static class Cache
     {
-        private static readonly CacheRemote GlobalCache = Jc.Rpc<CacheRemote>.Ge;
+        private static readonly CacheRemote GlobalCache = Jc.Rpc<CacheRemote>.Ex;
 
         #region Read
 
