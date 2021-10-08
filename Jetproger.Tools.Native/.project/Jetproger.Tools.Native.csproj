@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Jetproger.Tools.Native</RootNamespace>
     <AssemblyName>Jetproger.Tools.Native</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -39,6 +39,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
@@ -56,168 +57,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\DrawTextFormats.cs">
-      <Link>Bases\DrawTextFormats.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\EditControlMargins.cs">
-      <Link>Bases\EditControlMargins.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\EditControlMessages.cs">
-      <Link>Bases\EditControlMessages.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\EditControlNotifications.cs">
-      <Link>Bases\EditControlNotifications.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\EditControlStyles.cs">
-      <Link>Bases\EditControlStyles.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\FileCodes.cs">
-      <Link>Bases\FileCodes.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\HitTests.cs">
-      <Link>Bases\HitTests.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\LanCollection.cs">
-      <Link>Bases\LanCollection.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\MdiCreateStruct.cs">
-      <Link>Bases\MdiCreateStruct.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\NonScrollableMdiClient.cs">
-      <Link>Bases\NonScrollableMdiClient.cs</Link>
+    <Compile Include="..\Bases\Types.cs">
+      <Link>Bases\Types.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Bases\Native.cs">
       <Link>Bases\Native.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\Point.cs">
-      <Link>Bases\Point.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\Rect.cs">
-      <Link>Bases\Rect.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\ServerTypes.cs">
-      <Link>Bases\ServerTypes.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\ServerInfo.cs">
-      <Link>Bases\ServerInfo.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\ShellFileInfos.cs">
-      <Link>Bases\ShellFileInfos.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\ShFileInfo.cs">
-      <Link>Bases\ShFileInfo.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\SystemMetrics.cs">
-      <Link>Bases\SystemMetrics.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\TreeViewMessages.cs">
-      <Link>Bases\TreeViewMessages.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\TvInsertStruct.cs">
-      <Link>Bases\TvInsertStruct.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\TvItem.cs">
-      <Link>Bases\TvItem.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\WindowActivateStates.cs">
-      <Link>Bases\WindowActivateStates.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\WindowLongs.cs">
-      <Link>Bases\WindowLongs.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\WindowMessages.cs">
-      <Link>Bases\WindowMessages.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\WindowPositions.cs">
-      <Link>Bases\WindowPositions.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\WindowPosStruct.cs">
-      <Link>Bases\WindowPosStruct.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\WindowShows.cs">
-      <Link>Bases\WindowShows.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\WindowStyles.cs">
-      <Link>Bases\WindowStyles.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\CertPublicKeyInfo.cs">
-      <Link>Bases\CertPublicKeyInfo.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\CryptAlgorithmIdentifier.cs">
-      <Link>Bases\CryptAlgorithmIdentifier.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\CryptBitBlob.cs">
-      <Link>Bases\CryptBitBlob.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\CryptObjidBlob.cs">
-      <Link>Bases\CryptObjidBlob.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\CryptCodes.cs">
-      <Link>Bases\CryptCodes.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

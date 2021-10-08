@@ -29,8 +29,8 @@ namespace Jetproger.Tools.Trace.Bases
         public static void Write(this ITraceExpander expander, object message)
         {
             InitializeFileLogger(FileLogger);
-            var ticket = new Jc.Ticket();
-            var jce = message as Jc.Exception;
+            var ticket = new Ticket();
+            var jce = message as Je.Exception;
             if (jce != null)
             {
                 WriteTicket(ticket, true, jce.Text, jce.Description);
@@ -39,11 +39,11 @@ namespace Jetproger.Tools.Trace.Bases
             var exception = message as Exception;
             if (exception != null)
             {
-                var ex = new Jc.Exception(exception);
+                var ex = new Je.Exception(exception);
                 WriteTicket(ticket, true, ex.Text, ex.Description);
                 return;
             }
-            var msgTicket = message as Jc.Ticket;
+            var msgTicket = message as Ticket;
             if (msgTicket != null)
             {
                 WriteTicket(ticket, msgTicket.IsException, msgTicket.Text, msgTicket.Description);
@@ -53,11 +53,11 @@ namespace Jetproger.Tools.Trace.Bases
             WriteTicket(ticket, false, text, text);
         }
 
-        public static void Write<T>(this ITraceExpander expander, object message) where T : Jc.Ticket, new()
+        public static void Write<T>(this ITraceExpander expander, object message) where T : Ticket, new()
         {
             InitializeFileLogger(FileLogger);
             var ticket = new T();
-            var jce = message as Jc.Exception;
+            var jce = message as Je.Exception;
             if (jce != null)
             {
                 WriteTicket(ticket, true, jce.Text, jce.Description);
@@ -66,11 +66,11 @@ namespace Jetproger.Tools.Trace.Bases
             var exception = message as Exception;
             if (exception != null)
             {
-                var ex = new Jc.Exception(exception);
+                var ex = new Je.Exception(exception);
                 WriteTicket(ticket, true, ex.Text, ex.Description);
                 return;
             }
-            var msgTicket = message as Jc.Ticket;
+            var msgTicket = message as Ticket;
             if (msgTicket != null)
             {
                 WriteTicket(ticket, msgTicket.IsException, msgTicket.Text, msgTicket.Description);
@@ -80,7 +80,7 @@ namespace Jetproger.Tools.Trace.Bases
             WriteTicket(ticket, false, text, text);
         }
 
-        private static void WriteTicket(Jc.Ticket ticket, bool isException, string text, string description)
+        private static void WriteTicket(Ticket ticket, bool isException, string text, string description)
         {
             ticket.IsException = isException;
             ticket.Text = text;
@@ -88,7 +88,7 @@ namespace Jetproger.Tools.Trace.Bases
             if (!string.IsNullOrWhiteSpace(ticket.Text) || !string.IsNullOrWhiteSpace(ticket.Description)) System.Diagnostics.Trace.WriteLine(ticket);
         }
 
-        public static void WriteToFileLogger(string loggerName, Jc.Ticket ticket)
+        public static void WriteToFileLogger(string loggerName, Ticket ticket)
         {
             Jc.Rpc<TraceRemote>.Ge.Write(loggerName, ticket);
         }

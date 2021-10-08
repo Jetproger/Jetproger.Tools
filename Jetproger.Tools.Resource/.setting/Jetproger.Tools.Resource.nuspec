@@ -11,11 +11,6 @@
     <releaseNotes>Jetproger.Tools.Resource</releaseNotes>
     <copyright>Copyright 2020</copyright>
     <tags>Jetproger.Tools Resource</tags>
-    <dependencies>
-      <group>
-        <dependency id="Jetproger.Tools.Convert" version="1.2.0.0" />
-      </group>
-    </dependencies>
   </metadata>
   <files>
     <file src="Jetproger.Tools.Resource.dll" target="lib\4.0" /> 

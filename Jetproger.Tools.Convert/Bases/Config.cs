@@ -1,6 +1,7 @@
 using System;
 using System.Configuration;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using Jetproger.Tools.Convert.Bases;
 using Jetproger.Tools.Convert.Converts;
 
@@ -37,7 +38,7 @@ namespace Jetproger.Tools.Convert.Bases
 
     public static class ConfigExtensions
     {
-        private static Dictionary<string, string> AppSettings { get { return Je.One.Get(AppSettingsHolder, GetAppSettings); } }
+        private static Dictionary<string, string> AppSettings { get { return Je.one.Get(AppSettingsHolder, GetAppSettings); } }
         private static readonly Dictionary<string, string>[] AppSettingsHolder = { null };
 
         private static Dictionary<string, string> GetAppSettings()
@@ -86,6 +87,34 @@ namespace Jetproger.Tools.Convert.Bases
 
 namespace Jetproger.Tools.AppConfig
 {
-    public class ConnectionString : ConfigSetting<string> { public ConnectionString() : base("") { } }
     public class ServerHost : ConfigSetting<string> { public ServerHost() : base("127.0.0.1") { } }
+
+    public class ResourceAssembly : ConfigSetting<string> { public ResourceAssembly() : base("Jetproger.Tools.Resource") { } }
+
+    public class Culture : ConfigSetting<string> { public Culture() : base("en-US") { } }
+
+    public class MaxReservedDomains : ConfigSetting<int> { public MaxReservedDomains() : base(4) { } }
+
+    public class ConnectionString : ConfigSetting<string>
+    {
+        public ConnectionString() : base("")
+        {
+        }
+
+        protected override string GetValue(string defaultValue)
+        {
+            var connectionString = base.GetValue(defaultValue);
+            try
+            {
+                var csb = new SqlConnectionStringBuilder(connectionString);
+                csb.AsynchronousProcessing = true;
+                csb.MultipleActiveResultSets = true;
+                return csb.ToString();
+            }
+            catch
+            {
+                return connectionString;
+            }
+        }
+    }
 }

@@ -34,7 +34,7 @@ namespace Jetproger.Tools.Convert.Bases
             return this;
         }
 
-        protected virtual void RegisterLoggerContinue<T>() where T : Jc.Ticket
+        protected virtual void RegisterLoggerContinue<T>() where T : Ticket
         {
         }
 
@@ -90,7 +90,7 @@ namespace Jetproger.Tools.Convert.Bases
 
         private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            if (e?.ExceptionObject != null) Trace.WriteLine(new Jc.Ticket { IsException = true, Text = "UnhandledException", Description = e.ExceptionObject.ToString() });
+            if (e?.ExceptionObject != null) Trace.WriteLine(new Ticket { IsError = true, Message = "UnhandledException", Comment = e.ExceptionObject.ToString() });
         }
 
         IRegisterInject ICustomizeThreadExceptionEventHandler.CustomizeThreadExceptionEventHandler(ThreadExceptionEventHandler handler)
@@ -243,7 +243,7 @@ namespace Jetproger.Tools.Convert.Bases
 
     public interface IRegisterLogger
     {
-        IRegisterLogger RegisterLoggerContinue<T>() where T : Jc.Ticket;
+        IRegisterLogger RegisterLoggerContinue<T>() where T : Ticket;
         IRegisterLogger RegisterLoggerContinue(TraceListener listener);
         ICustomizeUnhandledExceptionMode RegisterLogger();
     }

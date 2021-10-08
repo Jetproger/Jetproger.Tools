@@ -63,7 +63,7 @@ namespace Jetproger.Tools.Process.Bases
             if (e is CommunicationObjectAbortedException) return default(T);
             if (e is CommunicationException) return default(T);
             System.Diagnostics.Trace.WriteLine(e.As<string>());
-            return Je.Meta.IsTypeOf(typeof(T), typeof(Exception)) ? (T)(object)e : default(T);
+            return Je.meta.IsTypeOf(typeof(T), typeof(Exception)) ? (T)(object)e : default(T);
         }
 
         public static void GarbageCollect()

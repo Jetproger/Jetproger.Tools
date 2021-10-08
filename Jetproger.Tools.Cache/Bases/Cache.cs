@@ -13,52 +13,52 @@ namespace Jetproger.Tools.Cache.Bases
 
         #region Read
 
-        public static bool Read<T, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, T8 p8, T9 p9, out T p)
+        public static bool Read<T, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, T8 p8, T9 p9, out T p)
         {
             return ReadEx(new object[] { p0, p1, p2, p3, p4, p5, p6, p7, p8, p9 }, out p);
         }
 
-        public static bool Read<T, T0, T1, T2, T3, T4, T5, T6, T7, T8>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, T8 p8, out T p)
+        public static bool Read<T, T0, T1, T2, T3, T4, T5, T6, T7, T8>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, T8 p8, out T p)
         {
             return ReadEx(new object[] { p0, p1, p2, p3, p4, p5, p6, p7, p8 }, out p);
         }
 
-        public static bool Read<T, T0, T1, T2, T3, T4, T5, T6, T7>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, out T p)
+        public static bool Read<T, T0, T1, T2, T3, T4, T5, T6, T7>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, out T p)
         {
             return ReadEx(new object[] { p0, p1, p2, p3, p4, p5, p6, p7 }, out p);
         }
 
-        public static bool Read<T, T0, T1, T2, T3, T4, T5, T6>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, out T p)
+        public static bool Read<T, T0, T1, T2, T3, T4, T5, T6>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, out T p)
         {
             return ReadEx(new object[] { p0, p1, p2, p3, p4, p5, p6 }, out p);
         }
 
-        public static bool Read<T, T0, T1, T2, T3, T4, T5>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, out T p)
+        public static bool Read<T, T0, T1, T2, T3, T4, T5>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, out T p)
         {
             return ReadEx(new object[] { p0, p1, p2, p3, p4, p5 }, out p);
         }
 
-        public static bool Read<T, T0, T1, T2, T3, T4>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, out T p)
+        public static bool Read<T, T0, T1, T2, T3, T4>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, out T p)
         {
             return ReadEx(new object[] { p0, p1, p2, p3, p4 }, out p);
         }
 
-        public static bool Read<T, T0, T1, T2, T3>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, out T p)
+        public static bool Read<T, T0, T1, T2, T3>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, out T p)
         {
             return ReadEx(new object[] { p0, p1, p2, p3 }, out p);
         }
 
-        public static bool Read<T, T0, T1, T2>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2, out T p)
+        public static bool Read<T, T0, T1, T2>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2, out T p)
         {
             return ReadEx(new object[] { p0, p1, p2 }, out p);
         }
 
-        public static bool Read<T, T0, T1>(this ICacheExpander expander, T0 p0, T1 p1, out T p)
+        public static bool Read<T, T0, T1>(this Je.IMemExpander expander, T0 p0, T1 p1, out T p)
         {
             return ReadEx(new object[] { p0, p1 }, out p);
         }
 
-        public static bool Read<T, T0>(this ICacheExpander expander, T0 p0, out T p)
+        public static bool Read<T, T0>(this Je.IMemExpander expander, T0 p0, out T p)
         {
             return ReadEx(new object[] { p0 }, out p);
         }
@@ -68,52 +68,52 @@ namespace Jetproger.Tools.Cache.Bases
 
         #region Read or write
 
-        public static T Read<T, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, T8 p8, T9 p9, Func<T> func, int lifetime = 0)
+        public static T Read<T, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, T8 p8, T9 p9, Func<T> func, int lifetime = 0)
         {
             return ReadEx(new object[] { p0, p1, p2, p3, p4, p5, p6, p7, p8, p9 }, func, lifetime);
         }
 
-        public static T Read<T, T0, T1, T2, T3, T4, T5, T6, T7, T8>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, T8 p8, Func<T> func, int lifetime = 0)
+        public static T Read<T, T0, T1, T2, T3, T4, T5, T6, T7, T8>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, T8 p8, Func<T> func, int lifetime = 0)
         {
             return ReadEx(new object[] { p0, p1, p2, p3, p4, p5, p6, p7, p8 }, func, lifetime);
         }
 
-        public static T Read<T, T0, T1, T2, T3, T4, T5, T6, T7>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, Func<T> func, int lifetime = 0)
+        public static T Read<T, T0, T1, T2, T3, T4, T5, T6, T7>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, Func<T> func, int lifetime = 0)
         {
             return ReadEx(new object[] { p0, p1, p2, p3, p4, p5, p6, p7 }, func, lifetime);
         }
 
-        public static T Read<T, T0, T1, T2, T3, T4, T5, T6>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, Func<T> func, int lifetime = 0)
+        public static T Read<T, T0, T1, T2, T3, T4, T5, T6>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, Func<T> func, int lifetime = 0)
         {
             return ReadEx(new object[] { p0, p1, p2, p3, p4, p5, p6 }, func, lifetime);
         }
 
-        public static T Read<T, T0, T1, T2, T3, T4, T5>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, Func<T> func, int lifetime = 0)
+        public static T Read<T, T0, T1, T2, T3, T4, T5>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, Func<T> func, int lifetime = 0)
         {
             return ReadEx(new object[] { p0, p1, p2, p3, p4, p5 }, func, lifetime);
         }
 
-        public static T Read<T, T0, T1, T2, T3, T4>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, Func<T> func, int lifetime = 0)
+        public static T Read<T, T0, T1, T2, T3, T4>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, Func<T> func, int lifetime = 0)
         {
             return ReadEx(new object[] { p0, p1, p2, p3, p4 }, func, lifetime);
         }
 
-        public static T Read<T, T0, T1, T2, T3>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, Func<T> func, int lifetime = 0)
+        public static T Read<T, T0, T1, T2, T3>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, Func<T> func, int lifetime = 0)
         {
             return ReadEx(new object[] { p0, p1, p2, p3 }, func, lifetime);
         }
 
-        public static T Read<T, T0, T1, T2>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2, Func<T> func, int lifetime = 0)
+        public static T Read<T, T0, T1, T2>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2, Func<T> func, int lifetime = 0)
         {
             return ReadEx(new object[] { p0, p1, p2 }, func, lifetime);
         }
 
-        public static T Read<T, T0, T1>(this ICacheExpander expander, T0 p0, T1 p1, Func<T> func, int lifetime = 0)
+        public static T Read<T, T0, T1>(this Je.IMemExpander expander, T0 p0, T1 p1, Func<T> func, int lifetime = 0)
         {
             return ReadEx(new object[] { p0, p1 }, func, lifetime);
         }
 
-        public static T Read<T, T0>(this ICacheExpander expander, T0 p0, Func<T> func, int lifetime = 0)
+        public static T Read<T, T0>(this Je.IMemExpander expander, T0 p0, Func<T> func, int lifetime = 0)
         {
             return ReadEx(new object[] { p0 }, func, lifetime);
         }
@@ -123,52 +123,52 @@ namespace Jetproger.Tools.Cache.Bases
 
         #region Write
 
-        public static void Write<T, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, T8 p8, T9 p9, Func<T> func, int lifetime = 0)
+        public static void Write<T, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, T8 p8, T9 p9, Func<T> func, int lifetime = 0)
         {
             WriteEx(new object[] { p0, p1, p2, p3, p4, p5, p6, p7, p8, p9 }, func(), lifetime);
         }
 
-        public static void Write<T, T0, T1, T2, T3, T4, T5, T6, T7, T8>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, T8 p8, Func<T> func, int lifetime = 0)
+        public static void Write<T, T0, T1, T2, T3, T4, T5, T6, T7, T8>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, T8 p8, Func<T> func, int lifetime = 0)
         {
             WriteEx(new object[] { p0, p1, p2, p3, p4, p5, p6, p7, p8 }, func(), lifetime);
         }
 
-        public static void Write<T, T0, T1, T2, T3, T4, T5, T6, T7>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, Func<T> func, int lifetime = 0)
+        public static void Write<T, T0, T1, T2, T3, T4, T5, T6, T7>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, Func<T> func, int lifetime = 0)
         {
             WriteEx(new object[] { p0, p1, p2, p3, p4, p5, p6, p7 }, func(), lifetime);
         }
 
-        public static void Write<T, T0, T1, T2, T3, T4, T5, T6>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, Func<T> func, int lifetime = 0)
+        public static void Write<T, T0, T1, T2, T3, T4, T5, T6>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, Func<T> func, int lifetime = 0)
         {
             WriteEx(new object[] { p0, p1, p2, p3, p4, p5, p6 }, func(), lifetime);
         }
 
-        public static void Write<T, T0, T1, T2, T3, T4, T5>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, Func<T> func, int lifetime = 0)
+        public static void Write<T, T0, T1, T2, T3, T4, T5>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, Func<T> func, int lifetime = 0)
         {
             WriteEx(new object[] { p0, p1, p2, p3, p4, p5 }, func(), lifetime);
         }
 
-        public static void Write<T, T0, T1, T2, T3, T4>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, Func<T> func, int lifetime = 0)
+        public static void Write<T, T0, T1, T2, T3, T4>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, Func<T> func, int lifetime = 0)
         {
             WriteEx(new object[] { p0, p1, p2, p3, p4 }, func(), lifetime);
         }
 
-        public static void Write<T, T0, T1, T2, T3>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, Func<T> func, int lifetime = 0)
+        public static void Write<T, T0, T1, T2, T3>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, Func<T> func, int lifetime = 0)
         {
             WriteEx(new object[] { p0, p1, p2, p3 }, func(), lifetime);
         }
 
-        public static void Write<T, T0, T1, T2>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2, Func<T> func, int lifetime = 0)
+        public static void Write<T, T0, T1, T2>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2, Func<T> func, int lifetime = 0)
         {
             WriteEx(new object[] { p0, p1, p2 }, func(), lifetime);
         }
 
-        public static void Write<T, T0, T1>(this ICacheExpander expander, T0 p0, T1 p1, Func<T> func, int lifetime = 0)
+        public static void Write<T, T0, T1>(this Je.IMemExpander expander, T0 p0, T1 p1, Func<T> func, int lifetime = 0)
         {
             WriteEx(new object[] { p0, p1 }, func(), lifetime);
         }
 
-        public static void Write<T, T0>(this ICacheExpander expander, T0 p0, Func<T> func, int lifetime = 0)
+        public static void Write<T, T0>(this Je.IMemExpander expander, T0 p0, Func<T> func, int lifetime = 0)
         {
             WriteEx(new object[] { p0 }, func(), lifetime);
         }
@@ -177,52 +177,52 @@ namespace Jetproger.Tools.Cache.Bases
 
         #region Clear
 
-        public static void Clear<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, T8 p8, T9 p9)
+        public static void Clear<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, T8 p8, T9 p9)
         {
             ClearEx(new object[] { p0, p1, p2, p3, p4, p5, p6, p7, p8, p9 });
         }
 
-        public static void Clear<T0, T1, T2, T3, T4, T5, T6, T7, T8>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, T8 p8)
+        public static void Clear<T0, T1, T2, T3, T4, T5, T6, T7, T8>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, T8 p8)
         {
             ClearEx(new object[] { p0, p1, p2, p3, p4, p5, p6, p7, p8 });
         }
 
-        public static void Clear<T0, T1, T2, T3, T4, T5, T6, T7>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7)
+        public static void Clear<T0, T1, T2, T3, T4, T5, T6, T7>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7)
         {
             ClearEx(new object[] { p0, p1, p2, p3, p4, p5, p6, p7 });
         }
 
-        public static void Clear<T0, T1, T2, T3, T4, T5, T6>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6)
+        public static void Clear<T0, T1, T2, T3, T4, T5, T6>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6)
         {
             ClearEx(new object[] { p0, p1, p2, p3, p4, p5, p6 });
         }
 
-        public static void Clear<T0, T1, T2, T3, T4, T5>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5)
+        public static void Clear<T0, T1, T2, T3, T4, T5>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5)
         {
             ClearEx(new object[] { p0, p1, p2, p3, p4, p5 });
         }
 
-        public static void Clear<T0, T1, T2, T3, T4>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4)
+        public static void Clear<T0, T1, T2, T3, T4>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4)
         {
             ClearEx(new object[] { p0, p1, p2, p3, p4 });
         }
 
-        public static void Clear<T0, T1, T2, T3>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2, T3 p3)
+        public static void Clear<T0, T1, T2, T3>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2, T3 p3)
         {
             ClearEx(new object[] { p0, p1, p2, p3 });
         }
 
-        public static void Clear<T0, T1, T2>(this ICacheExpander expander, T0 p0, T1 p1, T2 p2)
+        public static void Clear<T0, T1, T2>(this Je.IMemExpander expander, T0 p0, T1 p1, T2 p2)
         {
             ClearEx(new object[] { p0, p1, p2 });
         }
 
-        public static void Clear<T0, T1>(this ICacheExpander expander, T0 p0, T1 p1)
+        public static void Clear<T0, T1>(this Je.IMemExpander expander, T0 p0, T1 p1)
         {
             ClearEx(new object[] { p0, p1 });
         }
 
-        public static void Clear<T0>(this ICacheExpander expander, T0 p0)
+        public static void Clear<T0>(this Je.IMemExpander expander, T0 p0)
         {
             ClearEx(new object[] { p0 });
         }

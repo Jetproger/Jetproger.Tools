@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Jetproger.Tools.Convert</RootNamespace>
     <AssemblyName>Jetproger.Tools.Convert</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -48,224 +48,61 @@
     <Reference Include="System.Web.Extensions" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\Base.cs">
-      <Link>Bases\Base.cs</Link>
-    </Compile>
+    <Compile Include="..\Bases\Base.cs"><Link>Bases\Base.cs</Link></Compile>
+    <Compile Include="..\Bases\Entity.cs"><Link>Bases\Entity.cs</Link></Compile>
+    <Compile Include="..\Bases\Gui.cs"><Link>Bases\Gui.cs</Link></Compile>
+    <Compile Include="..\Bases\Meta.cs"><Link>Bases\Meta.cs</Link></Compile>
+    <Compile Include="..\Bases\Exception.cs"><Link>Bases\Exception.cs</Link></Compile>
+    <Compile Include="..\Bases\Ticket.cs"><Link>Bases\Ticket.cs</Link></Compile>
+    <Compile Include="..\Bases\Setting.cs"><Link>Bases\Setting.cs</Link></Compile>
+    <Compile Include="..\Bases\Guard.cs"><Link>Bases\Guard.cs</Link></Compile>
+    <Compile Include="..\Bases\Console.cs"><Link>Bases\Console.cs</Link></Compile>
+    <Compile Include="..\Bases\Config.cs"><Link>Bases\Config.cs</Link></Compile>
+    <Compile Include="..\Bases\Resource.cs"><Link>Bases\Resource.cs</Link></Compile>
+    <Compile Include="..\Bases\Starter.cs"><Link>Bases\Starter.cs</Link></Compile>
+    <Compile Include="..\Bases\Win.cs"><Link>Bases\Win.cs</Link></Compile>
+    <Compile Include="..\Bases\FileStore.cs"><Link>Bases\FileStore.cs</Link></Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\Ext.cs">
-      <Link>Bases\Ext.cs</Link>
-    </Compile>
+    <Compile Include="..\Converts\Bin.cs"><Link>Converts\Bin.cs</Link></Compile>
+    <Compile Include="..\Converts\Convert.cs"><Link>Converts\Convert.cs</Link></Compile>
+    <Compile Include="..\Converts\BaseJson.cs"><Link>Converts\BaseJson.cs</Link></Compile>
+    <Compile Include="..\Converts\Str.cs"><Link>Converts\Str.cs</Link></Compile>
+    <Compile Include="..\Converts\Web.cs"><Link>Converts\Web.cs</Link></Compile>
+    <Compile Include="..\Converts\Xml.cs"><Link>Converts\Xml.cs</Link></Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\Entity.cs">
-      <Link>Bases\Entity.cs</Link>
-    </Compile>
+    <Compile Include="..\Factories\One.cs"><Link>Factories\One.cs</Link></Compile>
+    <Compile Include="..\Factories\Store.cs"><Link>Factories\Store.cs</Link></Compile>
+    <Compile Include="..\Factories\Pool.cs"><Link>Factories\Pool.cs</Link></Compile>
+    <Compile Include="..\Factories\IpcServer.cs"><Link>Factories\IpcServer.cs</Link></Compile>
+    <Compile Include="..\Factories\IpcClient.cs"><Link>Factories\IpcClient.cs</Link></Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\Gui.cs">
-      <Link>Bases\Gui.cs</Link>
-    </Compile>
+    <Compile Include="..\Works\BinWork.cs"><Link>Works\BinWork.cs</Link></Compile>
+    <Compile Include="..\Works\CmdWork.cs"><Link>Works\CmdWork.cs</Link></Compile>
+    <Compile Include="..\Works\DataEntity.cs"><Link>Works\DataEntity.cs</Link></Compile>
+    <Compile Include="..\Works\JobWork.cs"><Link>Works\JobWork.cs</Link></Compile>
+    <Compile Include="..\Works\SqlWork.cs"><Link>Works\SqlWork.cs</Link></Compile>
+    <Compile Include="..\Works\WebWork.cs"><Link>Works\WebWork.cs</Link></Compile>
+    <Compile Include="..\Works\Work.cs"><Link>Works\Work.cs</Link></Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\Meta.cs">
-      <Link>Bases\Meta.cs</Link>
-    </Compile>
+    <Compile Include="..\Commands\BaseCommand.cs"><Link>Commands\BaseCommand.cs</Link></Compile>
+    <Compile Include="..\Commands\BaseCommander.cs"><Link>Commands\BaseCommander.cs</Link></Compile>
+    <Compile Include="..\Commands\ClientCommander.cs"><Link>Commands\ClientCommander.cs</Link></Compile>
+    <Compile Include="..\Commands\CommandExtensions.cs"><Link>Commands\CommandExtensions.cs</Link></Compile>
+    <Compile Include="..\Commands\CommandRequest.cs"><Link>Commands\CommandRequest.cs</Link></Compile>
+    <Compile Include="..\Commands\CommandResponse.cs"><Link>Commands\CommandResponse.cs</Link></Compile>
+    <Compile Include="..\Commands\CommandTicket.cs"><Link>Commands\CommandTicket.cs</Link></Compile>
+    <Compile Include="..\Commands\CommandTransaction.cs"><Link>Commands\CommandTransaction.cs</Link></Compile>
+    <Compile Include="..\Commands\RemoteCommand.cs"><Link>Commands\RemoteCommand.cs</Link></Compile>
+    <Compile Include="..\Commands\ServerCommander.cs"><Link>Commands\ServerCommander.cs</Link></Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\Ex.cs">
-      <Link>Bases\Ex.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\One.cs">
-      <Link>Bases\One.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\Value.cs">
-      <Link>Bases\Value.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\Exception.cs">
-      <Link>Bases\Exception.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\Ticket.cs">
-      <Link>Bases\Ticket.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\Setting.cs">
-      <Link>Bases\Setting.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\Guard.cs">
-      <Link>Bases\Guard.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\Console.cs">
-      <Link>Bases\Console.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\Config.cs">
-      <Link>Bases\Config.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\Resource.cs">
-      <Link>Bases\Resource.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\Starter.cs">
-      <Link>Bases\Starter.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Converts\Sz.cs">
-      <Link>Converts\Sz.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Converts\Txt.cs">
-      <Link>Converts\Txt.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Converts\BaseBin.cs">
-      <Link>Converts\BaseBin.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Converts\Bin.cs">
-      <Link>Converts\Bin.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Converts\Convert.cs">
-      <Link>Converts\Convert.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Converts\BaseJson.cs">
-      <Link>Converts\BaseJson.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\FileStore.cs">
-      <Link>Bases\FileStore.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Converts\Json.cs">
-      <Link>Converts\Json.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Converts\BaseXml.cs">
-      <Link>Converts\BaseXml.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Converts\Xml.cs">
-      <Link>Converts\Xml.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Datasets\DataHelp.cs">
-      <Link>Datasets\DataHelp.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Datasets\DataInfo.cs">
-      <Link>Datasets\DataInfo.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Datasets\DataTuple.cs">
-      <Link>Datasets\DataTuple.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Datasets\DataField.cs">
-      <Link>Datasets\DataField.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Datasets\DataStyle.cs">
-      <Link>Datasets\DataStyle.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Datasets\DataBlock.cs">
-      <Link>Datasets\DataBlock.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Datasets\DataScope.cs">
-      <Link>Datasets\DataScope.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Queries\QueryAnd.cs">
-      <Link>Queries\QueryAnd.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Queries\QueryData.cs">
-      <Link>Queries\QueryData.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Queries\QueryMatch.cs">
-      <Link>Queries\QueryMatch.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Queries\QueryOp.cs">
-      <Link>Queries\QueryOp.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Queries\QueryOr.cs">
-      <Link>Queries\QueryOr.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Queries\QueryScope.cs">
-      <Link>Queries\QueryScope.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Queries\QueryWhere.cs">
-      <Link>Queries\QueryWhere.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Settings\Setting.cs">
-      <Link>Settings\Setting.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\..\.solution\AssemblyInfo.cs">
-      <Link>.project\AssemblyInfo.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\.solution\jetproger.pfx">
-      <Link>.project\jetproger.pfx</Link>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\.setting\Jetproger.Tools.Convert.nuspec">
-      <Link>.project\Jetproger.Tools.Convert.nuspec</Link>
-    </None>
+    <Compile Include="..\..\.solution\AssemblyInfo.cs"><Link>.project\AssemblyInfo.cs</Link></Compile>
+    <None Include="..\..\.solution\jetproger.pfx"><Link>.project\jetproger.pfx</Link></None>
+    <None Include="..\.setting\Jetproger.Tools.Convert.nuspec"><Link>.project\Jetproger.Tools.Convert.nuspec</Link></None>
   </ItemGroup>
   <Target Name="RemoveDirectories" BeforeTargets="ResolveReferences">
     <Exec Command="for /d %%p in (&quot;$(ProjectDir)&quot;\*) do if /I &quot;%%p&quot; neq &quot;$(ProjectDir)\obj&quot; (rd /Q /S &quot;%%p&quot;)" />

@@ -8,8 +8,11 @@ namespace Jetproger.Tools.Convert.Bases
 {
     public abstract class ConsoleSetting<T> : MarshalByRefObject, ISetting
     {
+
         protected readonly IEnumerable<string> Keys;
+
         public bool IsDeclared { get; private set; }
+
         public T Value { get; private set; }
 
         protected ConsoleSetting(T defaultValue, params string[] keys)
@@ -118,8 +121,10 @@ namespace Jetproger.Tools.Convert.Bases
         }
     }
 }
+
 namespace Jetproger.Tools.AppConsole
 {
     public class Uninstall : ConsoleSetting<string> { public Uninstall() : base(string.Empty, "u") { } }
+
     public class Install : ConsoleSetting<string> { public Install() : base(string.Empty, "i") { } }
 }

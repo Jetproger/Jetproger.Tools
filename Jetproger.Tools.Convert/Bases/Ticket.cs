@@ -1,35 +1,15 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Jc
+namespace Jetproger.Tools.Convert.Bases
 {
-    [Serializable]
-    [DataContract]
+    [Serializable, DataContract]
     public class Ticket
     {
-        private bool _isException;
-        private string _text;
-        private string _description;
+        [DataMember]public bool IsError { get; set; } 
 
-        [DataMember]
-        public bool IsException
-        {
-            get { return _isException; }
-            set { _isException = value; }
-        }
+        [DataMember]public string Message { get; set; }
 
-        [DataMember]
-        public string Text
-        {
-            get { return _text; }
-            set { _text = value; }
-        }
-
-        [DataMember]
-        public string Description
-        {
-            get { return _description; }
-            set { _description = value; }
-        }
+        [DataMember]public string Comment { get; set; }
     }
 }

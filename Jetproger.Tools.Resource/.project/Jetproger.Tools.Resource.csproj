@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Jetproger.Tools.Resource</RootNamespace>
     <AssemblyName>Jetproger.Tools.Resource</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -47,21 +47,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\ConsoleSettings.cs">
-      <Link>Bases\ConsoleSettings.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\ConfigSettings.cs">
-      <Link>Bases\ConfigSettings.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\ResourceSettings.cs">
-      <Link>Bases\ResourceSettings.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="..\..\.solution\AssemblyInfo.cs">
       <Link>.project\AssemblyInfo.cs</Link>
     </Compile>
@@ -72,120 +57,114 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Resx\ResourceNames.Designer.cs">
-      <Link>Resx\ResourceNames.Designer.cs</Link>
+    <Compile Include="..\Bases\ResourceNames.Designer.cs">
+      <Link>Bases\ResourceNames.Designer.cs</Link>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ResourceNames.resx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\Resx\ResourceNames.ru-RU.resx">
-      <Link>Resx\ResourceNames.ru-RU.resx</Link>
+    <EmbeddedResource Include="..\Bases\ResourceNames.ru-RU.resx">
+      <Link>Bases\ResourceNames.ru-RU.resx</Link>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\Resx\ResourceNames.resx">
-      <Link>Resx\ResourceNames.resx</Link>
+    <EmbeddedResource Include="..\Bases\ResourceNames.resx">
+      <Link>Bases\ResourceNames.resx</Link>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ResourceNames.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Resx\ResourceDescriptions.Designer.cs">
-      <Link>Resx\ResourceDescriptions.Designer.cs</Link>
+    <Compile Include="..\Bases\ResourceDescriptions.Designer.cs">
+      <Link>Bases\ResourceDescriptions.Designer.cs</Link>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ResourceDescriptions.resx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\Resx\ResourceDescriptions.ru-RU.resx">
-      <Link>Resx\ResourceDescriptions.ru-RU.resx</Link>
+    <EmbeddedResource Include="..\Bases\ResourceDescriptions.ru-RU.resx">
+      <Link>Bases\ResourceDescriptions.ru-RU.resx</Link>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\Resx\ResourceDescriptions.resx">
-      <Link>Resx\ResourceDescriptions.resx</Link>
+    <EmbeddedResource Include="..\Bases\ResourceDescriptions.resx">
+      <Link>Bases\ResourceDescriptions.resx</Link>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ResourceDescriptions.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Resx\ResourcePictures.Designer.cs">
-      <Link>Resx\ResourcePictures.Designer.cs</Link>
+    <Compile Include="..\Bases\ResourcePictures.Designer.cs">
+      <Link>Bases\ResourcePictures.Designer.cs</Link>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ResourcePictures.resx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\Resx\ResourcePictures.ru-RU.resx">
-      <Link>Resx\ResourcePictures.ru-RU.resx</Link>
+    <EmbeddedResource Include="..\Bases\ResourcePictures.ru-RU.resx">
+      <Link>Bases\ResourcePictures.ru-RU.resx</Link>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\Resx\ResourcePictures.resx">
-      <Link>Resx\ResourcePictures.resx</Link>
+    <EmbeddedResource Include="..\Bases\ResourcePictures.resx">
+      <Link>Bases\ResourcePictures.resx</Link>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ResourcePictures.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Resx\ResourceShortcuts.Designer.cs">
-      <Link>Resx\ResourceShortcuts.Designer.cs</Link>
+    <Compile Include="..\Bases\ResourceShortcuts.Designer.cs">
+      <Link>Bases\ResourceShortcuts.Designer.cs</Link>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ResourceShortcuts.resx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\Resx\ResourceShortcuts.ru-RU.resx">
-      <Link>Resx\ResourceShortcuts.ru-RU.resx</Link>
+    <EmbeddedResource Include="..\Bases\ResourceShortcuts.ru-RU.resx">
+      <Link>Bases\ResourceShortcuts.ru-RU.resx</Link>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\Resx\ResourceShortcuts.resx">
-      <Link>Resx\ResourceShortcuts.resx</Link>
+    <EmbeddedResource Include="..\Bases\ResourceShortcuts.resx">
+      <Link>Bases\ResourceShortcuts.resx</Link>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ResourceShortcuts.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Resx\ResourceSpecifies.Designer.cs">
-      <Link>Resx\ResourceSpecifies.Designer.cs</Link>
+    <Compile Include="..\Bases\ResourceSpecifies.Designer.cs">
+      <Link>Bases\ResourceSpecifies.Designer.cs</Link>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ResourceSpecifies.resx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\Resx\ResourceSpecifies.ru-RU.resx">
-      <Link>Resx\ResourceSpecifies.ru-RU.resx</Link>
+    <EmbeddedResource Include="..\Bases\ResourceSpecifies.ru-RU.resx">
+      <Link>Bases\ResourceSpecifies.ru-RU.resx</Link>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\Resx\ResourceSpecifies.resx">
-      <Link>Resx\ResourceSpecifies.resx</Link>
+    <EmbeddedResource Include="..\Bases\ResourceSpecifies.resx">
+      <Link>Bases\ResourceSpecifies.resx</Link>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ResourceSpecifies.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Jetproger.Tools.Convert\.project\Jetproger.Tools.Convert.csproj">
-      <Project>{600aa7dc-ea39-4609-ab2a-3546bb5f8b72}</Project>
-      <Name>Jetproger.Tools.Convert</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\.setting\Jetproger.Tools.Resource.nuspec">

@@ -1,265 +1,137 @@
 using System;
-using System.Collections;
-using System.Collections.Concurrent;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.Remoting;
-using System.Runtime.Remoting.Channels;
-using System.Runtime.Remoting.Channels.Ipc;
-using System.Runtime.Serialization.Formatters;
-using System.Security.Permissions;
-using System.Security.Principal;
+using Jetproger.Tools.Convert.Converts;
+using Jetproger.Tools.Convert.Factories;
 
 namespace Jetproger.Tools.Convert.Bases
 {
     public static partial class Je
     {
-        private static AppDomain _defaultAppDomain = AppDomain.CurrentDomain.IsDefaultAppDomain() ? AppDomain.CurrentDomain : null;
+        public static AppDomain own => Je.one.Get(OwnHolder, () => AppDomain.CurrentDomain.IsDefaultAppDomain() ? AppDomain.CurrentDomain : null);
+        private static readonly AppDomain[] OwnHolder = { null };
 
-        public static AppDomain DefaultAppDomain
-        {
-            get { return _defaultAppDomain; }
-            set { _defaultAppDomain = _defaultAppDomain ?? value; }
-        }
+        public static IAppExpander app => null;
+        public interface IAppExpander { }
+
+        public static IAopExpander aop => null;
+        public interface IAopExpander { }
+
+        public static IBinExpander bin => null;
+        public interface IBinExpander { }
+
+        public static IErrExpander err => null;
+        public interface IErrExpander { }
+
+        public static ICmdExpander cmd => null;
+        public interface ICmdExpander { }
+
+        public static IExtExpander ext => null;
+        public interface IExtExpander { }
+
+        public static IFssExpander fss => null;
+        public interface IFssExpander { }
+
+        public static IGuiExpander gui => null;
+        public interface IGuiExpander { }
+
+        public static ILogExpander log => null;
+        public interface ILogExpander { }
+
+        public static IMemExpander mem => null;
+        public interface IMemExpander { }
+
+        public static IOneExpander one => null;
+        public interface IOneExpander { }
+
+        public static ISqlExpander sql => null;
+        public interface ISqlExpander { }
+
+        public static IStrExpander str => null;
+        public interface IStrExpander { }
+
+        public static ISysExpander sys => null;
+        public interface ISysExpander { }
+
+        public static IWebExpander web => null;
+        public interface IWebExpander { }
+
+        public static WinExpander win => Je.one.Get(WinExpanderHolder, () => new WinExpander());
+        private static readonly WinExpander[] WinExpanderHolder = { null };
+
+        public static XmlExpander xml => Je.one.Get(XmlExpanderHolder, () => new XmlExpander());
+        private static readonly XmlExpander[] XmlExpanderHolder = { null };
     }
 
     public static class Je<T> where T : class
     {
-        private static readonly ConcurrentBag<T> Pool = new ConcurrentBag<T>();
-        private static readonly T[] Holder = { null };
+        private static readonly IpcClient _IpcClient = new IpcClient();
+        private static readonly Type _Type = typeof(T);
 
         public static T New(params object[] args)
         {
-            return (T)Activator.CreateInstance(typeof(T), args);
+            return (T)Activator.CreateInstance(_Type, args);
         }
 
-        public static T One()
+        public static T Few(Func<T> factory)
         {
-            return !NeedIpc() ? Je.One.Get(Holder) : (T)IpcClient.One.GetOne(typeof(T));
+            return (T)_IpcClient.OfToPool(_Type, factory);
+        }
+
+        public static T Few()
+        {
+            return (T)_IpcClient.OfPool(_Type, 1);
+        }
+
+        public static T Few(int size)
+        {
+            return (T)_IpcClient.OfPool(_Type, size);
+        }
+
+        public static void Few(T value)
+        {
+            _IpcClient.ToPool(_Type, value);
         }
 
         public static T One(Func<T> factory)
         {
-            return !NeedIpc() ? Je.One.Get(Holder, factory) : (T)IpcClient.One.GetOne(typeof(T));
+            return (T)_IpcClient.OfToOne(_Type, factory);
+        }
+
+        public static T One()
+        {
+            return (T)_IpcClient.OfOne(_Type);
         }
 
         public static void One(T value)
         {
-            Je.One.Set(Holder, value);
+            _IpcClient.ToOne(_Type, value);
         }
 
-        public static T Get()
+        public static T Key<TKey>(TKey key, Func<TKey, T> factory)
         {
-            if (NeedIpc()) return (T)IpcClient.One.Pull(typeof(T));
-            T value; return Pool.TryTake(out value) ? value : New();
+            var func = new Func<object, object>(x => factory((TKey)x));
+            return (T)_IpcClient.OfToStore(typeof(TKey), _Type, key, func);
         }
 
-        public static T Get(Func<T> factory)
+        public static T Key<TKey>(TKey key)
         {
-            T value; return Pool.TryTake(out value) ? value : factory();
+            return (T)_IpcClient.OfStore(typeof(TKey), _Type, key);
         }
 
-        public static void Put(T value)
+        public static void Key<TKey>(TKey key, T value)
         {
-            if (NeedIpc()) IpcClient.One.Push(typeof(T), value); else Pool.Add(value);
-        }
-
-        private static bool NeedIpc()
-        {
-            return !AppDomain.CurrentDomain.IsDefaultAppDomain() && Je.DefaultAppDomain != null && typeof(T).IsMarshalByRef;
-        }
-
-        private static T GetOne()
-        {
-            return Je.One.Get(Holder, () => New());
-        }
-
-        private static T Pull()
-        {
-            return Get();
-        }
-
-        private static void Push(T value)
-        {
-            Put(value);
+            _IpcClient.ToStore(typeof(TKey), _Type, key, value);
         }
     }
 
-    public static class IpcClient
+    public interface ISerializer
     {
-        public static IpcOne One => Je.One.Get(Holder, GetProxy);
-        private static readonly IpcOne[] Holder = { null };
-
-        private static IpcOne GetProxy()
-        {
-            CreateChannel();
-            var type = typeof(IpcOne);
-            var portName = $"{(type.FullName ?? string.Empty).Replace(".", "-").ToLower()}-{Process.GetCurrentProcess().Id}";
-            var objectUri = type.Name.ToLower();
-            var uri = $"ipc://{portName}/{objectUri}";
-            var proxy = GetProxy(type, uri);
-            if (proxy != null) return proxy;
-            CreateProxy();
-            return (IpcOne)Activator.GetObject(type, uri);
-        }
-
-        private static void CreateChannel()
-        {
-            var type = typeof(IpcClient);
-            foreach (var entry in RemotingConfiguration.GetRegisteredWellKnownServiceTypes())
-            {
-                if (entry.ObjectType == type) return;
-            }
-            var portName = $"{AppDomain.CurrentDomain.FriendlyName.Replace(".", "-").ToLower()}-{Process.GetCurrentProcess().Id}";
-            var objectUri = type.Name.ToLower();
-            var client = new BinaryClientFormatterSinkProvider();
-            var server = new BinaryServerFormatterSinkProvider
-            {
-                TypeFilterLevel = TypeFilterLevel.Full
-            };
-            var config = new Hashtable
-            {
-                ["name"] = string.Empty,
-                ["portName"] = portName,
-                ["tokenImpersonationLevel"] = TokenImpersonationLevel.Impersonation,
-                ["impersonate"] = true,
-                ["useDefaultCredentials"] = true,
-                ["secure"] = true,
-                ["typeFilterLevel"] = TypeFilterLevel.Full
-            };
-            var ipcChannel = new IpcChannel(config, client, server);
-            ChannelServices.RegisterChannel(ipcChannel, true);
-            RemotingConfiguration.RegisterWellKnownServiceType(type, objectUri, WellKnownObjectMode.SingleCall);
-        }
-
-        private static IpcOne GetProxy(Type type, string uri)
-        {
-            try
-            {
-                return TryGetProxy(type, uri);
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        private static IpcOne TryGetProxy(Type type, string uri)
-        {
-            var proxy = (IpcOne)Activator.GetObject(type, uri);
-            proxy.CreateChannel();
-            return proxy;
-        }
-
-        private static void CreateProxy()
-        {
-            var type = typeof(IpcOne);
-            var assemblyName = type.Assembly.GetName().Name;
-            var typeName = type.FullName ?? string.Empty;
-            var instance = Je.DefaultAppDomain.CreateInstanceAndUnwrap(assemblyName, typeName) as IpcOne;
-            instance?.CreateChannel();
-        }
+        string Serialize(object value);
+        T Serialize<T>(object value);
     }
 
-    public static class IpcServer
+    public interface IDeserializer
     {
-        private static readonly ConcurrentDictionary<Type, MethodHolder> Methods = new ConcurrentDictionary<Type, MethodHolder>();
-
-        public static MethodInfo GetGetOneMethod(Type type)
-        {
-            return Methods.GetOrAdd(type, FindMethods).GetOne;
-        }
-
-        public static MethodInfo GetPushMethod(Type type)
-        {
-            return Methods.GetOrAdd(type, FindMethods).Push;
-        }
-
-        public static MethodInfo GetPullMethod(Type type)
-        {
-            return Methods.GetOrAdd(type, FindMethods).Pull;
-        }
-
-        private static MethodHolder FindMethods(Type type)
-        {
-            var jeType = typeof(Je<>);
-            var genericType = jeType.MakeGenericType(type);
-            var getOne = (MethodInfo)null;
-            var push = (MethodInfo)null;
-            var pull = (MethodInfo)null;
-            foreach (MethodInfo m in genericType.GetMethods(BindingFlags.Static | BindingFlags.NonPublic))
-            {
-                if (m.Name == "GetOne") getOne = m;
-                if (m.Name == "Push") push = m;
-                if (m.Name == "Pull") pull = m;
-            }
-            return new MethodHolder(getOne, push, pull);
-        }
-
-        private class MethodHolder
-        {
-            public readonly MethodInfo GetOne;
-            public readonly MethodInfo Push;
-            public readonly MethodInfo Pull;
-            public MethodHolder(MethodInfo getOne, MethodInfo push, MethodInfo pull)
-            {
-                GetOne = getOne;
-                Push = push;
-                Pull = pull;
-            }
-        }
-    }
-
-    public class IpcOne : MarshalByRefObject
-    {
-        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.Infrastructure)]
-        public override object InitializeLifetimeService()
-        {
-            return null;
-        }
-
-        public object GetOne(Type type)
-        {
-            return IpcServer.GetGetOneMethod(type)?.Invoke(null, new object[0]);
-        }
-
-        public object Pull(Type type)
-        {
-            return IpcServer.GetPullMethod(type)?.Invoke(null, new object[0]);
-        }
-
-        public void Push(Type type, object value)
-        {
-            IpcServer.GetPushMethod(type)?.Invoke(null, new [] { value });
-        }
-
-        public void CreateChannel()
-        {
-            var type = GetType();
-            foreach (var entry in RemotingConfiguration.GetRegisteredWellKnownServiceTypes())
-            {
-                if (entry.ObjectType == type) return;
-            }
-            var portName = $"{(type.FullName ?? string.Empty).Replace(".", "-").ToLower()}-{Process.GetCurrentProcess().Id}";
-            var objectUri = type.Name.ToLower();
-            var client = new BinaryClientFormatterSinkProvider();
-            var server = new BinaryServerFormatterSinkProvider
-            {
-                TypeFilterLevel = TypeFilterLevel.Full
-            };
-            var config = new Hashtable
-            {
-                ["name"] = string.Empty,
-                ["portName"] = portName,
-                ["tokenImpersonationLevel"] = TokenImpersonationLevel.Impersonation,
-                ["impersonate"] = true,
-                ["useDefaultCredentials"] = true,
-                ["secure"] = true,
-                ["typeFilterLevel"] = TypeFilterLevel.Full
-            };
-            var ipcChannel = new IpcChannel(config, client, server);
-            ChannelServices.RegisterChannel(ipcChannel, true);
-            RemotingConfiguration.RegisterWellKnownServiceType(type, objectUri, WellKnownObjectMode.SingleCall);
-        }
+        object Deserialize(string s, Type type);
+        T Deserialize<T>(string s);
     }
 }

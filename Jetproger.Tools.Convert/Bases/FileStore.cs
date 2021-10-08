@@ -99,11 +99,11 @@ namespace Jetproger.Tools.Convert.Bases
         {
             foreach (var file in GetFiles(Path, null))
             {
-                if (!(new FileMaster(file)).RemoveFile()) return false;
+                if (!(new FileStore(file)).RemoveFile()) return false;
             }
             foreach (var folder in GetFolders(Path))
             {
-                if (!(new FileMaster(folder)).RemoveFolder()) return false;
+                if (!(new FileStore(folder)).RemoveFolder()) return false;
             }
             return true;
         }
@@ -152,12 +152,12 @@ namespace Jetproger.Tools.Convert.Bases
 
         public string FindFile(string mask)
         {
-            return GetFiles(Path, null).FirstOrDefault(x => mask == (new FileMaster(x)).FileExt);
+            return GetFiles(Path, null).FirstOrDefault(x => mask == (new FileStore(x)).FileExt);
         }
 
         public string FindFolder(string fileName, string mask)
         {
-            return GetFolders(Path).FirstOrDefault(x => mask == (new FileMaster(x)).Folder);
+            return GetFolders(Path).FirstOrDefault(x => mask == (new FileStore(x)).Folder);
         }
 
         public IEnumerable<string> AllFiles()

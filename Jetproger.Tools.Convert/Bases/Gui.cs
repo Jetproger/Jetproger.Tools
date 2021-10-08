@@ -1,5 +1,6 @@
 using System.Drawing;
 using Jetproger.Tools.Convert.Converts;
+using Jetproger.Tools.Convert.Factories;
 
 namespace Jetproger.Tools.Convert.Bases
 {
@@ -8,19 +9,19 @@ namespace Jetproger.Tools.Convert.Bases
         private readonly static Image[] DefaultImageHolder = { null };
         private readonly static Icon[] DefaultIconHolder = { null };
 
-        public static Image GetIconAsImage(this Jc.IGuiExpander exp, Icon icon)
+        public static Image GetIconAsImage(this Je.IGuiExpander exp, Icon icon)
         {
             return icon.ToBitmap();
         }
 
-        public static Icon GetImageAsIcon(this Jc.IGuiExpander exp, Image image)
+        public static Icon GetImageAsIcon(this Je.IGuiExpander exp, Image image)
         {
             return GetImageAsIcon(exp, image, image.Size.Width, image.Size.Height);
         }
 
-        public static Icon GetImageAsIcon(this Jc.IGuiExpander exp, Image image, int width, int height)
+        public static Icon GetImageAsIcon(this Je.IGuiExpander exp, Image image, int width, int height)
         {
-            return Je.Guard.Try(GetDefaultIcon(), () => {
+            return Je.err.Try(GetDefaultIcon(), () => {
                 var bmp = new Bitmap(image, new Size(width, height));
                 bmp.MakeTransparent(Color.Magenta);
                 var hIcon = bmp.GetHicon();
@@ -30,12 +31,12 @@ namespace Jetproger.Tools.Convert.Bases
 
         public static Image GetDefaultImage()
         {
-            return Je.One.Get(DefaultImageHolder, () => Je.Txt.To<Image>(GetDefaultImageAsString()));
+            return Je.one.Get(DefaultImageHolder, () => Je.str.To<Image>(GetDefaultImageAsString()));
         }
 
         public static Icon GetDefaultIcon()
         {
-            return Je.One.Get(DefaultIconHolder, () => Je.Txt.To<Icon>(GetDefaultIconAsString()));
+            return Je.one.Get(DefaultIconHolder, () => Je.str.To<Icon>(GetDefaultIconAsString()));
         }
 
         public static string GetDefaultIconAsString()
