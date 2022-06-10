@@ -19,7 +19,7 @@ namespace Jetproger.Tools.Resource.Bases {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class ResourceNames {
@@ -88,11 +88,29 @@ namespace Jetproger.Tools.Resource.Bases {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The config does not specify the url of the application service (node &lt;AppHost&gt;).
+        /// </summary>
+        internal static string AppConfigAppHostName {
+            get {
+                return ResourceManager.GetString("AppConfigAppHostName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Memory busy by application.
         /// </summary>
         internal static string AppMemory {
             get {
                 return ResourceManager.GetString("AppMemory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The config does not specify a listening port (node &lt;AppPort&gt;).
+        /// </summary>
+        internal static string AppPortNotSpecifiedName {
+            get {
+                return ResourceManager.GetString("AppPortNotSpecifiedName", resourceCulture);
             }
         }
         
@@ -165,6 +183,33 @@ namespace Jetproger.Tools.Resource.Bases {
         internal static string Cascade {
             get {
                 return ResourceManager.GetString("Cascade", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Key bearer not found for certificate {0}=[{1}].
+        /// </summary>
+        internal static string CertificateKeyName {
+            get {
+                return ResourceManager.GetString("CertificateKeyName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Certificate {0}=[{1}] not found in current user store.
+        /// </summary>
+        internal static string CertificateStoreName {
+            get {
+                return ResourceManager.GetString("CertificateStoreName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Session [{0}]: no command defined to execute(CommandRequest.Command).
+        /// </summary>
+        internal static string CommandNotDefinedName {
+            get {
+                return ResourceManager.GetString("CommandNotDefinedName", resourceCulture);
             }
         }
         
@@ -556,6 +601,15 @@ namespace Jetproger.Tools.Resource.Bases {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0}: {1}.
+        /// </summary>
+        internal static string MssqlCommandName {
+            get {
+                return ResourceManager.GetString("MssqlCommandName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Name.
         /// </summary>
         internal static string Name {
@@ -921,6 +975,24 @@ namespace Jetproger.Tools.Resource.Bases {
         internal static string Type {
             get {
                 return ResourceManager.GetString("Type", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type not found &quot;{0}&quot;.
+        /// </summary>
+        internal static string TypeNotFoundName {
+            get {
+                return ResourceManager.GetString("TypeNotFoundName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type &quot;{0}&quot; is not a subtype of &quot;{1}&quot;.
+        /// </summary>
+        internal static string TypeNotSubtypeName {
+            get {
+                return ResourceManager.GetString("TypeNotSubtypeName", resourceCulture);
             }
         }
         

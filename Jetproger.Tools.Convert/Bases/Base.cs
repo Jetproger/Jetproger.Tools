@@ -1,6 +1,7 @@
 using System;
 using Jetproger.Tools.Convert.Converts;
 using Jetproger.Tools.Convert.Factories;
+using Jetproger.Tools.Convert.Settings;
 
 namespace Jetproger.Tools.Convert.Bases
 {
@@ -18,11 +19,14 @@ namespace Jetproger.Tools.Convert.Bases
         public static IBinExpander bin => null;
         public interface IBinExpander { }
 
-        public static IErrExpander err => null;
-        public interface IErrExpander { }
-
         public static ICmdExpander cmd => null;
         public interface ICmdExpander { }
+
+        public static CryExpander cry => Je.one.Get(CryExpanderHolder, () => new CryExpander());
+        private static readonly CryExpander[] CryExpanderHolder = { null };
+
+        public static IErrExpander err => null;
+        public interface IErrExpander { }
 
         public static IExtExpander ext => null;
         public interface IExtExpander { }
@@ -51,18 +55,19 @@ namespace Jetproger.Tools.Convert.Bases
         public static ISysExpander sys => null;
         public interface ISysExpander { }
 
-        public static IWebExpander web => null;
-        public interface IWebExpander { }
+        public static WebExpander web => Je.one.Get(WebExpanderHolder, () => new WebExpander());
+        private static readonly WebExpander[] WebExpanderHolder = { null };
 
         public static WinExpander win => Je.one.Get(WinExpanderHolder, () => new WinExpander());
         private static readonly WinExpander[] WinExpanderHolder = { null };
 
-        public static XmlExpander xml => Je.one.Get(XmlExpanderHolder, () => new XmlExpander());
-        private static readonly XmlExpander[] XmlExpanderHolder = { null };
+        public static IXmlExpander xml => null;
+        public interface IXmlExpander { }
     }
 
     public static class Je<T> where T : class
     {
+
         private static readonly IpcClient _IpcClient = new IpcClient();
         private static readonly Type _Type = typeof(T);
 
@@ -71,24 +76,9 @@ namespace Jetproger.Tools.Convert.Bases
             return (T)Activator.CreateInstance(_Type, args);
         }
 
-        public static T Few(Func<T> factory)
+        public static T Onu()
         {
-            return (T)_IpcClient.OfToPool(_Type, factory);
-        }
-
-        public static T Few()
-        {
-            return (T)_IpcClient.OfPool(_Type, 1);
-        }
-
-        public static T Few(int size)
-        {
-            return (T)_IpcClient.OfPool(_Type, size);
-        }
-
-        public static void Few(T value)
-        {
-            _IpcClient.ToPool(_Type, value);
+            return One(() => New());
         }
 
         public static T One(Func<T> factory)
@@ -106,10 +96,34 @@ namespace Jetproger.Tools.Convert.Bases
             _IpcClient.ToOne(_Type, value);
         }
 
-        public static T Key<TKey>(TKey key, Func<TKey, T> factory)
+        public static T Fnu()
         {
-            var func = new Func<object, object>(x => factory((TKey)x));
-            return (T)_IpcClient.OfToStore(typeof(TKey), _Type, key, func);
+            return Few(() => New());
+        }
+
+        public static T Few(Func<T> factory)
+        {
+            return (T)_IpcClient.OfToPool(_Type, factory);
+        }
+
+        public static T Few()
+        {
+            return (T)_IpcClient.OfPool(_Type);
+        }
+
+        public static void Few(T value)
+        {
+            _IpcClient.ToPool(_Type, value);
+        }
+
+        public static T Knu<TKey>(TKey key)
+        {
+            return Key(key, x => New(x));
+        }
+
+        public static T Key<TKey>(TKey key, Func<TKey, T> factory)
+        { 
+            return (T)_IpcClient.OfToStore(typeof(TKey), _Type, key, new Func<object, object>(x => factory((TKey)x)));
         }
 
         public static T Key<TKey>(TKey key)
@@ -123,15 +137,19 @@ namespace Jetproger.Tools.Convert.Bases
         }
     }
 
-    public interface ISerializer
+    public static class J_<T> where T : Setting
     {
-        string Serialize(object value);
-        T Serialize<T>(object value);
-    }
 
-    public interface IDeserializer
-    {
-        object Deserialize(string s, Type type);
-        T Deserialize<T>(string s);
+        private static readonly Type _Type = typeof(T);
+
+        public static bool Is
+        {
+            get { return Je<T>.Knu(_Type).IsDeclared; }
+        }
+
+        public static string Sz
+        {
+            get { return Je<T>.Knu(_Type).Value; }
+        }
     }
 }

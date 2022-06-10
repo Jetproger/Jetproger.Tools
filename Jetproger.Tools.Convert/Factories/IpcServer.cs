@@ -38,9 +38,9 @@ namespace Jetproger.Tools.Convert.Factories
             return PoolExtensions.GetSet(type, creator);
         }
 
-        public object OfPool(Type type, int size)
+        public object OfPool(Type type)
         {
-            return PoolExtensions.Get(type, size);
+            return PoolExtensions.Get(type);
         }
 
         public void ToPool(Type type, object value)

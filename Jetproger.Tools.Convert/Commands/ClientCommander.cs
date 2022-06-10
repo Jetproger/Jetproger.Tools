@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using ePlus.Kiz.AppConfig;
+using Jetproger.Tools.Convert.AppConfig;
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Convert.Converts;
+using Jetproger.Tools.Convert.Settings;
 
 namespace Jetproger.Tools.Convert.Commands
 {
@@ -11,22 +13,30 @@ namespace Jetproger.Tools.Convert.Commands
         private readonly ConcurrentDictionary<Guid, CommandTransaction> _commands = new ConcurrentDictionary<Guid, CommandTransaction>();
         private readonly List<Guid> _deleteds = new List<Guid>();
 
-        public ClientCommander() : base(1000 * Je<GTINClientCommandPeriodSeconds>.As.As<int>()) { }
+        public ClientCommander() : base(1000 * J_<ClientCommandPeriodSeconds>.Sz.As<int>())
+        {
+
+        }
+
+        public static CommandResponse Run(ICommand command, CommandRequest request)
+        {
+            return BaseCommander<ClientCommander>.Instance.BeginExecute(command, request);
+        }
 
         public override CommandResponse BeginExecute(ICommand command, CommandRequest request)
         {
-            ICommandAsync commandAsync;
-            var response = Execute(command, request, out commandAsync);
-            if (response != null) return response;
-            var transaction = new CommandTransaction(commandAsync, request);
+            var transaction = new CommandTransaction(command, request);
             _commands.TryAdd(request.Session, transaction);
             return base.BeginExecute(command, request);
         }
 
         protected override void Action()
         {
-            _deleteds.Clear();
-            foreach (CommandTransaction transaction in _commands.Values) ExecuteCommand(transaction);
+            PrepareDeleteds();
+            foreach (CommandTransaction transaction in _commands.Values)
+            {
+                ExecuteCommand(transaction);
+            }
             RemoveDeleteds();
         }
 
@@ -34,23 +44,28 @@ namespace Jetproger.Tools.Convert.Commands
         {
             try
             {
-                if (transaction.Command.Result != null)
+                if (transaction.Command.State == ECommandState.Completed)
                 {
                     _deleteds.Add(transaction.Request.Session);
-                    transaction.Command.EndExecute();
                     return;
                 }
-                if (!transaction.Command.IsRunning)
+                if (transaction.Command.State == ECommandState.None)
                 {
-                    transaction.Command.Execute(transaction.Request.Document);
+                    transaction.Command.Value = transaction.Request.DeserializeParameter();
+                    transaction.Command.Execute();
                     return;
                 }
             }
             catch (Exception e)
             {
                 _deleteds.Add(transaction.Request.Session);
-                Je.cmd.Log(Je.cmd.Error(e));
+                Je.log.To(e);
             }
+        }
+
+        private void PrepareDeleteds()
+        {
+            _deleteds.Clear();
         }
 
         private void RemoveDeleteds()
@@ -64,7 +79,7 @@ namespace Jetproger.Tools.Convert.Commands
     }
 }
 
-namespace ePlus.Kiz.AppConfig
+namespace Jetproger.Tools.Convert.AppConfig
 {
-    public class GTINClientCommandPeriodSeconds : ConfigSetting<int> { public GTINClientCommandPeriodSeconds() : base(5) { } }
+    public class ClientCommandPeriodSeconds : ConfigSetting { public ClientCommandPeriodSeconds() : base("5") { } }
 }

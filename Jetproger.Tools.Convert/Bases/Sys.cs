@@ -11,7 +11,7 @@ using Jetproger.Tools.Convert.Converts;
 
 namespace Jetproger.Tools.Convert.Bases
 {
-    public static class MetaExtensions
+    public static class SysExtensions
     {
         public static ResourceManager GetResourceManager(this Je.ISysExpander e, string resourceName, string assemblyName)
         {
@@ -39,36 +39,36 @@ namespace Jetproger.Tools.Convert.Bases
             }
         }
 
-        public static T CreateInstance<T>(this Je.ISysExpander e, string metaName, object[] args = null)
+        public static T InstanceOf<T>(this Je.ISysExpander e, string metaName, object[] args = null)
         {
-            return (T)CreateInstance(e, metaName, args);
+            return (T)InstanceOf(e, metaName, args);
         }
 
-        public static object CreateInstance(this Je.ISysExpander e, string metaName, object[] args = null)
+        public static object InstanceOf(this Je.ISysExpander e, string metaName, object[] args = null)
         {
             string assemblyName, typeName, value;
-            ResolveTypeName(e, metaName, out assemblyName, out typeName, out value);
-            if (string.IsNullOrWhiteSpace(value)) return CreateInstance(e, assemblyName, typeName, args);
-            var type = ResolveType(e, assemblyName, typeName);
-            return IsSimple(e, type) ? value.As(type) : CreateInstance(e, assemblyName, typeName, args);
+            ParseMetaName(e, metaName, out assemblyName, out typeName, out value);
+            if (string.IsNullOrWhiteSpace(value)) return InstanceOf(e, assemblyName, typeName, args);
+            var type = TypeOf(e, assemblyName, typeName);
+            return IsSimple(e, type) ? value.As(type) : InstanceOf(e, assemblyName, typeName, args);
         }
 
-        public static T CreateInstance<T>(this Je.ISysExpander e, string assemblyName, string typeName, object[] args = null)
+        public static T InstanceOf<T>(this Je.ISysExpander e, string assemblyName, string typeName, object[] args = null)
         {
-            return (T)CreateInstance(e, assemblyName, typeName, args);
+            return (T)InstanceOf(e, assemblyName, typeName, args);
         }
 
-        public static object CreateInstance(this Je.ISysExpander e, string assemblyName, string typeName, object[] args = null)
+        public static object InstanceOf(this Je.ISysExpander e, string assemblyName, string typeName, object[] args = null)
         {
-            return CreateInstance(e, ResolveType(e, assemblyName, typeName), args);
+            return InstanceOf(e, TypeOf(e, assemblyName, typeName), args);
         }
 
-        public static T CreateInstance<T>(this Je.ISysExpander e, object[] args = null)
+        public static T InstanceOf<T>(this Je.ISysExpander e, object[] args = null)
         {
-            return (T)CreateInstance(e, typeof(T), args);
+            return (T)InstanceOf(e, typeof(T), args);
         }
 
-        public static object CreateInstance(this Je.ISysExpander e, Type type, object[] args = null)
+        public static object InstanceOf(this Je.ISysExpander e, Type type, object[] args = null)
         {
             if (type == null) return null;
             if (type == typeof(string)) return Activator.CreateInstance(type, new char[0]);
@@ -76,14 +76,14 @@ namespace Jetproger.Tools.Convert.Bases
             return Activator.CreateInstance(type, args);
         }
 
-        public static Type ResolveType(this Je.ISysExpander e, string name)
+        public static Type TypeOf(this Je.ISysExpander e, string name)
         {
             string assemblyName, typeName, value;
-            ResolveTypeName(e, name, out assemblyName, out typeName, out value);
-            return ResolveType(e, assemblyName, typeName);
+            ParseMetaName(e, name, out assemblyName, out typeName, out value);
+            return TypeOf(e, assemblyName, typeName);
         }
 
-        public static Type ResolveType(this Je.ISysExpander e, string assemblyName, string typeName)
+        public static Type TypeOf(this Je.ISysExpander e, string assemblyName, string typeName)
         {
             if (string.IsNullOrWhiteSpace(typeName)) return null;
             assemblyName = assemblyName ?? string.Empty;
@@ -142,7 +142,7 @@ namespace Jetproger.Tools.Convert.Bases
             {
                 var httpContext = HttpContext.Current;
                 if (httpContext != null) name = Path.Combine("bin", name);
-                name = Path.Combine(FileStore.AppDir(), name);
+                name = Path.Combine(Je.fss.AppDir(), name);
             }
             return TryLoadAssemblyWithExtension(name);
         }
@@ -171,7 +171,7 @@ namespace Jetproger.Tools.Convert.Bases
             }
         }
 
-        public static void ResolveTypeName(this Je.ISysExpander e, object value, out string assemblyName, out string typeName, out string valueName)
+        public static void ParseMetaName(this Je.ISysExpander e, object value, out string assemblyName, out string typeName, out string valueName)
         {
             assemblyName = null;
             typeName = null;
@@ -179,15 +179,15 @@ namespace Jetproger.Tools.Convert.Bases
             if (value == null) return;
             var type = value.GetType();
             valueName = value.As<string>();
-            ResolveTypeName(e, type, out assemblyName, out typeName);
+            ParseMetaName(e, type, out assemblyName, out typeName);
         }
 
-        public static void ResolveTypeName<T>(this Je.ISysExpander e, out string assemblyName, out string typeName)
+        public static void ParseMetaName<T>(this Je.ISysExpander e, out string assemblyName, out string typeName)
         {
-            ResolveTypeName(e, typeof(T), out assemblyName, out typeName);
+            ParseMetaName(e, typeof(T), out assemblyName, out typeName);
         }
 
-        public static void ResolveTypeName(this Je.ISysExpander e, Type type, out string assemblyName, out string typeName)
+        public static void ParseMetaName(this Je.ISysExpander e, Type type, out string assemblyName, out string typeName)
         {
             assemblyName = null;
             typeName = null;
@@ -198,7 +198,7 @@ namespace Jetproger.Tools.Convert.Bases
             typeName = type.ToString();
         }
 
-        public static void ResolveTypeName(this Je.ISysExpander e, string metaName, out string assemblyName, out string typeName)
+        public static void ParseMetaName(this Je.ISysExpander e, string metaName, out string assemblyName, out string typeName)
         {
             assemblyName = null;
             typeName = null;
@@ -208,7 +208,7 @@ namespace Jetproger.Tools.Convert.Bases
             typeName = names.Length > 1 ? names[1] : null;
         }
 
-        public static void ResolveTypeName(this Je.ISysExpander e, string metaName, out string assemblyName, out string typeName, out string value)
+        public static void ParseMetaName(this Je.ISysExpander e, string metaName, out string assemblyName, out string typeName, out string value)
         {
             var names = (metaName ?? "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             assemblyName = names.Length > 0 ? names[0] : string.Empty;
@@ -216,30 +216,30 @@ namespace Jetproger.Tools.Convert.Bases
             value = names.Length > 2 ? names[2] : string.Empty;
         }
 
-        public static string MakeTypeName(this Je.ISysExpander e, object value)
+        public static string BuildMetaName(this Je.ISysExpander e, object value)
         {
             if (value == null) return string.Empty;
             var type = value.GetType();
             var stringValue = IsSimple(e, type) ? $", {value.As<string>()}" : string.Empty;
-            return $"{MakeTypeName(e, type)}{stringValue}";
+            return $"{BuildMetaName(e, type)}{stringValue}";
         }
 
-        public static string MakeTypeName<T>(this Je.ISysExpander e)
+        public static string BuildMetaName<T>(this Je.ISysExpander e)
         {
-            return MakeTypeName(e, typeof(T));
+            return BuildMetaName(e, typeof(T));
         }
 
-        public static string MakeTypeName(this Je.ISysExpander e, Type type)
+        public static string BuildMetaName(this Je.ISysExpander e, Type type)
         {
             return type != null ? $"{Path.GetFileNameWithoutExtension(type.Assembly.Location)}, {type}" : string.Empty;
         }
 
-        public static string MakeTypeName(this Je.ISysExpander e, string assemblyName, string typeName)
+        public static string BuildMetaName(this Je.ISysExpander e, string assemblyName, string typeName)
         {
             return $"{assemblyName}, {typeName}";
         }
 
-        public static string GetMemberName(this Je.ISysExpander e, LambdaExpression memberSelector)
+        public static string MemberNameOf(this Je.ISysExpander e, LambdaExpression memberSelector)
         {
             if (memberSelector == null)
             {

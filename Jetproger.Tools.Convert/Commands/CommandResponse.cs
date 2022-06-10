@@ -10,6 +10,6 @@ namespace Jetproger.Tools.Convert.Commands
 
         [DataMember]public string Result { get; set; }
 
-        [DataMember]public CommandTicket[] Report { get; set; }
+        [DataMember]public CommandMessage[] Report { get; set; }
     }
 }

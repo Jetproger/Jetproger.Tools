@@ -1,112 +1,169 @@
 using System;
+using System.Data;
 using System.IO;
 using System.Text;
 using System.Xml;
+using System.Xml.Schema;
 using System.Xml.Serialization;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Convert.Commands;
 
 namespace Jetproger.Tools.Convert.Converts
 {
     public static class XmlExtensions
     {
-        public static T Of<T>(this XmlExpander e, object value)
+        private static readonly XmlConverter Converter = Je<XmlConverter>.Onu();
+
+        public static string Of(this Je.IXmlExpander e, object value, XmlConverter converter = null)
         {
-            return Je<XmlConverter>.One(() => Je<XmlConverter>.New()).Serialize<T>(value);
+            return (converter ?? Converter).SerializeToString(value);
         }
 
-        public static string Of(this XmlExpander e, object value)
+        public static TResult Of<TResult>(this Je.IXmlExpander e, object value, XmlConverter converter = null)
         {
-            return Je<XmlConverter>.One(() => Je<XmlConverter>.New()).Serialize<string>(value);
+            var type = typeof(TResult);
+            converter = converter ?? Converter;
+            if (type == typeof(string)) return (TResult)(object)converter.SerializeToString(value);
+            if (type == typeof(byte[])) return (TResult)(object)converter.SerializeToBytes(value);
+            throw new XmlConverterInvalidResultTypeException();
         }
 
-        public static T To<T>(this XmlExpander e, string s)
+        public static TResult Of<TResult, TConverter>(this Je.IXmlExpander e, object value) where TConverter : XmlConverter
         {
-            return (T)Je<XmlConverter>.One(() => Je<XmlConverter>.New()).Deserialize(s, typeof(T)); 
+            var type = typeof(TResult);
+            var converter = Je.sys.InstanceOf<TConverter>();
+            if (type == typeof(string)) return (TResult)(object)converter.SerializeToString(value);
+            if (type == typeof(byte[])) return (TResult)(object)converter.SerializeToBytes(value);
+            throw new XmlConverterInvalidResultTypeException();
         }
 
-        public static object To(this XmlExpander e, string s, Type type)
-        {  
-            return Je<XmlConverter>.One(() => Je<XmlConverter>.New()).Deserialize(s, type);
+        public static object To(this Je.IXmlExpander e, string s, Type type, XmlConverter converter = null)
+        {
+            return (converter ?? Converter).Deserialize(s, type);
         }
 
-        public static string Op(this XmlExpander exp, XmlDocument doc, string xsltScript)
+        public static TResult To<TResult>(this Je.IXmlExpander e, string s, XmlConverter converter = null)
+        {
+            return (TResult)(converter ?? Converter).Deserialize(s, typeof(TResult));
+        }
+
+        public static TResult To<TResult, TConverter>(this Je.IXmlExpander e, string s) where TConverter : XmlConverter
+        {
+            return (TResult)Je.sys.InstanceOf<TConverter>().Deserialize(s, typeof(TResult));
+        }
+
+        public static object To(this Je.IXmlExpander e, byte[] bytes, Type type, XmlConverter converter = null)
+        {
+            return (converter ?? Converter).Deserialize(bytes, type);
+        }
+
+        public static TResult To<TResult>(this Je.IXmlExpander e, byte[] bytes, XmlConverter converter = null)
+        {
+            return (TResult)(converter ?? Converter).Deserialize(bytes, typeof(TResult));
+        }
+
+        public static TResult To<TResult, TConverter>(this Je.IXmlExpander e, byte[] bytes) where TConverter : XmlConverter
+        {
+            return (TResult)Je.sys.InstanceOf<TConverter>().Deserialize(bytes, typeof(TResult));
+        }
+
+        public static string Op(this Je.IXmlExpander e, string xml, string xslt)
         {
             using (var sw = new StringWriter())
             {
-                var xpathDoc = new XPathDocument(new XmlNodeReader(doc));
-                var xslt = new XslCompiledTransform();
-                var rs = new XmlReaderSettings { DtdProcessing = DtdProcessing.Prohibit };
-                using (var sr = new StringReader(xsltScript))
+                var doc = new XmlDocument();
+                doc.LoadXml(xml);
+                var xpath = new XPathDocument(new XmlNodeReader(doc));
+                var transformer = new XslCompiledTransform();
+                var settings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Prohibit };
+                using (var sr = new StringReader(xslt))
                 {
-                    using (var reader = XmlReader.Create(sr, rs))
+                    using (var reader = XmlReader.Create(sr, settings))
                     {
-                        xslt.Load(reader);
-                        xslt.Transform(xpathDoc, null, sw);
+                        transformer.Load(reader);
+                        transformer.Transform(xpath, null, sw);
                         return sw.ToString();
                     }
                 }
             }
         }
-    }
 
-    public class XmlExpander
-    {
-        public XmlAttributeExpander Attribute => Je<XmlAttributeExpander>.One(() => Je<XmlAttributeExpander>.New());
-        public XmlNodeExpander Node => Je<XmlNodeExpander>.One(() => Je<XmlNodeExpander>.New());
-    }
-
-    public class XmlNodeExpander
-    { 
-        public XmlNode Add(XmlNode root, string name)
+        public static string ValidateXml(this Je.IXmlExpander e, string xml, string xsd)
         {
-            return Add(root, name, "");
+            var error = new StringBuilder();
+            var doc = new XmlDocument();
+            var xsdReader = new StringReader(xsd);
+            var schema = XmlSchema.Read(xsdReader, (x, y) => error.AppendLine(y.Message));
+            doc.Schemas.Add(schema);
+            try
+            {
+                doc.LoadXml(xml);
+            }
+            catch (Exception exception)
+            {
+                return exception.Message;
+            }
+            doc.Validate((x, y) => error.AppendLine(y.Message));
+            return error.ToString();
         }
 
-        public XmlNode Add<T>(XmlNode root, string name, T value, string namespaceUri = null)
+        public static T GetNode<T>(this Je.IXmlExpander e, XmlNode root, int index)
         {
-            if (value == null) return null;
-            XmlDocument doc = root.OwnerDocument ?? (XmlDocument)root;
-            XmlNode node = doc.CreateNode(XmlNodeType.Element, name, namespaceUri);
-            node.InnerText = Je.str.Of(value);
-            root.AppendChild(node);
-            return node;
+            return GetNode(e, root, index).As<T>();
         }
 
-        public T Get<T>(XmlNode root, int index)
+        public static object GetNode(this Je.IXmlExpander e, XmlNode root, int index)
         {
-            return (root != null && index >= 0 && index < root.ChildNodes.Count ? root.ChildNodes[index].InnerText : null).As<T>();
+            return root != null && index >= 0 && index < root.ChildNodes.Count ? root.ChildNodes[index].InnerText : null;
         }
 
-        public T Get<T>(XmlNode root, string name)
+        public static T GetNode<T>(this Je.IXmlExpander e, XmlNode root, string name)
         {
-            if (root == null || string.IsNullOrWhiteSpace(name)) return default(T);
-            XmlNode node = root.SelectSingleNode(name);
-            return (node?.InnerText).As<T>();
+            return GetNode(e, root, name).As<T>();
         }
 
-        public void Set(XmlNode root, int index, object value)
+        public static object GetNode(this Je.IXmlExpander e, XmlNode root, string name)
+        {
+            if (root == null || string.IsNullOrWhiteSpace(name)) return null;
+            var node = root.SelectSingleNode(name);
+            return node?.InnerText;
+        }
+
+        public static T GetNode<T>(this Je.IXmlExpander e, XmlDocument doc, string xpath)
+        {
+            return GetNode(e, doc, xpath).As<T>();
+        }
+
+        public static object GetNode(this Je.IXmlExpander e, XmlDocument doc, string xpath)
+        {
+            if (doc == null || string.IsNullOrWhiteSpace(xpath)) return null;
+            var node = doc.SelectSingleNode(xpath);
+            return node?.InnerText;
+        }
+
+        public static void SetNode(this Je.IXmlExpander e, XmlNode root, int index, object value)
         {
             if (root == null || value == null || index < 0 && index >= root.ChildNodes.Count) return;
-            XmlNode node = root.ChildNodes[index];
+            var node = root.ChildNodes[index];
             if (node != null) node.InnerText = value.As<string>();
         }
 
-        public void Set(XmlNode root, string name, object value)
+        public static void SetNode(this Je.IXmlExpander e, XmlNode root, string name, object value)
         {
             if (root == null || string.IsNullOrWhiteSpace(name)) return;
-            XmlNode node = root.SelectSingleNode(name);
+            var node = root.SelectSingleNode(name);
             if (node != null) node.InnerText = value.As<string>();
         }
 
-        public void Set( XmlDocument doc, string xmlPath, string value)
+        public static void SetNode(this Je.IXmlExpander e, XmlDocument doc, string xpath, object value)
         {
-            XmlNode node = doc.SelectSingleNode(xmlPath) ?? Create(doc, xmlPath);
-            node.InnerText = value;
+            var node = doc.SelectSingleNode(xpath) ?? AddNode(e, doc, xpath);
+            node.InnerText = value.As<string>();
         }
 
-        public XmlNode Create()
+        public static XmlNode AddNode(this Je.IXmlExpander e)
         {
             var doc = new XmlDocument();
             XmlNode node = doc.CreateNode(XmlNodeType.Element, "XML", null);
@@ -114,68 +171,90 @@ namespace Jetproger.Tools.Convert.Converts
             return node;
         }
 
-        public XmlNode Create(XmlDocument doc, string xpath)
+        public static XmlNode AddNode(this Je.IXmlExpander e, XmlDocument doc, string xpath)
         {
             string[] data = xpath.Split('/');
-            XmlNode current = doc.DocumentElement;
+            var current = (XmlNode)doc.DocumentElement;
             string path = "";
             foreach (string name in data)
             {
                 path = path + "/" + name;
-                XmlNode node = doc.SelectSingleNode(path) ?? Add(current, name, "");
+                var node = doc.SelectSingleNode(path) ?? AddNode(e, current, name, "");
                 current = node;
             }
             return current;
         }
-    }
 
-    public class XmlAttributeExpander
-    {
-        public XmlNode Add<T>(XmlNode root, string name, T value)
+        public static XmlNode AddNode(this Je.IXmlExpander e, XmlNode root, string name)
         {
-            if (value == null) return null;
-            XmlDocument doc = root.OwnerDocument ?? (XmlDocument)root;
-            XmlAttribute attr = doc.CreateAttribute(name);
+            return AddNode(e, root, name, "");
+        }
+
+        public static XmlNode AddNode(this Je.IXmlExpander e, XmlNode root, string name, object value, string namespaceUri = null)
+        {
+            if (value == null || value == DBNull.Value) return null;
+            var doc = root.OwnerDocument ?? (XmlDocument)root;
+            var node = doc.CreateNode(XmlNodeType.Element, name, namespaceUri);
+            node.InnerText = Je.str.Of(value);
+            root.AppendChild(node);
+            return node;
+        }
+
+        public static XmlNode AddAttr(this Je.IXmlExpander e, XmlNode root, string name, object value)
+        {
+            if (value == null || value == DBNull.Value) return null;
+            var doc = root.OwnerDocument ?? (XmlDocument)root;
+            var attr = doc.CreateAttribute(name);
             attr.InnerText = Je.str.Of(value);
             root.Attributes?.Append(attr);
             return root;
         }
 
-        public T Get<T>(XmlNode root, int index)
+        public static T GetAttr<T>(this Je.IXmlExpander e, XmlNode root, int index)
         {
-            return (root != null && root.Attributes != null && index >= 0 && index < root.Attributes.Count ? root.Attributes[index].InnerText : null).As<T>();
+            return GetAttr(e, root, index).As<T>();
         }
 
-        public T Get<T>(XmlNode root, string name)
+        public static object GetAttr(this Je.IXmlExpander e, XmlNode root, int index)
         {
-            if (root == null || string.IsNullOrWhiteSpace(name) || root.Attributes == null) return default(T);
-            XmlAttribute attr = root.Attributes[name];
-            return (attr?.InnerText).As<T>();
+            return root != null && root.Attributes != null && index >= 0 && index < root.Attributes.Count ? root.Attributes[index].InnerText : null;
         }
 
-        public void Set(XmlNode root, int index, object value)
+        public static T GetAttr<T>(this Je.IXmlExpander e, XmlNode root, string name)
         {
-            if (root == null || value == null || root.Attributes == null || index < 0 && index >= root.Attributes.Count) return;
-            XmlAttribute attr = root.Attributes[index];
+            return GetAttr(e, root, name).As<T>();
+        }
+
+        public static object GetAttr(this Je.IXmlExpander e, XmlNode root, string name)
+        {
+            if (root == null || root.Attributes == null || string.IsNullOrWhiteSpace(name)) return null;
+            var attr = root.Attributes[name];
+            return attr?.InnerText;
+        }
+
+        public static void SetAttr(this Je.IXmlExpander e, XmlNode root, int index, object value)
+        {
+            if (root == null || root.Attributes == null || index < 0 && index >= root.Attributes.Count) return;
+            var attr = root.Attributes[index];
             if (attr != null) attr.InnerText = value.As<string>();
         }
 
-        public void Set(XmlNode root, string name, object value)
+        public static void SetAttr(this Je.IXmlExpander e, XmlNode root, string name, object value)
         {
-            if (root == null || string.IsNullOrWhiteSpace(name) || root.Attributes == null) return;
-            XmlAttribute attr = root.Attributes[name];
+            if (root == null || root.Attributes == null || string.IsNullOrWhiteSpace(name)) return;
+            var attr = root.Attributes[name];
             if (attr != null) attr.InnerText = value.As<string>();
         }
     }
 
     public class KizXmlConverter : XmlConverter
     {
-        protected override string SerializeToString(object value)
+        public override string SerializeToString(object value)
         {
             return Encoding.UTF8.GetString(SerializeToBytes(value));
         }
 
-        protected override byte[] SerializeToBytes(object value)
+        public override byte[] SerializeToBytes(object value)
         {
             if (value == null)  return null;
             using (var ms = new MemoryStream())
@@ -196,10 +275,13 @@ namespace Jetproger.Tools.Convert.Converts
             }
         }
 
-        protected override object DeserializeToObject(string xml, Type type)
+        public override object Deserialize(string xml, Type type)
         {
-            if (string.IsNullOrWhiteSpace(xml)) return Je.sys.DefaultOf(type);
-            var bytes = Encoding.UTF8.GetBytes(xml);
+            return !string.IsNullOrWhiteSpace(xml) ? Deserialize(Encoding.UTF8.GetBytes(xml), type) : Deserialize(new byte[0], type);
+        }
+
+        public override object Deserialize(byte[] bytes, Type type)
+        {
             if (bytes == null || bytes.Length == 0) return Je.sys.DefaultOf(type);
             using (var ms = new MemoryStream(bytes))
             {
@@ -216,70 +298,153 @@ namespace Jetproger.Tools.Convert.Converts
         }
     }
 
-    public class XmlConverter : ISerializer, IDeserializer
-    { 
+    public class XmlConverter
+    {
         private static readonly string ByteOrderMarkUtf8 = Encoding.UTF8.GetString(Encoding.UTF8.GetPreamble());
 
-        public T Serialize<T>(object value)
+        public virtual string SerializeToString(object o)
         {
-            if (typeof(T) == typeof(string)) return SerializeToString(value).As<T>();
-            if (typeof(T) == typeof(byte[])) return SerializeToBytes(value).As<T>();
-            throw new InvalidCastException();
+            return Encoding.UTF8.GetString(SerializeToBytes(o)).Remove(0, ByteOrderMarkUtf8.Length);
         }
 
-        public string Serialize(object value)
+        public virtual byte[] SerializeToBytes(object o)
         {
-            return SerializeToString(value);
-        }
-
-        public T Deserialize<T>(string s)
-        {
-            return (T)DeserializeToObject(s, typeof(T));
-        }
-
-        public object Deserialize(string s, Type type)
-        {  
-            return DeserializeToObject(s, type);
-        }
-
-        protected virtual object DeserializeToObject(string xml, Type type)
-        {
-            using (var sr = new StringReader(xml))
-            {
-                return (new XmlSerializer(type)).Deserialize(sr);
-            }
-        }
-
-        protected virtual string SerializeToString(object value)
-        {
-            return Encoding.UTF8.GetString(SerializeToBytes(value)).Remove(0, ByteOrderMarkUtf8.Length);
-        }
-
-        protected virtual byte[] SerializeToBytes(object value)
-        {
-            if (value == null) return null;
+            if (o == null) return null;
+            var ds = o as DataSet;
+            if (ds != null) return SerializeDataSet(ds);
+            var dt = o as DataTable;
+            if (dt != null) return SerializeDataTable(dt);
             using (var ms = new MemoryStream())
             {
                 var ns = new XmlSerializerNamespaces(new[] { XmlQualifiedName.Empty });
-                var xs = new XmlSerializer(value.GetType());
+                var xs = new XmlSerializer(o.GetType());
                 var xtw = new NoDeclarationXmlTextWriter(ms, Encoding.UTF8);
                 xtw.Formatting = Formatting.None;
-                xtw.Namespaces = false;
+                xtw.Namespaces = true;
                 var xws = new XmlWriterSettings();
                 xws.OmitXmlDeclaration = true;
                 var xw = XmlWriter.Create(xtw, xws);
-                xs.Serialize(xw, value, ns);
+                xs.Serialize(xw, o, ns);
                 return ms.ToArray();
+            }
+        }
+
+        public virtual object Deserialize(string xml, Type type)
+        {
+            if (string.IsNullOrWhiteSpace(xml)) return null;
+            if (type == typeof(DataSet)) return DeserializeDataSet(xml);
+            if (type == typeof(DataTable)) return DeserializeDataTable(xml);
+            return !string.IsNullOrWhiteSpace(xml) ? Deserialize(Encoding.UTF8.GetBytes(xml), type) : Deserialize(new byte[0], type);
+        }
+
+        public virtual object Deserialize(byte[] bytes, Type type)
+        {
+            if (bytes == null || bytes.Length == 0) return null;
+            if (type == typeof(DataSet)) return DeserializeDataSet(bytes);
+            if (type == typeof(DataTable)) return DeserializeDataTable(bytes);
+            using (var ms = new MemoryStream(bytes))
+            {
+                var xs = new XmlSerializer(type);
+                var xtr = new NoDeclarationXmlTextReader(ms, Encoding.UTF8);
+                xtr.Namespaces = false;
+                var xrs = new XmlReaderSettings();
+                xrs.IgnoreComments = true;
+                xrs.IgnoreProcessingInstructions = true;
+                xrs.IgnoreWhitespace = true;
+                var xr = XmlReader.Create(xtr, xrs);
+                return xs.Deserialize(xr);
+            }
+        }
+
+        private byte[] SerializeDataTable(DataTable dt)
+        {
+            if (dt == null) return null;
+            var ds = new DataSet { EnforceConstraints = false };
+            ds.Tables.Add(dt);
+            return SerializeDataSet(ds);
+        }
+
+        private byte[] SerializeDataSet(DataSet ds)
+        {
+            if (ds == null) return null;
+            using (var ms = new MemoryStream())
+            {
+                var xtw = new NoDeclarationXmlTextWriter(ms, Encoding.UTF8);
+                xtw.Formatting = Formatting.None;
+                xtw.Namespaces = true;
+                var xws = new XmlWriterSettings();
+                xws.OmitXmlDeclaration = true;
+                var xw = XmlWriter.Create(xtw, xws);
+                ds.WriteXml(xw, XmlWriteMode.WriteSchema);
+                return ms.ToArray();
+            }
+        }
+
+        private DataTable DeserializeDataTable(byte[] bytes)
+        {
+            if (bytes == null || bytes.Length == 0) return null;
+            var ds = DeserializeDataSet(bytes);
+            return ds.Tables.Count > 0 ? ds.Tables[0] : null;
+        }
+
+        private DataSet DeserializeDataSet(byte[] bytes)
+        {
+            if (bytes == null || bytes.Length == 0) return null;
+            using (var ms = new MemoryStream(bytes))
+            {
+                var xtr = new NoDeclarationXmlTextReader(ms, Encoding.UTF8);
+                xtr.Namespaces = false;
+                var xrs = new XmlReaderSettings();
+                xrs.IgnoreComments = true;
+                xrs.IgnoreProcessingInstructions = true;
+                xrs.IgnoreWhitespace = true;
+                var xr = XmlReader.Create(xtr, xrs);
+                var ds = new DataSet { EnforceConstraints = false };
+                ds.ReadXml(xr, XmlReadMode.ReadSchema);
+                return ds;
+            }
+        }
+
+        private DataTable DeserializeDataTable(string xml)
+        {
+            if (string.IsNullOrWhiteSpace(xml)) return null;
+            var ds = DeserializeDataSet(xml);
+            return ds.Tables.Count > 0 ? ds.Tables[0] : null;
+        }
+
+        private DataSet DeserializeDataSet(string xml)
+        {
+            if (string.IsNullOrWhiteSpace(xml)) return null;
+            using (var sr = new StringReader(xml))
+            {
+                var ds = new DataSet { EnforceConstraints = false };
+                ds.ReadXml(sr);
+                return ds;
             }
         }
 
         private class NoDeclarationXmlTextWriter : XmlTextWriter
         {
-            public NoDeclarationXmlTextWriter(Stream w, Encoding encoding) : base(w, encoding) { }
             public NoDeclarationXmlTextWriter(string filename, Encoding encoding) : base(filename, encoding) { }
+            public NoDeclarationXmlTextWriter(Stream w, Encoding encoding) : base(w, encoding) { }
             public NoDeclarationXmlTextWriter(TextWriter w) : base(w) { }
             public override void WriteStartDocument(bool standalone) { }
             public override void WriteStartDocument() { }
+        }
+
+        private class NoDeclarationXmlTextReader : XmlTextReader
+        {
+            public NoDeclarationXmlTextReader(string fileName) : base(new FileStream(fileName, FileMode.OpenOrCreate)) { }
+            public NoDeclarationXmlTextReader(Stream r, Encoding encoding) : base(new StreamReader(r, encoding)) { }
+            public NoDeclarationXmlTextReader(TextReader r) : base(r) { }
+        }
+    }
+
+    public class XmlConverterInvalidResultTypeException : Exception
+    {
+        public XmlConverterInvalidResultTypeException() : base(@"The return type must be System.String or System.Byte[]")
+        {
+
         }
     }
 }

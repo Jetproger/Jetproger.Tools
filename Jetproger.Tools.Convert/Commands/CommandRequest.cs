@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Convert.Converts;
 
 namespace Jetproger.Tools.Convert.Commands
 {
@@ -7,9 +9,32 @@ namespace Jetproger.Tools.Convert.Commands
     public class CommandRequest
     {
         [DataMember]public Guid Session { get; set; } 
-
+        [DataMember]public string Result { get; set; }
         [DataMember]public string Command { get; set; }
-
+        [DataMember]public string Parameter { get; set; }
         [DataMember]public string Document { get; set; }
+
+        public CommandRequest() : this(Guid.NewGuid()) { } 
+
+        public CommandRequest(Guid session)
+        {
+            Session = session;
+        }
+
+        public CommandRequest(CommandRequest request)
+        {
+            Session = request.Session;
+            Result = request.Result;
+            Command = request.Command;
+            Parameter = request.Parameter;
+            Document = request.Document;
+        }
+
+        public object DeserializeParameter()
+        {
+            var parameterType = Je.sys.TypeOf(Parameter);
+            if (parameterType == null) throw new TypeNotFoundException(Parameter);
+            return Je.xml.To(Document, parameterType);
+        }
     }
 }

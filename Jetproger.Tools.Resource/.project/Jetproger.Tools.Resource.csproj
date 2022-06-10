@@ -47,14 +47,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\.solution\AssemblyInfo.cs">
-      <Link>.project\AssemblyInfo.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\.solution\jetproger.pfx">
-      <Link>.project\jetproger.pfx</Link>
-    </None>
+    <Compile Include="..\..\.solution\AssemblyInfo.cs"><Link>.project\AssemblyInfo.cs</Link></Compile>
+    <None Include="..\..\.solution\jetproger.pfx"><Link>.project\jetproger.pfx</Link></None>
+    <None Include="..\.setting\Jetproger.Tools.Resource.nuspec"><Link>.project\Jetproger.Tools.Resource.nuspec</Link></None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Bases\ResourceNames.Designer.cs">
@@ -63,14 +58,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ResourceNames.resx</DependentUpon>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="..\Bases\ResourceNames.ru-RU.resx">
       <Link>Bases\ResourceNames.ru-RU.resx</Link>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="..\Bases\ResourceNames.resx">
       <Link>Bases\ResourceNames.resx</Link>
       <Generator>ResXFileCodeGenerator</Generator>
@@ -85,14 +76,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ResourceDescriptions.resx</DependentUpon>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="..\Bases\ResourceDescriptions.ru-RU.resx">
       <Link>Bases\ResourceDescriptions.ru-RU.resx</Link>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="..\Bases\ResourceDescriptions.resx">
       <Link>Bases\ResourceDescriptions.resx</Link>
       <Generator>ResXFileCodeGenerator</Generator>
@@ -107,14 +94,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ResourcePictures.resx</DependentUpon>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="..\Bases\ResourcePictures.ru-RU.resx">
       <Link>Bases\ResourcePictures.ru-RU.resx</Link>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="..\Bases\ResourcePictures.resx">
       <Link>Bases\ResourcePictures.resx</Link>
       <Generator>ResXFileCodeGenerator</Generator>
@@ -129,14 +112,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ResourceShortcuts.resx</DependentUpon>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="..\Bases\ResourceShortcuts.ru-RU.resx">
       <Link>Bases\ResourceShortcuts.ru-RU.resx</Link>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="..\Bases\ResourceShortcuts.resx">
       <Link>Bases\ResourceShortcuts.resx</Link>
       <Generator>ResXFileCodeGenerator</Generator>
@@ -151,14 +130,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ResourceSpecifies.resx</DependentUpon>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="..\Bases\ResourceSpecifies.ru-RU.resx">
       <Link>Bases\ResourceSpecifies.ru-RU.resx</Link>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="..\Bases\ResourceSpecifies.resx">
       <Link>Bases\ResourceSpecifies.resx</Link>
       <Generator>ResXFileCodeGenerator</Generator>
@@ -166,15 +141,11 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\.setting\Jetproger.Tools.Resource.nuspec">
-      <Link>.project\Jetproger.Tools.Resource.nuspec</Link>
-    </None>
-  </ItemGroup>
   <Target Name="RemoveDirectories" BeforeTargets="ResolveReferences">
     <Exec Command="for /d %%p in (&quot;$(ProjectDir)&quot;\*) do if /I &quot;%%p&quot; neq &quot;$(ProjectDir)\obj&quot; (rd /Q /S &quot;%%p&quot;)" />
   </Target>
   <Target Name="RemoveObj" AfterTargets="Rebuild">
+    <Exec Command="call $(SolutionDir)post-build.bat $(SolutionDir) $(ProjectDir) $(TargetDir) $(ProjectName)" />
     <Exec Command="rd /Q /S &quot;$(ProjectDir)\obj&quot;" />
   </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

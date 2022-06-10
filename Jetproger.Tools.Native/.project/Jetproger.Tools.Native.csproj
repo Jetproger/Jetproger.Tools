@@ -47,40 +47,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\.solution\AssemblyInfo.cs">
-      <Link>.project\AssemblyInfo.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\.solution\jetproger.pfx">
-      <Link>.project\jetproger.pfx</Link>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\Types.cs">
-      <Link>Bases\Types.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\Native.cs">
-      <Link>Bases\Native.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Jetproger.Tools.Convert\.project\Jetproger.Tools.Convert.csproj">
       <Project>{600aa7dc-ea39-4609-ab2a-3546bb5f8b72}</Project>
       <Name>Jetproger.Tools.Convert</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\.setting\Jetproger.Tools.Native.nuspec">
-      <Link>.project\Jetproger.Tools.Native.nuspec</Link>
-    </None>
+    <Compile Include="..\..\.solution\AssemblyInfo.cs"><Link>.project\AssemblyInfo.cs</Link></Compile>
+    <None Include="..\..\.solution\jetproger.pfx"><Link>.project\jetproger.pfx</Link></None>
+    <None Include="..\.setting\Jetproger.Tools.Native.nuspec"><Link>.project\Jetproger.Tools.Native.nuspec</Link></None>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\Types.cs"><Link>Bases\Types.cs</Link></Compile>
+    <Compile Include="..\Bases\Native.cs"><Link>Bases\Native.cs</Link></Compile>
   </ItemGroup>
   <Target Name="RemoveDirectories" BeforeTargets="ResolveReferences">
     <Exec Command="for /d %%p in (&quot;$(ProjectDir)&quot;\*) do if /I &quot;%%p&quot; neq &quot;$(ProjectDir)\obj&quot; (rd /Q /S &quot;%%p&quot;)" />
   </Target>
   <Target Name="RemoveObj" AfterTargets="Rebuild">
+    <Exec Command="call $(SolutionDir)post-build.bat $(SolutionDir) $(ProjectDir) $(TargetDir) $(ProjectName)" />
     <Exec Command="rd /Q /S &quot;$(ProjectDir)\obj&quot;" />
   </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

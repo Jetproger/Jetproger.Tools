@@ -3,83 +3,48 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using Jetproger.Tools.Convert.Bases;
 
 namespace Jetproger.Tools.Convert.Factories
 {
     public static class PoolExtensions<T>
     {
-        private static readonly ManualResetEvent Mre = new ManualResetEvent(false);
         private static readonly ConcurrentBag<T> Pool = new ConcurrentBag<T>();
-        private static FuncWrapper _creator;
-        private static long _ticks;
-        private static int _size;
 
-        static PoolExtensions()
+        public static void Set(T value)
         {
-            _size = 1;
-            (new Thread(Filling) { IsBackground = true }).Start();
-        }
-
-        public static T Get(int size)
-        {
-            _size = size > 0 ? size : _size;
-            return Get();
+            Pool.Add(value);
         }
 
         public static T GetSet(FuncWrapper creator)
         {
-            _creator = creator;
-            return Get();
+            T value;
+            return Get(out value) ? value : (T)creator.Execute();
         }
 
-        public static T Get(int size, FuncWrapper creator)
+        public static T Get()
         {
-            _size = size > 0 ? size : _size;
-            _creator = creator;
-            return Get();
+            T value;
+            return Get(out value) ? value : default(T);
         }
 
-        private static T Get()
+        private static bool Get(out T value)
         {
-            T instance;
-            instance = Pool.TryTake(out instance) ? instance : CreateInstance();
-            Mre.Set();
-            return instance;
-        }
-
-        public static void Set(T instance)
-        {
-            Pool.Add(instance);
-        }
-
-        private static void Filling()
-        {
+            value = default(T);
+            var counter = 0;
             while (true)
             {
-                if (Interlocked.Increment(ref _ticks) >= long.MaxValue)
-                {
-                    break;
-                }
-                if (Pool.Count < _size)
-                {
-                    Pool.Add(CreateInstance());
-                    continue;
-                }
-                Mre.WaitOne();
-                Mre.Reset();
+                if (counter++ > 3) break;
+                if (Pool.TryTake(out value)) return true;
+                Thread.Sleep(999);
             }
-        }
-
-        private static T CreateInstance()
-        {
-            return _creator != null ? (T)_creator.Execute() : Je.sys.CreateInstance<T>();
+            return false;
         }
     }
 
     public static class PoolExtensions
     {
         private static readonly ConcurrentDictionary<Type, MethodInfo> GetMethods = new ConcurrentDictionary<Type, MethodInfo>();
+
         private static readonly ConcurrentDictionary<Type, MethodInfo> SetMethods = new ConcurrentDictionary<Type, MethodInfo>();
 
         public static object GetSet(Type type, FuncWrapper creator)
@@ -87,9 +52,9 @@ namespace Jetproger.Tools.Convert.Factories
             return GetMethods.GetOrAdd(GenericOf(type), x => FindMethod(x, "GetSet"))?.Invoke(null, new[] { creator as object });
         }
 
-        public static object Get(Type type, int size)
+        public static object Get(Type type)
         {
-            return GetMethods.GetOrAdd(GenericOf(type), x => FindMethod(x, "Get"))?.Invoke(null, new object[] { size });
+            return GetMethods.GetOrAdd(GenericOf(type), x => FindMethod(x, "Get"))?.Invoke(null, new object[0]);
         }
 
         public static void Set(Type type, object value)

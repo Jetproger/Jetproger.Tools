@@ -348,4 +348,28 @@
   <data name="WindowsUser" xml:space="preserve">
     <value>Пользователь Windows</value>
   </data>
+  <data name="AppConfigAppHostName" xml:space="preserve">
+    <value>В конфиге не указан url сервиса приложения (нода &lt;AppHost&gt;)</value>
+  </data>
+  <data name="CertificateKeyName" xml:space="preserve">
+    <value>Не найден ключевой носитель для сертификата {0}=[{1}]</value>
+  </data>
+  <data name="CertificateStoreName" xml:space="preserve">
+    <value>Не найден сертификат {0}=[{1}] в хранилище текущего пользователя</value>
+  </data>
+  <data name="CommandNotDefinedName" xml:space="preserve">
+    <value>Сессия [{0}]: не определена команда для выполнения(CommandRequest.Command)</value>
+  </data>
+  <data name="MssqlCommandName" xml:space="preserve">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="TypeNotFoundName" xml:space="preserve">
+    <value>Не найден тип "{0}"</value>
+  </data>
+  <data name="TypeNotSubtypeName" xml:space="preserve">
+    <value>Тип "{0}" не является подтипом "{1}"</value>
+  </data>
+  <data name="AppPortNotSpecifiedName" xml:space="preserve">
+    <value>В конфиге не указан порт для прослушивания (нода &lt;AppPort&gt;)</value>
+  </data>
 </root>

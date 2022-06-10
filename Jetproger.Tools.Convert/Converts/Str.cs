@@ -1,51 +1,66 @@
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Text;
+using System.Xml;
 using Jetproger.Tools.Convert.Bases;
-using Jetproger.Tools.Convert.Converts;
-
-namespace Jetproger.Tools.Convert.Bases
-{
-    public static partial class Je
-    {
-        public static class str_<TConverter> where TConverter : StringConverter
-        {
-            public static string Of(object value)
-            {
-                return Je<TConverter>.One(() => Je<TConverter>.New()).Serialize(value);
-            }
-
-            public static T To<T>(string s)
-            {
-                return (T)Je<TConverter>.One(() => Je<TConverter>.New()).Deserialize(s, typeof(T));
-            }
-
-            public static object To(string s, Type type)
-            {
-                return Je<TConverter>.One(() => Je<TConverter>.New()).Deserialize(s, type);
-            }
-        }
-    }
-}
 
 namespace Jetproger.Tools.Convert.Converts
 {
     public static class StrExtensions
-    {                                                                             
-        public static string Of(this Je.IStrExpander e, object value)
+    {
+        private static readonly StringConverter Converter = Je<StringConverter>.Onu();
+
+        public static string Of(this Je.IStrExpander e, object value, StringConverter converter = null)
         {
-            return Je<StringConverter>.One(() => Je<StringConverter>.New()).Serialize(value); 
+            return (converter ?? Converter).Serialize(value);
         }
 
-        public static T To<T>(this Je.IStrExpander e, string s)
+        public static string Of<TConverter>(this Je.IStrExpander e, object value) where TConverter : StringConverter
         {
-            return (T)Je<StringConverter>.One(() => Je<StringConverter>.New()).Deserialize(s, typeof(T));
+            return (Je.sys.InstanceOf<TConverter>()).Serialize(value);
         }
 
-        public static object To(this Je.IStrExpander e, string s, Type type)
+        public static object To(this Je.IStrExpander e, string s, Type type, StringConverter converter = null)
         {
-            return Je<StringConverter>.One(() => Je<StringConverter>.New()).Deserialize(s, type);
+            return (converter ?? Converter).Deserialize(s, type);
+        }
+
+        public static T To<T>(this Je.IStrExpander exp, string json, StringConverter converter = null)
+        {
+            return (T)(converter ?? Converter).Deserialize(json, typeof(T));
+        }
+
+        public static TResult To<TResult, TConverter>(this Je.IStrExpander exp, string json) where TConverter : StringConverter
+        {
+            return (TResult)(Je.sys.InstanceOf<TConverter>()).Deserialize(json, typeof(TResult));
+        }
+
+        public static string Op(this Je.IStrExpander e, string fileName, string args)
+        {
+            var sb = new StringBuilder();
+            var psi = new ProcessStartInfo
+            {
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                StandardOutputEncoding = Encoding.GetEncoding(866)
+            };
+            psi.FileName = fileName;
+            psi.Arguments = args;
+            var process = Process.Start(psi);
+            while (process != null && !process.StandardOutput.EndOfStream)
+            {
+                sb.Append(process.StandardOutput.ReadLine());
+            }
+            if (process != null)
+            {
+                process.WaitForExit();
+                process.Close();
+            }
+            var result = sb.ToString();
+            return result;
         }
 
         public static string Repeat(this Je.IStrExpander e, string s, int count)
@@ -62,7 +77,10 @@ namespace Jetproger.Tools.Convert.Converts
         {
             if (string.IsNullOrWhiteSpace(s)) return s;
             var sb = new StringBuilder();
-            for (int i = s.Length - 1; i >= 0; i--) sb.Append(s[i]);
+            for (int i = s.Length - 1; i >= 0; i--)
+            {
+                sb.Append(s[i]);
+            }
             return sb.ToString();
         }
 
@@ -92,23 +110,40 @@ namespace Jetproger.Tools.Convert.Converts
             return s.Replace(substringOld, substringNew);
         }
 
-        public static string NewLength(this Je.IStrExpander e, string s, int len)
+        public static string NewLen(this Je.IStrExpander exp, string s, int len)
         {
             s = s ?? string.Empty;
             var oldLen = s.Length;
             var newLen = len > 0 ? len : oldLen;
             if (newLen == oldLen) return s;
             var sb = new StringBuilder();
-            for (int i = 0; i < newLen; i++) sb.Append(i < s.Length ? s[i] : ' ');
+            for (int i = 0; i < newLen; i++)
+            {
+                sb.Append(i < s.Length ? s[i] : ' ');
+            }
             return sb.ToString();
+        }
+
+        public static XmlDocument StrToXml(this Je.IStrExpander exp, string xml)
+        {
+            var doc = new XmlDocument();
+            doc.LoadXml(xml);
+            return doc;
+        }
+
+        public static byte[] StrToBin(this Je.IStrExpander exp, string str, Encoding encoding = null)
+        {
+            var utf16 = Encoding.GetEncoding("utf-16");
+            encoding = encoding ?? utf16;
+            var bytes = utf16.GetBytes(str);
+            if (encoding.EncodingName != utf16.EncodingName) bytes = Encoding.Convert(utf16, encoding, bytes);
+            return bytes;
         }
     }
 
     public class StringConverter
     {
         private CultureInfo Culture => _culture ?? (_culture = GetFormatter());
-        private readonly BinConverter _bin = new BinConverter();
-        public static readonly Type StringType = typeof(string);
         private CultureInfo _culture;
 
         public virtual string Serialize(object value)
@@ -118,13 +153,13 @@ namespace Jetproger.Tools.Convert.Converts
             if (value is bool) return (bool)value ? "1" : "0";
             if (value is byte[]) return System.Convert.ToBase64String((byte[])value, Base64FormattingOptions.None);
             if (value is char[]) return string.Concat((char[])value);
-            if (value is Icon) return System.Convert.ToBase64String(_bin.Of((Icon)value));
-            if (value is Image) return System.Convert.ToBase64String(_bin.Of((Image)value));
+            if (value is Icon) return System.Convert.ToBase64String(Je.bin.Of((Icon)value));
+            if (value is Image) return System.Convert.ToBase64String(Je.bin.Of((Image)value));
             if (value is DateTime) return ((DateTime)value).ToString("yyyy-MM-ddTHH:mm:ss.fff", Culture);
             if (value is Guid || value is char || value is StringBuilder || value.GetType().IsEnum) return value.ToString();
             if (value is decimal || value is float || value is double) return ConvertExtensions.Cast<double>(value).ToString("#################0.00", Culture);
             if (value is long || value is ulong || value is int || value is uint || value is short || value is ushort || value is byte || value is sbyte) return ConvertExtensions.Cast<long>(value).ToString("#################0", Culture);
-            return Je.sys.MakeTypeName(value);
+            return Je.sys.BuildMetaName(value);
         }
 
         public virtual object Deserialize(string s, Type type)
@@ -133,8 +168,8 @@ namespace Jetproger.Tools.Convert.Converts
             if (string.IsNullOrWhiteSpace(s)) return type.IsValueType ? Activator.CreateInstance(type) : null;
             if (type.IsEnum) return ToEnum(s, type);
             if (type == typeof(string)) return s;
-            if (type == typeof(Icon)) return _bin.To<Icon>(System.Convert.FromBase64String(s));
-            if (type == typeof(Image)) return _bin.To<Image>(System.Convert.FromBase64String(s));
+            if (type == typeof(Icon)) return Je.bin.To<Icon>(System.Convert.FromBase64String(s));
+            if (type == typeof(Image)) return Je.bin.To<Image>(System.Convert.FromBase64String(s));
             if (type == typeof(byte[])) return System.Convert.FromBase64String(s);
             if (type == typeof(char[])) return s.ToCharArray();
             if (type == typeof(StringBuilder)) return new StringBuilder(s);
@@ -153,7 +188,7 @@ namespace Jetproger.Tools.Convert.Converts
             if (type == typeof(double) || type == typeof(double?)) return ToDouble(s);
             if (type == typeof(DateTime) || type == typeof(DateTime?)) return ToDateTime(s);
             if (type == typeof(Guid) || type == typeof(Guid?)) return ToGuid(s);
-            return Je.sys.CreateInstance(s);
+            return Je.sys.InstanceOf(s);
         }
 
         protected virtual CultureInfo GetFormatter()

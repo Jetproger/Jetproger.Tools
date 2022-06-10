@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Convert.Factories;
 using NLog;
 
 namespace Jetproger.Tools.Trace.Bases
@@ -7,13 +8,13 @@ namespace Jetproger.Tools.Trace.Bases
     public static class TraceCore
     {
         private static readonly Dictionary<string, Logger> Loggers = new Dictionary<string, Logger>();
-        private static NlogConfig Config { get { return Je.One.Get(ConfigHolder, ReadConfig); } }
+        private static NlogConfig Config { get { return Je.one.Get(ConfigHolder, ReadConfig); } }
         private static readonly NlogConfig[] ConfigHolder = { null };
         private static readonly string[] AppUserHolder = { null };
 
         public static string AppUser
         {
-            get { return Je.One.Get(AppUserHolder); }
+            get { return Je.one.Get(AppUserHolder); }
         }
 
         public static void SetAppUser(string appUser)

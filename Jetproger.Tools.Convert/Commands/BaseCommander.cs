@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading;
 using Jetproger.Tools.Convert.Bases;
 
 namespace Jetproger.Tools.Convert.Commands
 {
     public abstract class BaseCommander
-    {
-        protected abstract void Action();
-
-        private readonly TimeSpan _timespan;
-
-        private bool _isRunning;
-
+    { 
+        private readonly TimeSpan _timespan; 
+        protected abstract void Action(); 
+        private bool _isRunning; 
         private long _ticks;
 
         protected BaseCommander(long periodMilliseconds)
@@ -26,48 +22,24 @@ namespace Jetproger.Tools.Convert.Commands
             return new CommandResponse { Session = request.Session, Result = null, Report = null };
         }
 
-        protected CommandResponse Execute(ICommand command, CommandRequest request, out ICommandAsync commandAsync)
-        {
-            commandAsync = command as ICommandAsync;
-            if (commandAsync != null) return null;
-            var error = (CommandTicket[])null;
-            var result = (string)null;
-            try
-            {
-                result = command.Execute(request.Document);
-            }
-            catch (Exception e)
-            {
-                error = Je.cmd.ReportJe.cmd.Error(e));
-            }
-            return new CommandResponse { Session = request.Session, Result = result ?? string.Empty, Report = error };
-        }
-
         private void Working()
         {
             _isRunning = true;
             while (true)
             {
-                if (Interlocked.Increment(ref _ticks) >= long.MaxValue)
-                {
-                    break;
-                }
-                var sw = new Stopwatch();
-                sw.Start();
+                if (Interlocked.Increment(ref _ticks) >= long.MaxValue) break;
                 try
                 {
                     Action();
                 }
                 catch (Exception e)
                 {
-                    Je.log.Error(e);
+                    Je.log.To(e);
                 }
                 finally
                 {
-                    sw.Stop();
+                    Thread.Sleep(_timespan);
                 }
-                var interval = sw.Elapsed;
-                if (_timespan > interval.Duration()) Thread.Sleep(_timespan.Subtract(interval));
             }
             _isRunning = false;
         }
@@ -76,6 +48,8 @@ namespace Jetproger.Tools.Convert.Commands
     public static class BaseCommander<T> where T : BaseCommander
     {
         private static readonly T[] Holder = { null };
+
+        //static BaseCommander() { GTINNlogTracer.Run(); }
 
         public static T Instance
         {

@@ -2,77 +2,64 @@
 using System.Collections.Generic;
 using System.Net;
 using Jetproger.Tools.Convert.Bases;
-using Jetproger.Tools.Convert.Works;
+using Jetproger.Tools.Convert.Converts;
 
 namespace Jetproger.Tools.Convert.Commands
 {
-    public abstract class RemoteCommand<TOutput, TInput> : BaseCommandAsync<TOutput, TInput>
-    {
+    public abstract class RemoteCommand<TResult, TValue> : Command<TResult, TValue>
+    { 
         private readonly CommandRequest _request;
+
         private bool _isSend;
 
-        protected RemoteCommand(string command)
+        protected RemoteCommand(string command, string parameter, string result)
         {
-            GTINNlogTracer.Run();
-            _request = new CommandRequest { Session = Guid.NewGuid(), Command = command, };
+            _request = new CommandRequest { Session = Guid.NewGuid(), Command = command, Parameter = parameter, Result = result };
         }
 
-        protected override void BeginExecute(Action<string> callback, string xml)
-        {
-            _isSend = false;
-            _request.Document = xml;
-            _request.Session = Guid.NewGuid();
-            base.BeginExecute(callback, xml);
-            Je.cmd.BeginExecute<ClientCommander>(this, _request);
+        protected override void Execute()
+        {  
+            Executing().BeginExecute(x => Je.log.To(x.Error));
         }
 
-        protected override string Execute(string xml)
-        {
-            _request.Document = xml;
-            Executing().Work()
-            .Catch(x => SetError(x))
-            .Start();
-            return null;
+        private IEnumerable<ICommand> Executing()
+        { 
+            var request = new CommandRequest(_request.Session);
+            if (!_isSend)
+            {
+                _isSend = true;
+                _request.Document = Je.xml.Of(Value);
+                request = new CommandRequest(_request);
+                ClientCommander.Run(this, request);
+            }
+            var webCmd = new AppRemoteCommand(request);
+            webCmd.AddHeader(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
+            webCmd.AddHeader(HttpRequestHeader.ContentType, "application/json");
+            webCmd.AddHeader(HttpRequestHeader.ContentLength, "0");
+            webCmd.Certificate = Je.cry.App;
+            yield return webCmd;
+            var response = webCmd.Result;
+            Error = Je.err.MsgToErr(response.Report);
+            var e = Je.cmd.ErrorEventArgs(this, Error, webCmd.Error);
+            if (e.IsSuccess)
+            {
+                State = response.Result != null ? ECommandState.Completed : ECommandState.None;
+                if (State == ECommandState.Completed) Result = Je.xml.To<TResult>(response.Result);
+            }
+            else
+            {
+                State = ECommandState.Completed; 
+            }
+            if (State == ECommandState.Completed)
+            {
+                _isSend = false;
+                EndExecuteEvent(e);
+            }
         }
+    }
 
-        private IEnumerable<IWork> Executing()
-        {
-            var request = CreateRequest();
-            var error = (Exception)null;
-            IsRunning = true;
-            Result = null;
-            Error = null;
-            var webWork = WebWork<CommandResponse>.Op(GetEfUrlService() + "cmd")
-                .Header(HttpRequestHeader.AcceptEncoding, "gzip,deflate")
-                .Header(HttpRequestHeader.ContentType, "application/json")
-                .Header(HttpRequestHeader.ContentLength, "0")
-                .Certificate(Je.Cert.Self)
-                .Content(Je.web.To(request))
-                .POST()
-                .Catch(x => error = x);
-            yield return webWork;
-            EndWork(webWork, error);
-        }
-
-        protected override void ApplyWork(object work)
-        {
-            var webWork = (WebWork<CommandResponse>)work;
-            Result = webWork.Result.Result;
-            Error = Error ?? Je.cmd.LastError(webWork.Result.Report);
-            Je.cmd.Log(webWork.Result.Report);
-        }
-
-        private CommandRequest CreateRequest()
-        {
-            if (_isSend) return new CommandRequest { Session = _request.Session, Command = null, Document = null };
-            _isSend = true;
-            return new CommandRequest { Session = _request.Session, Command = _request.Command, Document = _request.Document };
-        }
- 
-        private string GetEfUrlService()
-        {
-            if (string.IsNullOrWhiteSpace(Je<GTINEfHost>.As)) { throw new Exception(@"В конфиге не указан url сервиса KIZAPI (нода <GTINEfHost>)");}
-            return Je.Config.EfHost;
-        }
+    public class AppRemoteCommand : PostWebCommand<CommandResponse, CommandRequest>
+    {
+        public AppRemoteCommand(CommandRequest content) : base(Je.web.AppHost, content) { }
     }
 }

@@ -426,4 +426,28 @@
   <data name="WindowsUser" xml:space="preserve">
     <value>Windows user name</value>
   </data>
+  <data name="AppConfigAppHostName" xml:space="preserve">
+    <value>The config does not specify the url of the application service (node &lt;AppHost&gt;)</value>
+  </data>
+  <data name="CertificateKeyName" xml:space="preserve">
+    <value>Key bearer not found for certificate {0}=[{1}]</value>
+  </data>
+  <data name="CertificateStoreName" xml:space="preserve">
+    <value>Certificate {0}=[{1}] not found in current user store</value>
+  </data>
+  <data name="CommandNotDefinedName" xml:space="preserve">
+    <value>Session [{0}]: no command defined to execute(CommandRequest.Command)</value>
+  </data>
+  <data name="MssqlCommandName" xml:space="preserve">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="TypeNotFoundName" xml:space="preserve">
+    <value>Type not found "{0}"</value>
+  </data>
+  <data name="TypeNotSubtypeName" xml:space="preserve">
+    <value>Type "{0}" is not a subtype of "{1}"</value>
+  </data>
+  <data name="AppPortNotSpecifiedName" xml:space="preserve">
+    <value>The config does not specify a listening port (node &lt;AppPort&gt;)</value>
+  </data>
 </root>

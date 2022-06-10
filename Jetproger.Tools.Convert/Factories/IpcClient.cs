@@ -65,12 +65,12 @@ namespace Jetproger.Tools.Convert.Factories
             return value;
         }
 
-        public object OfPool(Type type, int size)
+        public object OfPool(Type type)
         {
             bool isLocal;
-            if (IsLocal || (_localTypes.TryGetValue(type, out isLocal) && isLocal)) return TryOfPoolLocal(type, size);
+            if (IsLocal || (_localTypes.TryGetValue(type, out isLocal) && isLocal)) return TryOfPoolLocal(type);
             object value;
-            isLocal = TryOfPoolCombain(type, size, out value);
+            isLocal = TryOfPoolCombain(type, out value);
             _localTypes.GetOrAdd(type, isLocal);
             return value;
         }
@@ -153,10 +153,10 @@ namespace Jetproger.Tools.Convert.Factories
             return true;
         }
 
-        private bool TryOfPoolCombain(Type type, int size, out object value)
+        private bool TryOfPoolCombain(Type type, out object value)
         {
-            if (TryOfPoolContainer(type, size, out value)) return false;
-            value = TryOfPoolLocal(type, size);
+            if (TryOfPoolContainer(type, out value)) return false;
+            value = TryOfPoolLocal(type);
             return true;
         }
 
@@ -247,11 +247,11 @@ namespace Jetproger.Tools.Convert.Factories
             }
         }
 
-        private bool TryOfPoolContainer(Type type, int size, out object value)
+        private bool TryOfPoolContainer(Type type, out object value)
         {
             try
             {
-                value = ContainerServer.OfPool(type, size);
+                value = ContainerServer.OfPool(type);
                 return true;
             }
             catch
@@ -339,9 +339,9 @@ namespace Jetproger.Tools.Convert.Factories
             return LocalServer.OfToPool(type, creator);
         }
 
-        private object TryOfPoolLocal(Type type, int size)
+        private object TryOfPoolLocal(Type type)
         {
-            return LocalServer.OfPool(type, size);
+            return LocalServer.OfPool(type);
         }
 
         private void TryToPoolLocal(Type type, object value)

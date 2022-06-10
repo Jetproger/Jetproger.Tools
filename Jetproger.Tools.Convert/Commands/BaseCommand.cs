@@ -1,165 +1,230 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using Jetproger.Tools.AppConfig;
 using Jetproger.Tools.Convert.Bases;
-using Jetproger.Tools.Convert.Works;
+using Jetproger.Tools.Convert.Converts;
+using Jetproger.Tools.Convert.Factories;
 
 namespace Jetproger.Tools.Convert.Commands
 {
-    public abstract class BaseCommandAsync<TOutput, TInput> : BaseCommand<TOutput, TInput>, ICommandAsync
+    public class Command : Command<object, object>
     {
-        protected virtual void ApplyWork(object work) { }
-        protected CommandTicket Error { get; set; }
-        protected bool IsRunning { get; set; }
-        protected string Result { get; set; }
-        private Action<string> _callback;
+        public Command() { }
+        public Command(object value) : this() { Value = value; }
+    }
 
-        bool ICommandAsync.IsRunning
+    public class Command<TResult> : Command<TResult, TResult>
+    {
+        public Command() { }
+        public Command(TResult value) : this() { Value = value; }
+    }
+
+    public class Command<TResult, TValue> : TraceListener, ICommand
+    { 
+        public Command()
         {
-            get { return IsRunning; }
+            InterfaceCommand = this;
+            InterfaceCommand.EndExecute += OnExecuted;
         }
 
-        CommandTicket ICommandAsync.Error
-        {
-            get { return Error; }
-        }
+        event CommandExecuteEventHandler ICommand.EndExecute { add { _endExecute += value; } remove { if (_endExecute != null) _endExecute -= value; } }
+        private CommandExecuteEventHandler _endExecute;
+        public Command(TValue value) : this() { Value = value; }
+        protected readonly ICommand InterfaceCommand;
 
-        string ICommandAsync.Result
-        {
-            get { return Result; }
-        }
+        object ICommand.Value { get { return Value; } set { Value = value.As<TValue>(); } }
+        public TValue Value { get { return GetValue(); } set { SetValue(value); } }
+        protected virtual void SetValue(TValue value) { Set(_value, value); }
+        protected virtual TValue GetValue() { return Get(_value); }
+        private readonly TValue[] _value = { default(TValue) };
 
-        void ICommandAsync.BeginExecute(Action<string> callback, string xml)
-        {
-            BeginExecute(callback, xml);
-        }
+        object ICommand.Result { get { return Result; } }
+        public TResult Result { get { return GetResult(); } protected set { SetResult(value); } }
+        protected virtual void SetResult(TResult result) { Set(_result, result); }
+        protected virtual TResult GetResult() { return Get(_result); }
+        private readonly TResult[] _result = { default(TResult) };
 
-        protected virtual void BeginExecute(Action<string> callback, string xml)
-        {
-            _callback = callback;
-        }
+        Exception ICommand.Error { get { return Error; } }
+        public Exception Error { get { return GetError(); } protected set { SetError(value); } }
+        protected virtual void SetError(Exception error) { Set(_error, error); }
+        protected virtual Exception GetError() { return Get(_error); }
+        private readonly Exception[] _error = { null };
 
-        void ICommandAsync.EndExecute()
-        {
-            if (_callback != null) _callback(Result);
-        }
+        ECommandState ICommand.State { get { return State; } }
+        public ECommandState State { get { return GetState(); } protected set { SetState(value); } }
+        protected virtual void SetState(ECommandState state) { Set(_state, state); }
+        protected virtual ECommandState GetState() { return Get(_state); }
+        private readonly ECommandState[] _state = { ECommandState.None };
 
-        protected void EndWork<TWorkResult>(Work<TWorkResult> work, Exception error)
+        private List<CommandMessage> Messages { get { return Je.one.Get(_messagesHolder, () => new List<CommandMessage>()); } }
+        private void WriteLine(CommandMessage message) { lock (Messages) { Messages.Add(message); } }
+        public override void WriteLine(string message) { WriteLine((object)message); }
+        public override void Write(string message) { WriteLine((object)message); }
+        public override void Write(object message) { WriteLine(message); }
+        private readonly List<CommandMessage>[] _messagesHolder = { null };
+
+        CommandMessage[] ICommand.GetLog()
         {
-            IsRunning = false;
-            var e1 = LogError(error);
-            Error = Error ?? Je.cmd.Error(error);
-            if (work == null)
+            lock (Messages)
             {
-                Result = Result == null && e1 ? string.Empty : Result;
-                return;
+                var tickets = Messages.ToArray();
+                Messages.Clear();
+                return tickets;
             }
-            var e2 = LogError(work.Error);
-            Error = Error ?? Je.cmd.Error(work.Error);
-            if (work.Result == null)
-            {
-                Result = Result == null && (e1 || e2) ? string.Empty : Result;
-                return;
-            }
-            TryApplyWork(work);
-            Result = Result == null && (Error != null || e1 || e2) ? string.Empty : Result;
         }
 
-        private void TryApplyWork(object work)
+        public virtual void Execute(TValue value)
+        {
+            Value = value;
+            InterfaceCommand.Execute();
+        }
+
+        void ICommand.Execute()
         {
             try
             {
-                ApplyWork(work);
+                State = ECommandState.Running;
+                Execute();
             }
             catch (Exception e)
             {
-                SetError(e);
+                Finalize(e);
             }
         }
 
-        protected bool SetError(Exception e)
+        protected virtual void Execute()
         {
-            if (!LogError(e)) return false;
-            Error = Je.cmd.Error(e);
-            Result = Result == null && Error != null ? string.Empty : Result;
-            return true;
-        }
-    }
-
-    public abstract class BaseCommand<TOutput, TInput> : ICommand
-    { 
-        private readonly List<CommandTicket> _report = new List<CommandTicket>();
-        protected abstract string Execute(string xml);
-
-        public TOutput Execute(TInput parameter)
-        {
-            var parameterXml = Je.Xml<ClearXml>.AsString(parameter);
-            var resultXml = Execute(parameterXml); 
-            return Je.Xml<ClearXml>.As<TOutput>(resultXml);
+            Result = Value.As<TResult>();
+            EndExecuteEvent(Je.cmd.EmptyEventArgs(this));
         }
 
-        object ICommand.Execute(object arg)
+        protected void EndExecuteEvent(CommandExecuteEventArgs e)
         {
-            return Execute(arg);
+            if (_endExecute != null) _endExecute(e);
         }
 
-        protected bool LogError(Exception e)
+        private void OnExecuted(CommandExecuteEventArgs e)
         {
+            State = ECommandState.Completed;
+            e.IsSuccess = false;
+            if (Error != null) return;
+            e.IsSuccess = true;
+            if (e.Exceptions == null || e.Exceptions.Length == 0) return;
+            foreach (Exception exception in e.Exceptions)
+            {
+                if (IsFinalizeWithError(exception)) e.IsSuccess = false;
+            }
+        }
+
+        public override void WriteLine(object message)
+        {
+            if (message == null)
+            {
+                return;
+            } 
+            var msg = message as CommandMessage;
+            if (msg != null)
+            {
+                WriteLine(msg);
+                return;
+            }
+            var e = message as Exception;
+            if (e != null)
+            {
+                WriteLine(Je.err.ErrToMsg(e));
+                return;
+            } 
+            var s = message.ToString();
+            if (!string.IsNullOrWhiteSpace(s))
+            {
+                WriteLine(Je.cmd.TraceMsg(s));
+                return;
+            }
+        }
+
+        protected void Finalize(Exception e)
+        {
+            var exceptions = new List<Exception> { e };
+            try
+            {
+                IsFinalizeWithError(e);
+            }
+            catch (Exception exception)
+            {
+                exceptions.Add(exception);
+            }
+            finally
+            {
+                EndExecuteEvent(Je.cmd.ErrorEventArgs(this, exceptions));
+            }
+        }
+
+        protected bool IsFinalizeWithError(Exception e)
+        {
+            State = ECommandState.Completed;
             if (e == null) return false;
-            var ticket = Je.cmd.Error(e);
-            WriteReport(ticket);
-            Je.cmd.Log(ticket);
+            Error = e;
+            var msg = Je.err.ErrToMsg(e);
+            if (msg == null) return false;
+            WriteLine(msg);
             return true;
         }
 
-        protected bool LogError(string s)
+        protected bool IsFinalizeWithError(string s)
+        {
+            State = ECommandState.Completed;
+            if (string.IsNullOrWhiteSpace(s)) return false;
+            Error = new Exception(s);
+            var msg = Je.cmd.ErrorMsg(s);
+            if (msg == null) return false;
+            WriteLine(msg);
+            return true;
+        }
+
+        protected bool IsFinalizeWithMessage(string s)
         {
             if (string.IsNullOrWhiteSpace(s)) return false;
-            var ticket = Je.cmd.Error(s);
-            WriteReport(ticket);
-            Je.cmd.Log(ticket);
+            var msg = Je.cmd.TraceMsg(s);
+            if (msg == null) return false;
+            WriteLine(msg);
             return true;
         }
 
-        protected bool LogTrace(string s)
+        private static T Get<T>(T[] holder)
         {
-            if (string.IsNullOrWhiteSpace(s)) return false;
-            var ticket = Je.cmd.Trace(s);
-            WriteReport(ticket);
-            Je.cmd.Log(ticket);
-            return true;
+            lock (holder) { return holder[0]; }
         }
 
-        private void WriteReport(CommandTicket ticket)
+        private static void Set<T>(T[] holder, T value)
         {
-            lock (_report)
-            {
-                _report.Add(ticket);
-            }
+            lock (holder) { holder[0] = value; }
         }
-
-        public CommandTicket[] ReadReport()
-        {
-            lock (_report)
-            {
-                var report = _report.ToArray();
-                _report.Clear();
-                return report;
-            }
-        }
-    }
-
-    public interface ICommandAsync : ICommand
-    {
-        bool IsRunning { get; }
-        CommandTicket Error { get; } 
-        string Result { get; } 
-        void BeginExecute(Action<string> callback, string xml);
-        void EndExecute();
     }
 
     public interface ICommand
     {
-        object Execute(object arg); 
-        CommandTicket[] ReadReport();
+        event CommandExecuteEventHandler EndExecute;
+        CommandMessage[] GetLog();
+        ECommandState State { get; }
+        object Value { get; set; }
+        Exception Error { get; }
+        object Result { get; }
+        void Execute();
+    }
+
+    public enum ECommandState
+    {
+        None, Running, Completed
+    }
+
+    public delegate void CommandExecuteEventHandler(CommandExecuteEventArgs e);
+
+    public class CommandExecuteEventArgs : EventArgs
+    {
+        public bool IsSuccess { get; set; }
+        public ICommand Command { get; set; }
+        public Exception[] Exceptions { get; set; }
     }
 }

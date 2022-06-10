@@ -1,40 +1,53 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
-using Jetproger.AppConfig;
+using ePlus.Kiz.AppConfig;
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Convert.Converts;
+using Jetproger.Tools.Convert.Settings;
 
 namespace Jetproger.Tools.Convert.Commands
 {
     public class ServerCommander : BaseCommander
     {
-        private readonly ConcurrentDictionary<Guid, _CommandTransaction> _commands = new ConcurrentDictionary<Guid, _CommandTransaction>();
-        public ServerCommander() : base(1000 * Je<ServerCommandPeriodSeconds>.As.As<int>()) { }
+        private readonly ConcurrentDictionary<Guid, CommandTransaction> _commands = new ConcurrentDictionary<Guid, CommandTransaction>();
+        private readonly List<Guid> _deleteds = new List<Guid>();
+        public ServerCommander() : base(1000 * J_<ServerCommandPeriodSeconds>.Sz.As<int>()) { }
+
+        public static CommandResponse Run(ICommand command, CommandRequest request)
+        {
+            return BaseCommander<ServerCommander>.Instance.BeginExecute(command, request);
+        }
 
         public override CommandResponse BeginExecute(ICommand command, CommandRequest request)
         {
-            _CommandTransaction existsTransaction;
+            CommandTransaction existsTransaction;
             if (_commands.TryGetValue(request.Session, out existsTransaction))
             {
                 var session = request.Session;
-                var result = existsTransaction.Transaction.Command.Result;
-                var report = existsTransaction.Transaction.Command.ReadReport();
-                if (result != null) _commands.TryRemove(session, out existsTransaction);
+                var report = existsTransaction.Command.GetLog();
+                var result = (string)null;
+                if (existsTransaction.Command.State == ECommandState.Completed)
+                {
+                    Je.log.UnregisterTracer(command as TraceListener);
+                    _commands.TryRemove(session, out existsTransaction);
+                    result = (existsTransaction.Command.Result != null ? Je.xml.Of(existsTransaction.Command.Result) : string.Empty) ?? string.Empty;
+                }
                 return new CommandResponse { Session = session, Result = result, Report = report };
             }
             if (string.IsNullOrWhiteSpace(request.Command))
             {
                 var session = request.Session;
                 var result = string.Empty;
-                var report = Je.cmd.Report(Je.cmd.Error(string.Format("Сессия [{0}]: не определена команда для выполнения(CommandRequest.Command)", session)));
+                var report = Je.cmd.MessagesOf(Je.err.ErrToMsg(new CommandNotDefinedException(session)));
                 return new CommandResponse { Session = session, Result = result, Report = report };
-            }
-            ICommandAsync commandAsync;
-            var response = Execute(command, request, out commandAsync);
-            if (response != null) return response;
-            var transaction = new _CommandTransaction(commandAsync, request);
+            } 
+            var transaction = new CommandTransaction(command, request);
             if (_commands.TryAdd(request.Session, transaction))
             {
+                Je.log.RegisterTracer(command as TraceListener);
                 base.BeginExecute(command, request);
                 Thread.Sleep(1111);
                 return BeginExecute(command, request);
@@ -44,27 +57,39 @@ namespace Jetproger.Tools.Convert.Commands
 
         protected override void Action()
         {
-            foreach (_CommandTransaction transaction in _commands.Values)
+            PrepareDeleteds();
+            foreach (CommandTransaction transaction in _commands.Values)
             {
-                if (transaction.IsStart) continue;
-                transaction.IsStart = true;
-                transaction.Transaction.Command.BeginExecute(null, transaction.Transaction.Request.Document);
+                if (transaction.Command.State == ECommandState.None)
+                {
+                    transaction.Command.Value = transaction.Request.DeserializeParameter();
+                    transaction.Command.Execute();
+                }
+                if (transaction.IsExpiration())
+                {
+                    _deleteds.Add(transaction.Request.Session);
+                }
             }
+            RemoveDeleteds();
         }
 
-        private class _CommandTransaction
+        private void PrepareDeleteds()
         {
-            public readonly CommandTransaction Transaction;
-            public bool IsStart;
-            public _CommandTransaction(ICommandAsync command, CommandRequest request)
+            _deleteds.Clear();
+        }
+
+        private void RemoveDeleteds()
+        {
+            foreach (Guid deleted in _deleteds)
             {
-                Transaction = new CommandTransaction(command, request);
-                IsStart = false;
+                CommandTransaction transaction;
+                _commands.TryRemove(deleted, out transaction);
             }
         }
     }
 }
-namespace Jetproger.AppConfig
+
+namespace ePlus.Kiz.AppConfig
 {
-    public class ServerCommandPeriodSeconds : ConfigSetting<int> { public ServerCommandPeriodSeconds() : base(5) { } }
+    public class ServerCommandPeriodSeconds : ConfigSetting { public ServerCommandPeriodSeconds() : base("5") { } }
 }
