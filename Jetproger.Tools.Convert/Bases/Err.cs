@@ -5,13 +5,13 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using Jetproger.Tools.AppResource;
+using Jetproger.Tools.Convert.Commanders;
 using Jetproger.Tools.Convert.Commands;
 
 namespace Jetproger.Tools.Convert.Bases
 {
     public static class ErrorExtensions
     {
-
         public static void GuardNull(this Je.IErrExpander exp, Func<bool> isError, string paramName)
         {
             if (isError()) throw new ArgumentNullException(paramName);
@@ -91,74 +91,8 @@ namespace Jetproger.Tools.Convert.Bases
         {
             if (isError) throw exception;
         }
-
-        public static CommandMessage ErrToMsg(this Je.IErrExpander exp, Exception e)
-        {
-            return e != null ? new CommandMessage { Category = ECommandMessage.Error, Message = e.Message, Comment = ErrToStr(exp, e) } : null;
-        }
-
-        public static Exception MsgToErr(this Je.IErrExpander exp, CommandMessage msg)
-        {
-            return msg.Category == ECommandMessage.Error ? new Exception(msg.Message) : null;
-        }
-
-        public static Exception MsgToErr(this Je.IErrExpander exp, IEnumerable<CommandMessage> messages)
-        {
-            var msg = FirstErrOf(exp, messages);
-            return msg != null ? new Exception(msg.Message) : null;
-        }
-
-        public static string ErrToStr(this Je.IErrExpander exp, Exception exception)
-        {
-            exception = FirstErrOf(exp, exception);
-            var msg = WebToStr(exp, exception as WebException);
-            if (msg != null) return msg;
-            return StackOf(exp, exception);
-        }
-
-        public static string WebToStr(this Je.IErrExpander exp, WebException we)
-        {
-            if (we == null) return null;
-            if (we.Response == null) return "Response is empty";
-            var responseStream = we.Response.GetResponseStream();
-            if (responseStream == null) return "Response stream unavailable";
-            using (var sr = new StreamReader(responseStream)) { return sr.ReadToEnd(); }
-        }
-
-        public static string StackOf(this Je.IErrExpander exp, Exception e)
-        {
-            var sb = new StringBuilder();
-            sb.AppendLine(e.ToString());
-            while (e != null)
-            {
-                sb.AppendLine(e.Message);
-                e = e.InnerException;
-            }
-            return sb.ToString();
-        }
-
-        public static Exception FirstErrOf(this Je.IErrExpander exp, object obj)
-        {
-            var ae = obj as AggregateException;
-            if (ae == null) return obj as Exception;
-            return ae.InnerExceptions.Count > 0 ? ae.InnerExceptions[0].InnerException ?? ae.InnerExceptions[0] : null;
-        }
-
-        public static CommandMessage FirstErrOf(this Je.IErrExpander exp, IEnumerable<CommandMessage> messages)
-        {
-            return (messages ?? new CommandMessage[0]).FirstOrDefault(x => x.Category == ECommandMessage.Error);
-        }
-
-        public static CommandMessage LastErrOf(this Je.IErrExpander exp, IEnumerable<CommandMessage> messages)
-        {
-            var error = (CommandMessage)null;
-            foreach (CommandMessage message in (messages ?? new CommandMessage[0]))
-            {
-                if (message.Category == ECommandMessage.Error) error = message;
-            }
-            return error;
-        }
     }
+
 
     public class TypeNotFoundException : Exception { public TypeNotFoundException(string typeName) : base(string.Format(J_<TypeNotFoundName>.Sz, typeName)) { } }
     public class TypeNotSubtypeException : Exception { public TypeNotSubtypeException(string type, string baseType) : base(string.Format(J_<TypeNotSubtypeName>.Sz, type, baseType)) { } }

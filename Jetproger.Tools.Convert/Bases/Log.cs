@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using Jetproger.Tools.Convert.Commanders;
 using Jetproger.Tools.Convert.Commands;
 
 namespace Jetproger.Tools.Convert.Bases
@@ -17,7 +18,7 @@ namespace Jetproger.Tools.Convert.Bases
 
         public static CommandMessage[] Of(this Je.ILogExpander exp, ICommand command)
         {
-            return command != null ? command.GetLog() : new CommandMessage[0];
+            return command != null ? command.LogExecute() : new CommandMessage[0];
         }
 
         public static void RegisterTracer(this Je.ILogExpander exp, TraceListener tracer)

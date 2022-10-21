@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Threading;
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Convert.Commands;
 
-namespace Jetproger.Tools.Convert.Commands
+namespace Jetproger.Tools.Convert.Commanders
 {
     public abstract class BaseCommander
     { 

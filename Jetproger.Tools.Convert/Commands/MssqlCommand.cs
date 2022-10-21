@@ -9,7 +9,9 @@ using System.Reflection;
 using System.Text;
 using Jetproger.Tools.AppConfig;
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Convert.Commanders;
 using Jetproger.Tools.Convert.Converts;
+using MssqlCommandException = Jetproger.Tools.Convert.Bases.MssqlCommandException;
 
 namespace Jetproger.Tools.Convert.Commands
 {
@@ -22,7 +24,7 @@ namespace Jetproger.Tools.Convert.Commands
 
     public abstract class MssqlCommand<T> : BaseMssqlCommand<T, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore>
     {
-        protected MssqlCommand(string commandString) : base(commandString){ }
+        protected MssqlCommand(string commandString) : base(commandString) { }
     }
 
     public abstract class MssqlCommand<T, T0> : BaseMssqlCommand<T, T0, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore>
@@ -74,7 +76,7 @@ namespace Jetproger.Tools.Convert.Commands
     }
 
     public abstract class MssqlCommand<T, T0, T1, T2, T3, T4, T5, T6, T7, T8> : BaseMssqlCommand<T, T0, T1, T2, T3, T4, T5, T6, T7, T8, MssqlCommandParameterIgnore>
-    {  
+    {
         public void Execute(T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, T8 p8) { Execute(p0, p1, p2, p3, p4, p5, p6, p7, p8, null); }
         protected MssqlCommand(string commandString) : base(commandString) { }
     }
@@ -138,7 +140,7 @@ namespace Jetproger.Tools.Convert.Commands
                     case 9: P9 = enumerator.Current.As<T9>(); break;
                 }
             }
-        }                                     
+        }
 
         public void Execute(T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, T8 p8, T9 p9)
         {
@@ -173,7 +175,7 @@ namespace Jetproger.Tools.Convert.Commands
             }
             catch (Exception e)
             {
-                Finalize(e);
+                Error = e;
             }
         }
 
@@ -181,7 +183,7 @@ namespace Jetproger.Tools.Convert.Commands
         {
             try
             {
-                if (state.Reader != null) Result = GetResult(state.Reader);
+                var result = state.Reader != null ? GetResult(state.Reader) : default(T);
                 var typeIgnore = typeof(MssqlCommandParameterIgnore);
                 var ordinal = 0;
                 P0 = GetParameterValue(state.Command, typeIgnore, P0, ref ordinal);
@@ -195,12 +197,12 @@ namespace Jetproger.Tools.Convert.Commands
                 P8 = GetParameterValue(state.Command, typeIgnore, P8, ref ordinal);
                 P9 = GetParameterValue(state.Command, typeIgnore, P9, ref ordinal);
                 state.Dispose();
-                EndExecuteEvent(Je.cmd.EmptyEventArgs(this));
+                Result = result;
             }
             catch (Exception e)
             {
                 state.Dispose();
-                Finalize(e);
+                Error = e;
             }
         }
 
@@ -441,10 +443,10 @@ namespace Jetproger.Tools.Convert.Commands
         private string GetBindingScript(Type type, int ordinal, bool isOutput)
         {
             return string.Format("@P{0} = @P{0}{1}", ordinal, isOutput ? " OUTPUT" : "");
-        } 
+        }
 
         private string GetSqlTypeText(Type type)
-        {  
+        {
             var sqlType = Je.sql.SqlTypeOf(type);
             switch (sqlType)
             {
@@ -553,7 +555,7 @@ namespace Jetproger.Tools.Convert.Commands
     public class MssqlCommandBulkCopyDataSet
     {
         public readonly FieldSizer Sizer;
-        public readonly DataSet Source; 
+        public readonly DataSet Source;
         public MssqlCommandBulkCopyDataSet(FieldSizer sizer, DataSet source)
         {
             Sizer = sizer;
@@ -561,7 +563,7 @@ namespace Jetproger.Tools.Convert.Commands
         }
     }
 
-    public class MssqlCommandParameterOutput<T> where T : struct
+    public class MssqlCommandParameterOutput<T>
     {
         private T Value { get; set; }
 
@@ -579,7 +581,6 @@ namespace Jetproger.Tools.Convert.Commands
     public class MssqlCommandState
     {
         public SqlCommand Command { get; private set; }
-
         public SqlDataReader Reader { get; set; }
 
         public MssqlCommandState(SqlCommand command)
@@ -630,6 +631,5 @@ namespace Jetproger.Tools.Convert.Commands
             }
         }
     }
-
     public class MssqlCommandParameterIgnore { }
 }

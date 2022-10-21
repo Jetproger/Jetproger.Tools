@@ -6,7 +6,6 @@ using System.Text;
 using System.Web.Script.Serialization;
 using Jetproger.Tools.AppConfig;
 using Jetproger.Tools.Convert.Bases;
-using Jetproger.Tools.Convert.Commands;
 using Jetproger.Tools.Convert.Factories;
 using Jetproger.Tools.Convert.Settings;
 
@@ -14,20 +13,20 @@ namespace Jetproger.Tools.Convert.Converts
 {
     public class WebExpander
     {
-        public int RequestTimeout { get { return Je.one.Get(RequestTimeoutHolder, () => J_<HttpConnectionTimeoutSeconds>.Sz.As<int>() * 1000); } }
-        private readonly int?[] RequestTimeoutHolder = { null };
+        public int RequestTimeout { get { return Je.one.Get(_requestTimeoutHolder, () => J_<HttpConnectionTimeoutSeconds>.Sz.As<int>() * 1000); } }
+        private readonly int?[] _requestTimeoutHolder = { null };
 
-        public Encoding WebEncoding { get { return Je.one.Get(WebEncodingHolder, () => Encoding.GetEncoding("utf-8")); } }
-        private readonly Encoding[] WebEncodingHolder = { null };
+        public Encoding WebEncoding { get { return Je.one.Get(_webEncodingHolder, () => Encoding.GetEncoding("utf-8")); } }
+        private readonly Encoding[] _webEncodingHolder = { null };
 
-        public string AppAddress { get { return Je.one.Get(AppAddressHolder, GetAppAddress); } }
-        private readonly string[] AppAddressHolder = { null };
+        public string AppAddress { get { return Je.one.Get(_appAddressHolder, GetAppAddress); } }
+        private readonly string[] _appAddressHolder = { null };
 
-        public string AppHost { get { return Je.one.Get(AppHostHolder, GetAppHost); } }
-        private readonly string[] AppHostHolder = { null };
+        public string AppHost { get { return Je.one.Get(_appHostHolder, GetAppHost); } }
+        private readonly string[] _appHostHolder = { null };
 
-        public string AppUrl { get { return Je.one.Get(AppUrlHolder, GetAppUrl); } }
-        private readonly string[] AppUrlHolder = { null };
+        public string AppUrl { get { return Je.one.Get(_appUrlHolder, GetAppUrl); } }
+        private readonly string[] _appUrlHolder = { null };
 
         private string GetAppAddress()
         {
@@ -51,7 +50,9 @@ namespace Jetproger.Tools.Convert.Converts
     public static class WebExtensions
     {
         private static List<string> ProxyExcludesList { get { return Je.one.Get(ProxyExcludesListHolder, GetProxyExcludesList); } }
+        
         private static readonly List<string>[] ProxyExcludesListHolder = { null }; 
+        
         private static readonly WebConverter Converter = Je<WebConverter>.Onu();
 
         static WebExtensions()
@@ -154,6 +155,7 @@ namespace Jetproger.Tools.Convert.Converts
     public class WebConverter
     { 
         private static JavaScriptSerializer Serializer { get { return Je<JavaScriptSerializer>.One(CreateJsonSerializer); } } 
+        
         private static JavaScriptSerializer Deserializer { get { return Je<JavaScriptSerializer>.Onu(); } }
 
         public virtual string Serialize(object o)
@@ -199,6 +201,8 @@ namespace Jetproger.Tools.Convert.Converts
         }
     }
 }
+
+
 namespace Jetproger.Tools.AppConfig
 {
     public class HttpConnectionTimeoutSeconds : ConfigSetting { public HttpConnectionTimeoutSeconds() : base("300") { } }

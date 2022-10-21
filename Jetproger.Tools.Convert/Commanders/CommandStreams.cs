@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 
-namespace Jetproger.Tools.Convert.Commands
+namespace Jetproger.Tools.Convert.Commanders
 { 
     public class WebStreams : CommandStreams
     {

@@ -1,12 +1,9 @@
 using System;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Compression;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Cryptography;
-using System.Text;
-using System.Xml;
 using Jetproger.Tools.Convert.Bases;
 
 namespace Jetproger.Tools.Convert.Converts
@@ -75,64 +72,6 @@ namespace Jetproger.Tools.Convert.Converts
             }
         }
 
-        public static MemoryStream ObjToMem(this Je.IBinExpander exp, object obj, Encoding encoding = null)
-        {
-            return BinToMem(exp, ObjToBin(exp, obj, encoding));
-        }
-
-        public static MemoryStream BinToMem(this Je.IBinExpander exp, byte[] bytes)
-        {
-            var ms = new MemoryStream();
-            ms.Write(bytes, 0, bytes.Length);
-            ms.Seek(0, SeekOrigin.Begin);
-            return ms;
-        }
-
-        public static T MemToObj<T>(this Je.IBinExpander exp, MemoryStream ms, Encoding encoding = null)
-        {
-            return (T)MemToObj(exp, ms, typeof(T), encoding);
-        }
-
-        public static object MemToObj(this Je.IBinExpander exp, MemoryStream ms, Type type, Encoding encoding = null)
-        {
-            return BinToObj(exp, MemToBin(exp, ms), type, encoding);
-        }
-
-        public static byte[] MemToBin(this Je.IBinExpander exp, MemoryStream ms)
-        {
-            var bytes = new byte[ms.Length];
-            ms.Seek(0, SeekOrigin.Begin);
-            ms.Read(bytes, 0, bytes.Length);
-            return bytes;
-        }
-
-        public static byte[] ObjToBin(this Je.IBinExpander exp, object obj, Encoding encoding = null)
-        {
-            if (obj == null || obj == DBNull.Value) return new byte[0];
-            var bytes = obj as byte[];
-            if (bytes != null) return bytes;
-            var str = obj as string;
-            if (str != null) return Je.str.StrToBin(str, encoding);
-            var doc = obj as XmlDocument;
-            if (doc != null) return Je.str.StrToBin(doc.InnerXml, encoding);
-            return Je.str.StrToBin(Je.web.Of(obj), encoding);
-        }
-
-        public static T BinToObj<T>(this Je.IBinExpander exp, byte[] bytes, Encoding encoding = null)
-        {
-            return (T)BinToObj(exp, bytes, typeof(T));
-        }
-
-        public static object BinToObj(this Je.IBinExpander exp, byte[] bytes, Type type, Encoding encoding = null)
-        {
-            if (type == typeof(byte[])) return bytes;
-            encoding = encoding ?? Encoding.GetEncoding("utf-16");
-            var str = encoding.GetString(bytes);
-            if (type == typeof(string)) return str;
-            if (type == typeof(XmlDocument)) return Je.str.StrToXml(str);
-            return Je.web.To(str, type);
-        }
-
         public static bool IsEqualBytes(this Je.IBinExpander exp, byte[] bytes1, byte[] bytes2)
         {
             if (bytes1 == null || bytes2 == null) return false;
@@ -168,28 +107,10 @@ namespace Jetproger.Tools.Convert.Converts
             if (value is float) return BitConverter.GetBytes((float)value);
             if (value is decimal) return BitConverter.GetBytes((double)value);
             if (value is double) return BitConverter.GetBytes((double)value);
-            if (value is Icon) return SerializeIcon((Icon)value);
-            if (value is Image) return SerializeImage((Image)value);
+            if (value is Icon) return value.As<byte[]>();
+            if (value is Image) return value.As<byte[]>();
             return SerializeObject(value);
-        }
-
-        protected virtual byte[] SerializeIcon(Icon icon)
-        {
-            using (var ms = new MemoryStream())
-            {
-                icon.Save(ms);
-                return ms.ToArray();
-            }
-        }
-
-        protected virtual byte[] SerializeImage(Image image)
-        {
-            using (var ms = new MemoryStream())
-            {
-                image.Save(ms, ImageFormat.Png);
-                return ms.ToArray();
-            }
-        }
+        } 
 
         protected virtual byte[] SerializeObject(object obj)
         {
@@ -223,8 +144,8 @@ namespace Jetproger.Tools.Convert.Converts
             if (type == typeof(float)) return BitConverter.ToSingle(bytes, 0);
             if (type == typeof(decimal)) return (decimal)BitConverter.ToDouble(bytes, 0);
             if (type == typeof(double)) return BitConverter.ToDouble(bytes, 0);
-            if (type == typeof(Icon)) return DeserializeIcon(bytes);
-            if (type == typeof(Image)) return DeserializeImage(bytes);
+            if (type == typeof(Icon)) return bytes.As<Icon>();
+            if (type == typeof(Image)) return bytes.As<Image>();
             return DeserializeObject(bytes);
         }
 
@@ -233,22 +154,6 @@ namespace Jetproger.Tools.Convert.Converts
             var chars = new char[bytes.Length];
             System.Convert.ToBase64CharArray(bytes, 0, bytes.Length, chars, 0, Base64FormattingOptions.None);
             return chars;
-        }
-
-        protected virtual Image DeserializeImage(byte[] bytes)
-        {
-            using (var ms = new MemoryStream(bytes))
-            {
-                return Image.FromStream(ms, true);
-            }
-        }
-
-        protected virtual Icon DeserializeIcon(byte[] bytes)
-        {
-            using (var ms = new MemoryStream(bytes))
-            {
-                return new Icon(ms);
-            }
         }
 
         protected virtual object DeserializeObject(byte[] bytes)

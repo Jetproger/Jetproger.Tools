@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Text;
-using System.Xml;
 using Jetproger.Tools.Convert.Bases;
 
 namespace Jetproger.Tools.Convert.Converts
@@ -123,27 +122,12 @@ namespace Jetproger.Tools.Convert.Converts
             }
             return sb.ToString();
         }
-
-        public static XmlDocument StrToXml(this Je.IStrExpander exp, string xml)
-        {
-            var doc = new XmlDocument();
-            doc.LoadXml(xml);
-            return doc;
-        }
-
-        public static byte[] StrToBin(this Je.IStrExpander exp, string str, Encoding encoding = null)
-        {
-            var utf16 = Encoding.GetEncoding("utf-16");
-            encoding = encoding ?? utf16;
-            var bytes = utf16.GetBytes(str);
-            if (encoding.EncodingName != utf16.EncodingName) bytes = Encoding.Convert(utf16, encoding, bytes);
-            return bytes;
-        }
     }
 
     public class StringConverter
     {
         private CultureInfo Culture => _culture ?? (_culture = GetFormatter());
+        
         private CultureInfo _culture;
 
         public virtual string Serialize(object value)
@@ -153,12 +137,13 @@ namespace Jetproger.Tools.Convert.Converts
             if (value is bool) return (bool)value ? "1" : "0";
             if (value is byte[]) return System.Convert.ToBase64String((byte[])value, Base64FormattingOptions.None);
             if (value is char[]) return string.Concat((char[])value);
-            if (value is Icon) return System.Convert.ToBase64String(Je.bin.Of((Icon)value));
-            if (value is Image) return System.Convert.ToBase64String(Je.bin.Of((Image)value));
+            if (value is Icon) return System.Convert.ToBase64String(value.As<byte[]>());
+            if (value is Image) return System.Convert.ToBase64String(value.As<byte[]>());
             if (value is DateTime) return ((DateTime)value).ToString("yyyy-MM-ddTHH:mm:ss.fff", Culture);
             if (value is Guid || value is char || value is StringBuilder || value.GetType().IsEnum) return value.ToString();
             if (value is decimal || value is float || value is double) return ConvertExtensions.Cast<double>(value).ToString("#################0.00", Culture);
             if (value is long || value is ulong || value is int || value is uint || value is short || value is ushort || value is byte || value is sbyte) return ConvertExtensions.Cast<long>(value).ToString("#################0", Culture);
+            if (value.GetType().IsEnum) return value.ToString();
             return Je.sys.BuildMetaName(value);
         }
 
@@ -168,8 +153,8 @@ namespace Jetproger.Tools.Convert.Converts
             if (string.IsNullOrWhiteSpace(s)) return type.IsValueType ? Activator.CreateInstance(type) : null;
             if (type.IsEnum) return ToEnum(s, type);
             if (type == typeof(string)) return s;
-            if (type == typeof(Icon)) return Je.bin.To<Icon>(System.Convert.FromBase64String(s));
-            if (type == typeof(Image)) return Je.bin.To<Image>(System.Convert.FromBase64String(s));
+            if (type == typeof(Icon)) return System.Convert.FromBase64String(s).As<Icon>();
+            if (type == typeof(Image)) return System.Convert.FromBase64String(s).As<Image>();
             if (type == typeof(byte[])) return System.Convert.FromBase64String(s);
             if (type == typeof(char[])) return s.ToCharArray();
             if (type == typeof(StringBuilder)) return new StringBuilder(s);

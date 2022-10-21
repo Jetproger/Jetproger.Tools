@@ -30,7 +30,7 @@ namespace Jetproger.Tools.Convert.Converts
             return $"{Guid.NewGuid()}.tmp";
         }
 
-        public static FileWay TruFile(this Je.IFssExpander e, string fileName)
+        public static FileWay UseFile(this Je.IFssExpander e, string fileName)
         {
             return Je<FileWay>.Key(fileName.ToLower(), x => new FileWay(x));
         }
@@ -162,12 +162,12 @@ namespace Jetproger.Tools.Convert.Converts
 
         public string FindFile(string mask)
         {
-            return GetFiles(Path, null).FirstOrDefault(x => mask == Je.fss.TruFile(x).NameExt);
+            return GetFiles(Path, null).FirstOrDefault(x => mask == Je.fss.UseFile(x).NameExt);
         }
 
         public string FindFolder(string fileName, string mask)
         {
-            return GetFolders(Path).FirstOrDefault(x => mask == Je.fss.TruFile(x).Folder);
+            return GetFolders(Path).FirstOrDefault(x => mask == Je.fss.UseFile(x).Folder);
         }
 
         public IEnumerable<string> AllFiles()

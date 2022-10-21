@@ -8,7 +8,6 @@ using System.Xml.Serialization;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 using Jetproger.Tools.Convert.Bases;
-using Jetproger.Tools.Convert.Commands;
 
 namespace Jetproger.Tools.Convert.Converts
 {
@@ -439,12 +438,8 @@ namespace Jetproger.Tools.Convert.Converts
             public NoDeclarationXmlTextReader(TextReader r) : base(r) { }
         }
     }
-
     public class XmlConverterInvalidResultTypeException : Exception
     {
-        public XmlConverterInvalidResultTypeException() : base(@"The return type must be System.String or System.Byte[]")
-        {
-
-        }
+        public XmlConverterInvalidResultTypeException() : base(@"The return type must be System.String or System.Byte[]") { }
     }
 }

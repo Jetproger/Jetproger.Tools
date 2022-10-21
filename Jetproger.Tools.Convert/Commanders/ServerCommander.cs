@@ -1,20 +1,23 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 using ePlus.Kiz.AppConfig;
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Convert.Commands;
 using Jetproger.Tools.Convert.Converts;
 using Jetproger.Tools.Convert.Settings;
 
-namespace Jetproger.Tools.Convert.Commands
+namespace Jetproger.Tools.Convert.Commanders
 {
     public class ServerCommander : BaseCommander
     {
         private readonly ConcurrentDictionary<Guid, CommandTransaction> _commands = new ConcurrentDictionary<Guid, CommandTransaction>();
         private readonly List<Guid> _deleteds = new List<Guid>();
-        public ServerCommander() : base(1000 * J_<ServerCommandPeriodSeconds>.Sz.As<int>()) { }
+
+        public ServerCommander() : base(1000 * J_<ServerCommandPeriodSeconds>.Sz.As<int>())
+        {
+        }
 
         public static CommandResponse Run(ICommand command, CommandRequest request)
         {
@@ -27,11 +30,10 @@ namespace Jetproger.Tools.Convert.Commands
             if (_commands.TryGetValue(request.Session, out existsTransaction))
             {
                 var session = request.Session;
-                var report = existsTransaction.Command.GetLog();
+                var report = existsTransaction.Command.LogExecute();
                 var result = (string)null;
                 if (existsTransaction.Command.State == ECommandState.Completed)
                 {
-                    Je.log.UnregisterTracer(command as TraceListener);
                     _commands.TryRemove(session, out existsTransaction);
                     result = (existsTransaction.Command.Result != null ? Je.xml.Of(existsTransaction.Command.Result) : string.Empty) ?? string.Empty;
                 }
@@ -41,13 +43,12 @@ namespace Jetproger.Tools.Convert.Commands
             {
                 var session = request.Session;
                 var result = string.Empty;
-                var report = Je.cmd.MessagesOf(Je.err.ErrToMsg(new CommandNotDefinedException(session)));
+                var report = (new CommandMessage(new CommandNotDefinedException(session))).Messages;
                 return new CommandResponse { Session = session, Result = result, Report = report };
-            } 
+            }
             var transaction = new CommandTransaction(command, request);
             if (_commands.TryAdd(request.Session, transaction))
             {
-                Je.log.RegisterTracer(command as TraceListener);
                 base.BeginExecute(command, request);
                 Thread.Sleep(1111);
                 return BeginExecute(command, request);
@@ -88,8 +89,7 @@ namespace Jetproger.Tools.Convert.Commands
         }
     }
 }
-
 namespace ePlus.Kiz.AppConfig
 {
-    public class ServerCommandPeriodSeconds : ConfigSetting { public ServerCommandPeriodSeconds() : base("5") { } }
+    public class ServerCommandPeriodSeconds : ConfigSetting {public ServerCommandPeriodSeconds() : base("5") { } }
 }

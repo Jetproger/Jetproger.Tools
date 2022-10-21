@@ -2,43 +2,43 @@
 using System.IO;
 using System.Text;
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Convert.Commanders;
 using Jetproger.Tools.Convert.Converts;
 
 namespace Jetproger.Tools.Convert.Commands
 {
     public abstract class FileCommandWriter<T> : FileCommand<T>
     {
-        protected FileCommandWriter(string fileName, Encoding encoding, T content) : base(fileName, encoding, content) { } 
-
+        protected FileCommandWriter(string fileName, Encoding encoding, T content) : base(fileName, encoding, content) { }
         protected FileCommandWriter(string fileName, T content) : base(fileName, Encoding.UTF8, content) { }
     }
 
     public abstract class FileCommandReader<T> : FileCommand<T>
     {
         protected FileCommandReader(string fileName, Encoding encoding) : base(fileName, encoding) { }
-        
         protected FileCommandReader(string fileName) : base(fileName, Encoding.UTF8) { }
     }
 
     public abstract class FileCommand<T> : Command<T>
     {
+        
         public string FileName { get; private set; }
-
+        
         private readonly Encoding _encoding;
+        
         private readonly bool _isWriter;
 
         protected FileCommand(string fileName, Encoding encoding, T content)
-        {  
-            FileName = Je.fss.TruFile(fileName).PathNameExt;
+        {
+            FileName = Je.fss.UseFile(fileName).PathNameExt;
             _encoding = encoding;
             _isWriter = true;
-            Result = content;
             Value = content;
         }
 
         protected FileCommand(string fileName, Encoding encoding)
         {
-            FileName = Je.fss.TruFile(fileName).PathNameExt;
+            FileName = Je.fss.UseFile(fileName).PathNameExt;
             _encoding = encoding;
             _isWriter = false;
         }
@@ -76,14 +76,14 @@ namespace Jetproger.Tools.Convert.Commands
             try
             {
                 var ms = state.StreamWriter as MemoryStream;
-                if (ms != null) Result = Je.bin.MemToObj<T>(ms, _encoding);
+                var result = ms != null ? ms.As<T>(_encoding) : default(T);
                 state.Dispose();
-                EndExecuteEvent(Je.cmd.EmptyEventArgs(this));
+                Result = result;
             }
             catch (Exception e)
             {
                 state.Dispose();
-                Finalize(e);
+                Error = e;
             }
         }
 
@@ -96,7 +96,7 @@ namespace Jetproger.Tools.Convert.Commands
 
         private Stream CreateReader()
         {
-            return _isWriter ? (Stream)Je.bin.ObjToMem(Value, _encoding) : new FileStream(FileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+            return _isWriter ? (Stream)Value.As<MemoryStream>(_encoding) : new FileStream(FileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
         }
 
         private Stream CreateWriter(Stream reader)
@@ -116,7 +116,7 @@ namespace Jetproger.Tools.Convert.Commands
             catch (Exception e)
             {
                 if (state != null) state.Dispose();
-                Finalize(e);
+                Error = e;
             }
         }
 
@@ -131,7 +131,7 @@ namespace Jetproger.Tools.Convert.Commands
             catch (Exception e)
             {
                 if (state != null) state.Dispose();
-                Finalize(e);
+                Error = e;
             }
         }
 
@@ -146,10 +146,10 @@ namespace Jetproger.Tools.Convert.Commands
             catch (Exception e)
             {
                 if (state != null) state.Dispose();
-                Finalize(e);
+                Error = e;
             }
         }
- 
+
         #endregion
     }
 }

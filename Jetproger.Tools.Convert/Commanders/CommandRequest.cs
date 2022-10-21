@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 using Jetproger.Tools.Convert.Bases;
 using Jetproger.Tools.Convert.Converts;
 
-namespace Jetproger.Tools.Convert.Commands
+namespace Jetproger.Tools.Convert.Commanders
 {
     [DataContract, Serializable]
     public class CommandRequest

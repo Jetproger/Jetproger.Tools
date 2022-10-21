@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Net;
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Convert.Commanders;
 using Jetproger.Tools.Convert.Converts;
 
 namespace Jetproger.Tools.Convert.Commands
 {
-    public abstract class RemoteCommand<TResult, TValue> : Command<TResult, TValue>
-    { 
+    public abstract class RemoteCommand<TResult, TValue> : WorkCommand<TResult, TValue>
+    {
         private readonly CommandRequest _request;
-
+        private bool _isCompleted;
         private bool _isSend;
 
         protected RemoteCommand(string command, string parameter, string result)
@@ -17,13 +18,13 @@ namespace Jetproger.Tools.Convert.Commands
             _request = new CommandRequest { Session = Guid.NewGuid(), Command = command, Parameter = parameter, Result = result };
         }
 
-        protected override void Execute()
-        {  
-            Executing().BeginExecute(x => Je.log.To(x.Error));
+        protected override void SetResult(TResult result)
+        {
+            if (_isCompleted) base.SetResult(result);
         }
 
-        private IEnumerable<ICommand> Executing()
-        { 
+        protected override void Execute()
+        {
             var request = new CommandRequest(_request.Session);
             if (!_isSend)
             {
@@ -37,29 +38,43 @@ namespace Jetproger.Tools.Convert.Commands
             webCmd.AddHeader(HttpRequestHeader.ContentType, "application/json");
             webCmd.AddHeader(HttpRequestHeader.ContentLength, "0");
             webCmd.Certificate = Je.cry.App;
+            AddCommands(Executing(webCmd));
+            base.Execute();
+        }
+
+        private IEnumerable<ICommand> Executing(AppRemoteCommand webCmd)
+        {
             yield return webCmd;
             var response = webCmd.Result;
-            Error = Je.err.MsgToErr(response.Report);
-            var e = Je.cmd.ErrorEventArgs(this, Error, webCmd.Error);
-            if (e.IsSuccess)
+            var exception = (new CommandMessage(response.Report)).As<CommandException>();
+            if (exception != null)
             {
-                State = response.Result != null ? ECommandState.Completed : ECommandState.None;
-                if (State == ECommandState.Completed) Result = Je.xml.To<TResult>(response.Result);
+                _isSend = false;
+                _isCompleted = true;
+                throw exception;
+            }
+            var cmdResult = new Command { Value = default(TResult) };
+            if (response.Result != null)
+            {
+                _isSend = false;
+                _isCompleted = true;
+                cmdResult.Value = string.IsNullOrWhiteSpace(response.Result) ? cmdResult.Value : Je.xml.To<TResult>(response.Result);
             }
             else
             {
-                State = ECommandState.Completed; 
+                _isSend = true;
+                _isCompleted = false;
+                State = ECommandState.None;
             }
-            if (State == ECommandState.Completed)
-            {
-                _isSend = false;
-                EndExecuteEvent(e);
-            }
+            yield return cmdResult;
         }
     }
 
     public class AppRemoteCommand : PostWebCommand<CommandResponse, CommandRequest>
     {
-        public AppRemoteCommand(CommandRequest content) : base(Je.web.AppHost, content) { }
+        public AppRemoteCommand(CommandRequest content) : base(Je.web.AppHost, content)
+        {
+
+        }
     }
 }

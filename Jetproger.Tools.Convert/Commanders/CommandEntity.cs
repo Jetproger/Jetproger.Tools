@@ -7,7 +7,7 @@ using System.Reflection;
 using Jetproger.Tools.Convert.Bases;
 using Jetproger.Tools.Convert.Converts;
 
-namespace Jetproger.Tools.Convert.Commands
+namespace Jetproger.Tools.Convert.Commanders
 {
     public class EntityReader : IDataReader
     {
@@ -83,7 +83,7 @@ namespace Jetproger.Tools.Convert.Commands
             {
                 var entity = obj as ICommandEntity;
                 if (entity == null) continue;
-                foreach (var item in entity.GetEntities(currentType)) _buffer.Add(item);
+                foreach (var item in entity.GetAll(currentType)) _buffer.Add(item);
             }
             return true;
         }
@@ -173,7 +173,7 @@ namespace Jetproger.Tools.Convert.Commands
         public double GetDouble(int i) { return GetValue(i).As<double>(); }
         public string GetString(int i) { return GetValue(i).As<string>(); }
         public decimal GetDecimal(int i) { return GetValue(i).As<decimal>(); }
-        public DateTime GetDateTime(int i) { return GetValue(i).As<DateTime>(); } 
+        public DateTime GetDateTime(int i) { return GetValue(i).As<DateTime>(); }
         public object GetValue(int i)
         {
             var value = _fields != null ? _fields[i].GetValue(_buffer[_bufferCounter], null) : _buffer[_bufferCounter];
@@ -216,7 +216,7 @@ namespace Jetproger.Tools.Convert.Commands
             var size = 1;
             if (value != null && value != DBNull.Value)
             {
-                if (value is string) size = ((string) value).Length;
+                if (value is string) size = ((string)value).Length;
                 else
                 if (value is byte[]) size = ((byte[])value).Length;
             }
@@ -289,7 +289,7 @@ namespace Jetproger.Tools.Convert.Commands
         private readonly Type _type;
 
         public EntityWriter(IDataReader reader)
-        { 
+        {
             _reader = reader;
             _type = typeof(T);
             _geType = Je.sys.GenericOf(_type) ?? _type;
@@ -297,7 +297,7 @@ namespace Jetproger.Tools.Convert.Commands
         }
 
         public T Write()
-        { 
+        {
             var list = ReadData().ToList();
             if (list.Count == 0)
             {
@@ -468,8 +468,8 @@ namespace Jetproger.Tools.Convert.Commands
         IEnumerable<string> ICommandEntity.GetKeys() { return GetKeys(); }
         protected virtual IEnumerable<string> GetKeys() { yield break; }
 
-        IEnumerable<ICommandEntity> ICommandEntity.GetEntities(Type type) { return GetEntities(type); }
-        protected virtual IEnumerable<ICommandEntity> GetEntities(Type type) { yield break; }
+        IEnumerable<ICommandEntity> ICommandEntity.GetAll(Type type) { return GetAll(type); }
+        protected virtual IEnumerable<ICommandEntity> GetAll(Type type) { yield break; }
 
         void ICommandEntity.SetEntity(ICommandEntity item) { SetEntity(item); }
         protected virtual void SetEntity(ICommandEntity item) { }
@@ -508,13 +508,13 @@ namespace Jetproger.Tools.Convert.Commands
             {
                 lock (Maps)
                 {
-                    if (!Maps.ContainsKey(type)) Maps.Add(type, MapOf(type));
+                    if (!Maps.ContainsKey(type)) Maps.Add(type, ReadMap(type));
                 }
             }
             return Maps[type];
         }
 
-        private static Type[] MapOf(Type type)
+        private static Type[] ReadMap(Type type)
         {
             var list = new List<Type> { type };
             foreach (var attribute in type.GetCustomAttributes(true))
@@ -531,20 +531,20 @@ namespace Jetproger.Tools.Convert.Commands
     [AttributeUsage(AttributeTargets.Class)]
     public class TypeMapAttribute : Attribute
     {
+        public TypeMapAttribute(params Type[] types) { Types = types; }
         public Type[] Types { get; private set; }
-
-        public TypeMapAttribute(params Type[] types)
-        {
-            Types = types;
-        }
     }
 
     public interface ICommandEntity
     {
         string GetKey();
+        
         IEnumerable<string> GetKeys();
+        
         void SetEntity(ICommandEntity entity);
+        
         void AddEntity(ICommandEntity entity);
-        IEnumerable<ICommandEntity> GetEntities(Type type);
+        
+        IEnumerable<ICommandEntity> GetAll(Type type);
     }
 }

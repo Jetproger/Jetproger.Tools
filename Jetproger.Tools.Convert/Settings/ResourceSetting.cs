@@ -153,6 +153,8 @@ namespace Jetproger.Tools.AppConfig
 
 namespace Jetproger.Tools.AppResource
 {
+    #region Names
+
     public class AppConfigAppHostName : ResourceNameSetting { public AppConfigAppHostName() : base("AppConfigAppHostName") { } }
     public class AboutName : ResourceNameSetting { public AboutName() : base("AboutName") { } }
     public class AskExitName : ResourceNameSetting { public AskExitName() : base("AskExitName") { } }
@@ -250,6 +252,10 @@ namespace Jetproger.Tools.AppResource
     public class CertificateKeyName : ResourceNameSetting { public CertificateKeyName() : base("CertificateKeyName") { } }
     public class AppPortNotSpecifiedName : ResourceNameSetting { public AppPortNotSpecifiedName() : base("AppPortNotSpecifiedName") { } }
 
+    #endregion
+
+    #region Descriptions
+
     public class AskExitNote : ResourceDescriptionSetting { public AskExitNote() : base("AskExitNote") { } }
     public class AskTitleNote : ResourceDescriptionSetting { public AskTitleNote() : base("AskTitleNote") { } }
     public class CancelNote : ResourceDescriptionSetting { public CancelNote() : base("CancelNote") { } }
@@ -337,6 +343,10 @@ namespace Jetproger.Tools.AppResource
     public class StartReadConfNote : ResourceDescriptionSetting { public StartReadConfNote() : base("StartReadConfNote") { } }
     public class StartResNote : ResourceDescriptionSetting { public StartResNote() : base("StartResNote") { } }
     public class StartTraceNote : ResourceDescriptionSetting { public StartTraceNote() : base("StartTraceNote") { } }
+
+    #endregion
+
+    #region Shortcuts
 
     public class AskExitKeys : ResourceShortcutSetting { public AskExitKeys() : base("AskExitKeys") { } }
     public class AskTitleKeys : ResourceShortcutSetting { public AskTitleKeys() : base("AskTitleKeys") { } }
@@ -426,6 +436,10 @@ namespace Jetproger.Tools.AppResource
     public class StartResKeys : ResourceShortcutSetting { public StartResKeys() : base("StartResKeys") { } }
     public class StartTraceKeys : ResourceShortcutSetting { public StartTraceKeys() : base("StartTraceKeys") { } }
 
+    #endregion
+
+    #region Specifies
+
     public class AskExitSpec : ResourceSpecifySetting { public AskExitSpec() : base("AskExitSpec") { } }
     public class AskTitleSpec : ResourceSpecifySetting { public AskTitleSpec() : base("AskTitleSpec") { } }
     public class CancelSpec : ResourceSpecifySetting { public CancelSpec() : base("CancelSpec") { } }
@@ -514,91 +528,98 @@ namespace Jetproger.Tools.AppResource
     public class StartResSpec : ResourceSpecifySetting { public StartResSpec() : base("StartResSpec") { } }
     public class StartTraceSpec : ResourceSpecifySetting { public StartTraceSpec() : base("StartTraceSpec") { } }
 
-    public class AskExitIcon : ResourcePictureSetting { public AskExitIcon() : base(Je.gui.DefImgStr()) { } }
-    public class AskTitleIcon : ResourcePictureSetting { public AskTitleIcon() : base(Je.gui.DefImgStr()) { } }
-    public class CancelIcon : ResourcePictureSetting { public CancelIcon() : base(Je.gui.DefImgStr()) { } }
-    public class CaptionIcon : ResourcePictureSetting { public CaptionIcon() : base(Je.gui.DefImgStr()) { } }
-    public class DialogIcon : ResourcePictureSetting { public DialogIcon() : base(Je.gui.DefImgStr()) { } }
-    public class ErrorTitleIcon : ResourcePictureSetting { public ErrorTitleIcon() : base(Je.gui.DefImgStr()) { } }
-    public class InfoTitleIcon : ResourcePictureSetting { public InfoTitleIcon() : base(Je.gui.DefImgStr()) { } }
-    public class InfoTraceIcon : ResourcePictureSetting { public InfoTraceIcon() : base(Je.gui.DefImgStr()) { } }
-    public class LoginIcon : ResourcePictureSetting { public LoginIcon() : base(Je.gui.DefImgStr()) { } }
-    public class MessageLoadingIcon : ResourcePictureSetting { public MessageLoadingIcon() : base(Je.gui.DefImgStr()) { } }
-    public class MessageNonConnectIcon : ResourcePictureSetting { public MessageNonConnectIcon() : base(Je.gui.DefImgStr()) { } }
-    public class MessageNonPasswordIcon : ResourcePictureSetting { public MessageNonPasswordIcon() : base(Je.gui.DefImgStr()) { } }
-    public class MessageStartIcon : ResourcePictureSetting { public MessageStartIcon() : base(Je.gui.DefImgStr()) { } }
-    public class MessageSuccessConnectIcon : ResourcePictureSetting { public MessageSuccessConnectIcon() : base(Je.gui.DefImgStr()) { } }
-    public class MessageSuccessPasswordIcon : ResourcePictureSetting { public MessageSuccessPasswordIcon() : base(Je.gui.DefImgStr()) { } }
-    public class OkIcon : ResourcePictureSetting { public OkIcon() : base(Je.gui.DefImgStr()) { } }
-    public class PasswordIcon : ResourcePictureSetting { public PasswordIcon() : base(Je.gui.DefImgStr()) { } }
-    public class PasswordChangeIcon : ResourcePictureSetting { public PasswordChangeIcon() : base(Je.gui.DefImgStr()) { } }
-    public class PasswordNewIcon : ResourcePictureSetting { public PasswordNewIcon() : base(Je.gui.DefImgStr()) { } }
-    public class PasswordOldIcon : ResourcePictureSetting { public PasswordOldIcon() : base(Je.gui.DefImgStr()) { } }
-    public class UserIcon : ResourcePictureSetting { public UserIcon() : base(Je.gui.DefImgStr()) { } }
-    public class AddIcon : ResourcePictureSetting { public AddIcon() : base(Je.gui.DefImgStr()) { } }
-    public class CopyIcon : ResourcePictureSetting { public CopyIcon() : base(Je.gui.DefImgStr()) { } }
-    public class EditIcon : ResourcePictureSetting { public EditIcon() : base(Je.gui.DefImgStr()) { } }
-    public class RefreshIcon : ResourcePictureSetting { public RefreshIcon() : base(Je.gui.DefImgStr()) { } }
-    public class RemoveIcon : ResourcePictureSetting { public RemoveIcon() : base(Je.gui.DefImgStr()) { } }
-    public class RestoreIcon : ResourcePictureSetting { public RestoreIcon() : base(Je.gui.DefImgStr()) { } }
-    public class DescriptionIcon : ResourcePictureSetting { public DescriptionIcon() : base(Je.gui.DefImgStr()) { } }
-    public class FolderIcon : ResourcePictureSetting { public FolderIcon() : base(Je.gui.DefImgStr()) { } }
-    public class FolderOpenIcon : ResourcePictureSetting { public FolderOpenIcon() : base(Je.gui.DefImgStr()) { } }
-    public class IconIcon : ResourcePictureSetting { public IconIcon() : base(Je.gui.DefImgStr()) { } }
-    public class TypeIcon : ResourcePictureSetting { public TypeIcon() : base(Je.gui.DefImgStr()) { } }
-    public class BinaryIcon : ResourcePictureSetting { public BinaryIcon() : base(Je.gui.DefImgStr()) { } }
-    public class BooleanIcon : ResourcePictureSetting { public BooleanIcon() : base(Je.gui.DefImgStr()) { } }
-    public class DateIcon : ResourcePictureSetting { public DateIcon() : base(Je.gui.DefImgStr()) { } }
-    public class GuidIcon : ResourcePictureSetting { public GuidIcon() : base(Je.gui.DefImgStr()) { } }
-    public class IntegerIcon : ResourcePictureSetting { public IntegerIcon() : base(Je.gui.DefImgStr()) { } }
-    public class ListIcon : ResourcePictureSetting { public ListIcon() : base(Je.gui.DefImgStr()) { } }
-    public class NumericIcon : ResourcePictureSetting { public NumericIcon() : base(Je.gui.DefImgStr()) { } }
-    public class RangeIcon : ResourcePictureSetting { public RangeIcon() : base(Je.gui.DefImgStr()) { } }
-    public class ReferenceIcon : ResourcePictureSetting { public ReferenceIcon() : base(Je.gui.DefImgStr()) { } }
-    public class StringIcon : ResourcePictureSetting { public StringIcon() : base(Je.gui.DefImgStr()) { } }
-    public class LoginInvalidIcon : ResourcePictureSetting { public LoginInvalidIcon() : base(Je.gui.DefImgStr()) { } }
-    public class LoginLengthIcon : ResourcePictureSetting { public LoginLengthIcon() : base(Je.gui.DefImgStr()) { } }
-    public class MetaCreateTypeIcon : ResourcePictureSetting { public MetaCreateTypeIcon() : base(Je.gui.DefImgStr()) { } }
-    public class MetaImplementInterfaceIcon : ResourcePictureSetting { public MetaImplementInterfaceIcon() : base(Je.gui.DefImgStr()) { } }
-    public class NullCodeIcon : ResourcePictureSetting { public NullCodeIcon() : base(Je.gui.DefImgStr()) { } }
-    public class NullLoginIcon : ResourcePictureSetting { public NullLoginIcon() : base(Je.gui.DefImgStr()) { } }
-    public class NullIconIcon : ResourcePictureSetting { public NullIconIcon() : base(Je.gui.DefImgStr()) { } }
-    public class PasswordConfirmationInvalidIcon : ResourcePictureSetting { public PasswordConfirmationInvalidIcon() : base(Je.gui.DefImgStr()) { } }
-    public class PasswordNewInvalidIcon : ResourcePictureSetting { public PasswordNewInvalidIcon() : base(Je.gui.DefImgStr()) { } }
-    public class ConfigurationIcon : ResourcePictureSetting { public ConfigurationIcon() : base(Je.gui.DefImgStr()) { } }
-    public class ConstantIcon : ResourcePictureSetting { public ConstantIcon() : base(Je.gui.DefImgStr()) { } }
-    public class ContextIcon : ResourcePictureSetting { public ContextIcon() : base(Je.gui.DefImgStr()) { } }
-    public class PreviousIcon : ResourcePictureSetting { public PreviousIcon() : base(Je.gui.DefImgStr()) { } }
-    public class FullIcon : ResourcePictureSetting { public FullIcon() : base(Je.gui.DefImgStr()) { } }
-    public class NoneIcon : ResourcePictureSetting { public NoneIcon() : base(Je.gui.DefImgStr()) { } }
-    public class ReadIcon : ResourcePictureSetting { public ReadIcon() : base(Je.gui.DefImgStr()) { } }
-    public class LikeLoginIcon : ResourcePictureSetting { public LikeLoginIcon() : base(Je.gui.DefImgStr()) { } }
-    public class NoDigitIcon : ResourcePictureSetting { public NoDigitIcon() : base(Je.gui.DefImgStr()) { } }
-    public class NoLowerIcon : ResourcePictureSetting { public NoLowerIcon() : base(Je.gui.DefImgStr()) { } }
-    public class NoSymbolIcon : ResourcePictureSetting { public NoSymbolIcon() : base(Je.gui.DefImgStr()) { } }
-    public class NoUpperIcon : ResourcePictureSetting { public NoUpperIcon() : base(Je.gui.DefImgStr()) { } }
-    public class SmallLengthIcon : ResourcePictureSetting { public SmallLengthIcon() : base(Je.gui.DefImgStr()) { } }
-    public class StrengthIcon : ResourcePictureSetting { public StrengthIcon() : base(Je.gui.DefImgStr()) { } }
-    public class DelIcon : ResourcePictureSetting { public DelIcon() : base(Je.gui.DefImgStr()) { } }
-    public class NewIcon : ResourcePictureSetting { public NewIcon() : base(Je.gui.DefImgStr()) { } }
-    public class ProcIcon : ResourcePictureSetting { public ProcIcon() : base(Je.gui.DefImgStr()) { } }
-    public class AppMemoryIcon : ResourcePictureSetting { public AppMemoryIcon() : base(Je.gui.DefImgStr()) { } }
-    public class ComputerIconIcon : ResourcePictureSetting { public ComputerIconIcon() : base(Je.gui.DefImgStr()) { } }
-    public class DefaultUserIcon : ResourcePictureSetting { public DefaultUserIcon() : base(Je.gui.DefImgStr()) { } }
-    public class DotNetVersionIcon : ResourcePictureSetting { public DotNetVersionIcon() : base(Je.gui.DefImgStr()) { } }
-    public class DrivesIcon : ResourcePictureSetting { public DrivesIcon() : base(Je.gui.DefImgStr()) { } }
-    public class OperatingSystemIcon : ResourcePictureSetting { public OperatingSystemIcon() : base(Je.gui.DefImgStr()) { } }
-    public class ProcessorCountIcon : ResourcePictureSetting { public ProcessorCountIcon() : base(Je.gui.DefImgStr()) { } }
-    public class TotalMemoryIcon : ResourcePictureSetting { public TotalMemoryIcon() : base(Je.gui.DefImgStr()) { } }
-    public class WindowsUserIcon : ResourcePictureSetting { public WindowsUserIcon() : base(Je.gui.DefImgStr()) { } }
-    public class StartAppLangIcon : ResourcePictureSetting { public StartAppLangIcon() : base(Je.gui.DefImgStr()) { } }
-    public class StartCmdArgsIcon : ResourcePictureSetting { public StartCmdArgsIcon() : base(Je.gui.DefImgStr()) { } }
-    public class StartCmdPoolIcon : ResourcePictureSetting { public StartCmdPoolIcon() : base(Je.gui.DefImgStr()) { } }
-    public class StartDIIcon : ResourcePictureSetting { public StartDIIcon() : base(Je.gui.DefImgStr()) { } }
-    public class StartEndIcon : ResourcePictureSetting { public StartEndIcon() : base(Je.gui.DefImgStr()) { } }
-    public class StartNLogBaseIcon : ResourcePictureSetting { public StartNLogBaseIcon() : base(Je.gui.DefImgStr()) { } }
-    public class StartNLogTypedIcon : ResourcePictureSetting { public StartNLogTypedIcon() : base(Je.gui.DefImgStr()) { } }
-    public class StartReadConfIcon : ResourcePictureSetting { public StartReadConfIcon() : base(Je.gui.DefImgStr()) { } }
-    public class StartResIcon : ResourcePictureSetting { public StartResIcon() : base(Je.gui.DefImgStr()) { } }
-    public class StartTraceIcon : ResourcePictureSetting { public StartTraceIcon() : base(Je.gui.DefImgStr()) { } } 
+    #endregion
+
+    #region Pictures
+
+    public class AskExitIcon : ResourcePictureSetting { public AskExitIcon() : base(Je.gui._DefaultImage()) { } }
+    public class AskTitleIcon : ResourcePictureSetting { public AskTitleIcon() : base(Je.gui._DefaultImage()) { } }
+    public class CancelIcon : ResourcePictureSetting { public CancelIcon() : base(Je.gui._DefaultImage()) { } }
+    public class CaptionIcon : ResourcePictureSetting { public CaptionIcon() : base(Je.gui._DefaultImage()) { } }
+    public class DialogIcon : ResourcePictureSetting { public DialogIcon() : base(Je.gui._DefaultImage()) { } }
+    public class ErrorTitleIcon : ResourcePictureSetting { public ErrorTitleIcon() : base(Je.gui._DefaultImage()) { } }
+    public class InfoTitleIcon : ResourcePictureSetting { public InfoTitleIcon() : base(Je.gui._DefaultImage()) { } }
+    public class InfoTraceIcon : ResourcePictureSetting { public InfoTraceIcon() : base(Je.gui._DefaultImage()) { } }
+    public class LoginIcon : ResourcePictureSetting { public LoginIcon() : base(Je.gui._DefaultImage()) { } }
+    public class MessageLoadingIcon : ResourcePictureSetting { public MessageLoadingIcon() : base(Je.gui._DefaultImage()) { } }
+    public class MessageNonConnectIcon : ResourcePictureSetting { public MessageNonConnectIcon() : base(Je.gui._DefaultImage()) { } }
+    public class MessageNonPasswordIcon : ResourcePictureSetting { public MessageNonPasswordIcon() : base(Je.gui._DefaultImage()) { } }
+    public class MessageStartIcon : ResourcePictureSetting { public MessageStartIcon() : base(Je.gui._DefaultImage()) { } }
+    public class MessageSuccessConnectIcon : ResourcePictureSetting { public MessageSuccessConnectIcon() : base(Je.gui._DefaultImage()) { } }
+    public class MessageSuccessPasswordIcon : ResourcePictureSetting { public MessageSuccessPasswordIcon() : base(Je.gui._DefaultImage()) { } }
+    public class OkIcon : ResourcePictureSetting { public OkIcon() : base(Je.gui._DefaultImage()) { } }
+    public class PasswordIcon : ResourcePictureSetting { public PasswordIcon() : base(Je.gui._DefaultImage()) { } }
+    public class PasswordChangeIcon : ResourcePictureSetting { public PasswordChangeIcon() : base(Je.gui._DefaultImage()) { } }
+    public class PasswordNewIcon : ResourcePictureSetting { public PasswordNewIcon() : base(Je.gui._DefaultImage()) { } }
+    public class PasswordOldIcon : ResourcePictureSetting { public PasswordOldIcon() : base(Je.gui._DefaultImage()) { } }
+    public class UserIcon : ResourcePictureSetting { public UserIcon() : base(Je.gui._DefaultImage()) { } }
+    public class AddIcon : ResourcePictureSetting { public AddIcon() : base(Je.gui._DefaultImage()) { } }
+    public class CopyIcon : ResourcePictureSetting { public CopyIcon() : base(Je.gui._DefaultImage()) { } }
+    public class EditIcon : ResourcePictureSetting { public EditIcon() : base(Je.gui._DefaultImage()) { } }
+    public class RefreshIcon : ResourcePictureSetting { public RefreshIcon() : base(Je.gui._DefaultImage()) { } }
+    public class RemoveIcon : ResourcePictureSetting { public RemoveIcon() : base(Je.gui._DefaultImage()) { } }
+    public class RestoreIcon : ResourcePictureSetting { public RestoreIcon() : base(Je.gui._DefaultImage()) { } }
+    public class DescriptionIcon : ResourcePictureSetting { public DescriptionIcon() : base(Je.gui._DefaultImage()) { } }
+    public class FolderIcon : ResourcePictureSetting { public FolderIcon() : base(Je.gui._DefaultImage()) { } }
+    public class FolderOpenIcon : ResourcePictureSetting { public FolderOpenIcon() : base(Je.gui._DefaultImage()) { } }
+    public class IconIcon : ResourcePictureSetting { public IconIcon() : base(Je.gui._DefaultImage()) { } }
+    public class TypeIcon : ResourcePictureSetting { public TypeIcon() : base(Je.gui._DefaultImage()) { } }
+    public class BinaryIcon : ResourcePictureSetting { public BinaryIcon() : base(Je.gui._DefaultImage()) { } }
+    public class BooleanIcon : ResourcePictureSetting { public BooleanIcon() : base(Je.gui._DefaultImage()) { } }
+    public class DateIcon : ResourcePictureSetting { public DateIcon() : base(Je.gui._DefaultImage()) { } }
+    public class GuidIcon : ResourcePictureSetting { public GuidIcon() : base(Je.gui._DefaultImage()) { } }
+    public class IntegerIcon : ResourcePictureSetting { public IntegerIcon() : base(Je.gui._DefaultImage()) { } }
+    public class ListIcon : ResourcePictureSetting { public ListIcon() : base(Je.gui._DefaultImage()) { } }
+    public class NumericIcon : ResourcePictureSetting { public NumericIcon() : base(Je.gui._DefaultImage()) { } }
+    public class RangeIcon : ResourcePictureSetting { public RangeIcon() : base(Je.gui._DefaultImage()) { } }
+    public class ReferenceIcon : ResourcePictureSetting { public ReferenceIcon() : base(Je.gui._DefaultImage()) { } }
+    public class StringIcon : ResourcePictureSetting { public StringIcon() : base(Je.gui._DefaultImage()) { } }
+    public class LoginInvalidIcon : ResourcePictureSetting { public LoginInvalidIcon() : base(Je.gui._DefaultImage()) { } }
+    public class LoginLengthIcon : ResourcePictureSetting { public LoginLengthIcon() : base(Je.gui._DefaultImage()) { } }
+    public class MetaCreateTypeIcon : ResourcePictureSetting { public MetaCreateTypeIcon() : base(Je.gui._DefaultImage()) { } }
+    public class MetaImplementInterfaceIcon : ResourcePictureSetting { public MetaImplementInterfaceIcon() : base(Je.gui._DefaultImage()) { } }
+    public class NullCodeIcon : ResourcePictureSetting { public NullCodeIcon() : base(Je.gui._DefaultImage()) { } }
+    public class NullLoginIcon : ResourcePictureSetting { public NullLoginIcon() : base(Je.gui._DefaultImage()) { } }
+    public class NullIconIcon : ResourcePictureSetting { public NullIconIcon() : base(Je.gui._DefaultImage()) { } }
+    public class PasswordConfirmationInvalidIcon : ResourcePictureSetting { public PasswordConfirmationInvalidIcon() : base(Je.gui._DefaultImage()) { } }
+    public class PasswordNewInvalidIcon : ResourcePictureSetting { public PasswordNewInvalidIcon() : base(Je.gui._DefaultImage()) { } }
+    public class ConfigurationIcon : ResourcePictureSetting { public ConfigurationIcon() : base(Je.gui._DefaultImage()) { } }
+    public class ConstantIcon : ResourcePictureSetting { public ConstantIcon() : base(Je.gui._DefaultImage()) { } }
+    public class ContextIcon : ResourcePictureSetting { public ContextIcon() : base(Je.gui._DefaultImage()) { } }
+    public class PreviousIcon : ResourcePictureSetting { public PreviousIcon() : base(Je.gui._DefaultImage()) { } }
+    public class FullIcon : ResourcePictureSetting { public FullIcon() : base(Je.gui._DefaultImage()) { } }
+    public class NoneIcon : ResourcePictureSetting { public NoneIcon() : base(Je.gui._DefaultImage()) { } }
+    public class ReadIcon : ResourcePictureSetting { public ReadIcon() : base(Je.gui._DefaultImage()) { } }
+    public class LikeLoginIcon : ResourcePictureSetting { public LikeLoginIcon() : base(Je.gui._DefaultImage()) { } }
+    public class NoDigitIcon : ResourcePictureSetting { public NoDigitIcon() : base(Je.gui._DefaultImage()) { } }
+    public class NoLowerIcon : ResourcePictureSetting { public NoLowerIcon() : base(Je.gui._DefaultImage()) { } }
+    public class NoSymbolIcon : ResourcePictureSetting { public NoSymbolIcon() : base(Je.gui._DefaultImage()) { } }
+    public class NoUpperIcon : ResourcePictureSetting { public NoUpperIcon() : base(Je.gui._DefaultImage()) { } }
+    public class SmallLengthIcon : ResourcePictureSetting { public SmallLengthIcon() : base(Je.gui._DefaultImage()) { } }
+    public class StrengthIcon : ResourcePictureSetting { public StrengthIcon() : base(Je.gui._DefaultImage()) { } }
+    public class DelIcon : ResourcePictureSetting { public DelIcon() : base(Je.gui._DefaultImage()) { } }
+    public class NewIcon : ResourcePictureSetting { public NewIcon() : base(Je.gui._DefaultImage()) { } }
+    public class ProcIcon : ResourcePictureSetting { public ProcIcon() : base(Je.gui._DefaultImage()) { } }
+    public class AppMemoryIcon : ResourcePictureSetting { public AppMemoryIcon() : base(Je.gui._DefaultImage()) { } }
+    public class ComputerIconIcon : ResourcePictureSetting { public ComputerIconIcon() : base(Je.gui._DefaultImage()) { } }
+    public class DefaultUserIcon : ResourcePictureSetting { public DefaultUserIcon() : base(Je.gui._DefaultImage()) { } }
+    public class DotNetVersionIcon : ResourcePictureSetting { public DotNetVersionIcon() : base(Je.gui._DefaultImage()) { } }
+    public class DrivesIcon : ResourcePictureSetting { public DrivesIcon() : base(Je.gui._DefaultImage()) { } }
+    public class OperatingSystemIcon : ResourcePictureSetting { public OperatingSystemIcon() : base(Je.gui._DefaultImage()) { } }
+    public class ProcessorCountIcon : ResourcePictureSetting { public ProcessorCountIcon() : base(Je.gui._DefaultImage()) { } }
+    public class TotalMemoryIcon : ResourcePictureSetting { public TotalMemoryIcon() : base(Je.gui._DefaultImage()) { } }
+    public class WindowsUserIcon : ResourcePictureSetting { public WindowsUserIcon() : base(Je.gui._DefaultImage()) { } }
+    public class StartAppLangIcon : ResourcePictureSetting { public StartAppLangIcon() : base(Je.gui._DefaultImage()) { } }
+    public class StartCmdArgsIcon : ResourcePictureSetting { public StartCmdArgsIcon() : base(Je.gui._DefaultImage()) { } }
+    public class StartCmdPoolIcon : ResourcePictureSetting { public StartCmdPoolIcon() : base(Je.gui._DefaultImage()) { } }
+    public class StartDIIcon : ResourcePictureSetting { public StartDIIcon() : base(Je.gui._DefaultImage()) { } }
+    public class StartEndIcon : ResourcePictureSetting { public StartEndIcon() : base(Je.gui._DefaultImage()) { } }
+    public class StartNLogBaseIcon : ResourcePictureSetting { public StartNLogBaseIcon() : base(Je.gui._DefaultImage()) { } }
+    public class StartNLogTypedIcon : ResourcePictureSetting { public StartNLogTypedIcon() : base(Je.gui._DefaultImage()) { } }
+    public class StartReadConfIcon : ResourcePictureSetting { public StartReadConfIcon() : base(Je.gui._DefaultImage()) { } }
+    public class StartResIcon : ResourcePictureSetting { public StartResIcon() : base(Je.gui._DefaultImage()) { } }
+    public class StartTraceIcon : ResourcePictureSetting { public StartTraceIcon() : base(Je.gui._DefaultImage()) { } }
+
+    
+    #endregion
 }

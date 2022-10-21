@@ -1,65 +1,60 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Convert.Commanders;
+using Jetproger.Tools.Convert.Converts;
 
 namespace Jetproger.Tools.Convert.Commands
 { 
     public static class CommandExtensions
     {
-        public static CommandMessage TraceMsg(this Je.ICmdExpander exp, string message, string comment = null)
+
+        public static CommandResponse ServerExecute(this Je.ICmdExpander exp, CommandRequest request)
         {
-            return !IsEmptyStrings(message, comment) ? new CommandMessage { Category = ECommandMessage.Trace, Message = message, Comment = comment } : null;
+            var response = new CommandResponse { Session = request.Session };
+            try
+            {
+                if (string.IsNullOrWhiteSpace(request.Command)) return ServerCommander.Run(null, request);
+                var command = Je.cmd.CommandOf(request.Command);
+                var parameterType = Je.sys.TypeOf(request.Parameter);
+                Je.err.GuardTypeNotFound(parameterType == null, request.Parameter);
+                return ServerCommander.Run(command, request);
+            }
+            catch (Exception e)
+            {
+                var msg = e.As<CommandMessage>();
+                Je.log.To(e);
+                response.Result = string.Empty;
+                response.Report = Je.cmd.ReportOf(msg);
+                return response;
+            }
         }
 
-        public static CommandMessage DebugMsg(this Je.ICmdExpander exp, string message, string comment = null)
+        public static ICommand CommandOf(this Je.ICmdExpander exp, string commandTypeName)
         {
-            return !IsEmptyStrings(message, comment) ? new CommandMessage { Category = ECommandMessage.Debug, Message = message, Comment = comment } : null;
+            var commandType = Je.sys.TypeOf(commandTypeName);
+            Je.err.GuardTypeNotFound(commandType == null, commandTypeName);
+            var command = Je.sys.InstanceOf(commandType) as ICommand;
+            Je.err.GuardTypeNotSubtype(command == null, commandTypeName, typeof(ICommand).FullName);
+            return command;
         }
 
-        public static CommandMessage InfoMsg(this Je.ICmdExpander exp, string message, string comment = null)
-        {
-            return !IsEmptyStrings(message, comment) ? new CommandMessage { Category = ECommandMessage.Info, Message = message, Comment = comment } : null;
-        }
-
-        public static CommandMessage WarnMsg(this Je.ICmdExpander exp, string message, string comment = null)
-        {
-            return !IsEmptyStrings(message, comment) ? new CommandMessage { Category = ECommandMessage.Warn, Message = message, Comment = comment } : null;
-        }
-
-        public static CommandMessage ErrorMsg(this Je.ICmdExpander exp, string message, string comment = null)
-        {
-            return !IsEmptyStrings(message, comment) ? new CommandMessage { Category = ECommandMessage.Error, Message = message, Comment = comment } : null;
-        }
-
-        private static bool IsEmptyStrings(string s1, string s2)
-        {
-            return string.IsNullOrWhiteSpace(s1) && string.IsNullOrWhiteSpace(s2);
-        }
-
-        public static CommandExecuteEventArgs ErrorEventArgs(this Je.ICmdExpander exp, ICommand command, IEnumerable<Exception> exceptions)
-        {
-            var arr = ExceptionsOf(exceptions); return new CommandExecuteEventArgs { Command = command, IsSuccess = arr == null, Exceptions = arr };
-        }
-
-        public static CommandExecuteEventArgs ErrorEventArgs(this Je.ICmdExpander exp, ICommand command, params Exception[] exceptions)
-        {
-            var arr = ExceptionsOf(exceptions); return new CommandExecuteEventArgs { Command = command, IsSuccess = arr == null, Exceptions = arr };
-        }
-
-        public static CommandExecuteEventArgs EmptyEventArgs(this Je.ICmdExpander exp, ICommand command)
-        {
-            return new CommandExecuteEventArgs { IsSuccess = true };
-        }
-
-        private static Exception[] ExceptionsOf(IEnumerable<Exception> exceptions)
-        {
-            var arr = (exceptions ?? new Exception[0]).Where(x => x != null).ToArray(); return arr.Length > 0 ? arr : null;
-        }
-
-        public static CommandMessage[] MessagesOf(this Je.ICmdExpander exp, params CommandMessage[] messages)
+        public static CommandMessage[] ReportOf(this Je.ICmdExpander exp, params CommandMessage[] messages)
         {
             return messages;
+        }
+
+        public static int IndexOf(this Je.ICmdExpander exp, IEnumerable items, object item)
+        {
+            var i = 0;
+            foreach (object obj in items)
+            {
+                if (ReferenceEquals(obj, item)) return i;
+                i++;
+            }
+            return -1;
         }
     }
 }

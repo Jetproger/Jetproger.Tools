@@ -3,10 +3,11 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Jetproger.Tools.Convert.AppConfig;
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Convert.Commands;
 using Jetproger.Tools.Convert.Converts;
 using Jetproger.Tools.Convert.Settings;
 
-namespace Jetproger.Tools.Convert.Commands
+namespace Jetproger.Tools.Convert.Commanders
 {
     public class ClientCommander : BaseCommander
     {
@@ -15,7 +16,6 @@ namespace Jetproger.Tools.Convert.Commands
 
         public ClientCommander() : base(1000 * J_<ClientCommandPeriodSeconds>.Sz.As<int>())
         {
-
         }
 
         public static CommandResponse Run(ICommand command, CommandRequest request)

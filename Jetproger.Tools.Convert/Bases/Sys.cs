@@ -17,7 +17,7 @@ namespace Jetproger.Tools.Convert.Bases
         {
             try
             {
-                var assembly = GetAssembly(e, assemblyName);
+                var assembly = AssemblyOf(e, assemblyName);
                 var baseName = $"{assemblyName}.Bases.{resourceName}";
                 return new ResourceManager(baseName, assembly);
             }
@@ -92,7 +92,7 @@ namespace Jetproger.Tools.Convert.Bases
             Type type;
             if (!string.IsNullOrWhiteSpace(assemblyName))
             {
-                assembly = GetAssembly(e, assemblyName);
+                assembly = AssemblyOf(e, assemblyName);
                 if (assembly != null)
                 {
                     type = assembly.GetType(typeName, false, true);
@@ -109,7 +109,7 @@ namespace Jetproger.Tools.Convert.Bases
                     pos = typeName.LastIndexOf(".", pos - 1, StringComparison.Ordinal);
                     if (pos < 1) return null;
                     assemblyName = typeName.Substring(0, pos);
-                    assembly = GetAssembly(e, assemblyName);
+                    assembly = AssemblyOf(e, assemblyName);
                     if (assembly == null) continue;
                     type = assembly.GetType(typeName);
                     if (type != null) return type;
@@ -124,7 +124,7 @@ namespace Jetproger.Tools.Convert.Bases
             }
         }
 
-        public static Assembly GetAssembly(this Je.ISysExpander e, string assemblyName)
+        public static Assembly AssemblyOf(this Je.ISysExpander e, string assemblyName)
         {
             return assemblyName != string.Empty ? LoadAssembly(assemblyName) : null;
         }
@@ -262,13 +262,6 @@ namespace Jetproger.Tools.Convert.Bases
             }
         }
 
-        public static bool IsList(this Je.ISysExpander e, Type type)
-        {
-            if (type == null) return false;
-            var genericType = GenericOf(e, type);
-            return genericType != null && type.GetGenericTypeDefinition() == typeof(List<>) && genericType.IsClass && !typeof(IEnumerable).IsAssignableFrom(genericType);
-        }
-
         public static T DefaultOf<T>(this Je.ISysExpander e)
         {
             return (T)DefaultOf(e, typeof(T));
@@ -279,16 +272,23 @@ namespace Jetproger.Tools.Convert.Bases
             return type.IsValueType ? Activator.CreateInstance(type) : null;
         }
 
-        public static bool IsTypeOf(this Je.ISysExpander e, Type type, Type sample)
-        {
-            return type == sample || type.IsSubclassOf(sample) || type.GetInterfaces().Any(x => x == sample);
-        }
-
         public static Type GenericOf(this Je.ISysExpander e, Type type)
         {
             var types = type.GetGenericArguments();
             if (types.Length > 0) return types[0];
             return type.HasElementType ? type.GetElementType() : null;
+        }
+
+        public static bool IsList(this Je.ISysExpander e, Type type)
+        {
+            if (type == null) return false;
+            var genericType = GenericOf(e, type);
+            return genericType != null && type.GetGenericTypeDefinition() == typeof(List<>) && genericType.IsClass && !typeof(IEnumerable).IsAssignableFrom(genericType);
+        }
+
+        public static bool IsTypeOf(this Je.ISysExpander e, Type type, Type sample)
+        {
+            return type == sample || type.IsSubclassOf(sample) || type.GetInterfaces().Any(x => x == sample);
         }
 
         public static bool IsSimple(this Je.ISysExpander e, Type type)

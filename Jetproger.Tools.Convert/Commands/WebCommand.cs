@@ -5,6 +5,7 @@ using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Convert.Commanders;
 using Jetproger.Tools.Convert.Converts;
 
 namespace Jetproger.Tools.Convert.Commands
@@ -73,7 +74,7 @@ namespace Jetproger.Tools.Convert.Commands
         public string Url { get; private set; }
 
         protected WebCommand(string url, string method, TValue content)
-        { 
+        {
             Value = content;
             Method = method;
             Url = url;
@@ -88,7 +89,7 @@ namespace Jetproger.Tools.Convert.Commands
         {
             var state = new WebStreams();
             state.Request = CreateRequest();
-            state.StreamReader = Je.bin.ObjToMem(Value, Je.web.WebEncoding);
+            state.StreamReader = Value.As<MemoryStream>(Je.web.WebEncoding);
             if (state.StreamReader.Length == 0)
             {
                 BeginGetResponse(state);
@@ -153,14 +154,14 @@ namespace Jetproger.Tools.Convert.Commands
             try
             {
                 var ms = state.StreamWriter as MemoryStream;
-                if (ms != null) Result = Je.bin.MemToObj<TResult>(ms, Je.web.WebEncoding);
+                var result = ms != null ? ms.As<TResult>(Je.web.WebEncoding) : default(TResult);
                 state.Dispose();
-                EndExecuteEvent(Je.cmd.EmptyEventArgs(this));
+                Result = result;
             }
             catch (Exception e)
             {
                 state.Dispose();
-                Finalize(e);
+                Error = new CommandException(e);
             }
         }
 
@@ -178,7 +179,7 @@ namespace Jetproger.Tools.Convert.Commands
             {
                 request.PreAuthenticate = true;
                 request.Credentials = new NetworkCredential(NetworkCredentialUser, NetworkCredentialPassword);
-            } 
+            }
             request.Proxy = Je.web.GetProxy(Url);
             return request;
         }
@@ -225,7 +226,7 @@ namespace Jetproger.Tools.Convert.Commands
             catch (Exception e)
             {
                 if (state != null) state.Dispose();
-                Finalize(e);
+                Error = new CommandException(e);
             }
         }
 
@@ -240,7 +241,7 @@ namespace Jetproger.Tools.Convert.Commands
             catch (Exception e)
             {
                 if (state != null) state.Dispose();
-                Finalize(e);
+                Error = new CommandException(e);
             }
         }
 
@@ -255,7 +256,7 @@ namespace Jetproger.Tools.Convert.Commands
             catch (Exception e)
             {
                 if (state != null) state.Dispose();
-                Finalize(e);
+                Error = new CommandException(e);
             }
         }
 
@@ -270,7 +271,7 @@ namespace Jetproger.Tools.Convert.Commands
             catch (Exception e)
             {
                 if (state != null) state.Dispose();
-                Finalize(e);
+                Error = new CommandException(e);
             }
         }
 
@@ -285,7 +286,7 @@ namespace Jetproger.Tools.Convert.Commands
             catch (Exception e)
             {
                 if (state != null) state.Dispose();
-                Finalize(e);
+                Error = new CommandException(e);
             }
         }
 
@@ -300,7 +301,7 @@ namespace Jetproger.Tools.Convert.Commands
             catch (Exception e)
             {
                 if (state != null) state.Dispose();
-                Finalize(e);
+                Error = new CommandException(e);
             }
         }
 
@@ -315,7 +316,7 @@ namespace Jetproger.Tools.Convert.Commands
             catch (Exception e)
             {
                 if (state != null) state.Dispose();
-                Finalize(e);
+                Error = new CommandException(e);
             }
         }
 

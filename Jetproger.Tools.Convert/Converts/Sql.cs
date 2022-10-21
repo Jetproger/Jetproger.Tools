@@ -5,6 +5,7 @@ using System.Data.SqlTypes;
 using System.Linq;
 using System.Reflection;
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Convert.Commanders;
 using Jetproger.Tools.Convert.Commands;
 using Jetproger.Tools.Convert.Settings;
 
@@ -54,10 +55,8 @@ namespace Jetproger.Tools.Convert.Converts
                 || type == typeof(float?)
                 || type == typeof(double)
                 || type == typeof(double?)) return SqlDbType.Money;
-            if (type == typeof(Guid)
-                || type == typeof(Guid?)) return SqlDbType.UniqueIdentifier;
-            if (type == typeof(DateTime)
-                || type == typeof(DateTime?)) return SqlDbType.DateTime;
+            if (type == typeof(Guid) || type == typeof(Guid?)) return SqlDbType.UniqueIdentifier;
+            if (type == typeof(DateTime) || type == typeof(DateTime?)) return SqlDbType.DateTime;
             if (type == typeof(char) || type == typeof(char?)) return SqlDbType.NChar;
             if (type == typeof(byte[])) return SqlDbType.VarBinary;
             if (type == typeof(string)) return SqlDbType.NVarChar;
@@ -133,7 +132,6 @@ namespace Jetproger.Tools.Convert.Converts
         } 
     }
 }
-
 namespace Jetproger.Tools.AppConfig
 {
     public class ConnectionString : ConfigSetting

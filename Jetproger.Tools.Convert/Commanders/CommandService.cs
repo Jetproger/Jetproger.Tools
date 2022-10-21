@@ -9,7 +9,7 @@ using Jetproger.Tools.Convert.Bases;
 using Jetproger.Tools.Convert.Converts;
 using Jetproger.Tools.Convert.Settings;
 
-namespace Jetproger.Tools.Convert.Commands
+namespace Jetproger.Tools.Convert.Commanders
 {
     public class CommandService : ServiceBase
     {
@@ -47,7 +47,7 @@ namespace Jetproger.Tools.Convert.Commands
                 config.HostNameComparisonMode = hostNameComparisonMode;
                 config.Routes.MapHttpRoute(
                     name: "cmd",
-                    routeTemplate: "kiz/v1/cmd",
+                    routeTemplate: "jetproger/v1/cmd",
                     defaults: new { controller = "Command", action = "ExecuteCommand", name = RouteParameter.Optional }
                 );
                 _server = new HttpSelfHostServer(config);
@@ -76,8 +76,10 @@ namespace Jetproger.Tools.Convert.Commands
         }
     }
 }
-
 namespace Jetproger.Tools.AppConfig
 {
-    public class AppServiceName : ConfigSetting { public AppServiceName() : base("jetproger-api") { } }
+    public class AppServiceName : ConfigSetting
+    {
+        public AppServiceName() : base("jetproger-api") { }
+    }
 }

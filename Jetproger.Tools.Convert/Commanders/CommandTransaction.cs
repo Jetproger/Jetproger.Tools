@@ -1,11 +1,11 @@
-﻿namespace Jetproger.Tools.Convert.Commands
+﻿using Jetproger.Tools.Convert.Commands;
+
+namespace Jetproger.Tools.Convert.Commanders
 {
     public class CommandTransaction
     {
-        public CommandResponse Response { get; private set; } 
-
+        public CommandResponse Response { get; private set; }
         public CommandRequest Request { get; private set; } 
-
         public ICommand Command { get; private set; }
 
         public CommandTransaction(ICommand command, CommandRequest request)

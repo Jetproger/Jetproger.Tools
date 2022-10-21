@@ -4,7 +4,7 @@ using System.Threading;
 using Jetproger.Tools.Convert.Bases;
 using Jetproger.Tools.Convert.Factories;
 
-namespace Jetproger.Tools.Convert.Commands
+namespace Jetproger.Tools.Convert.Commanders
 {
     public class CommandThreads
     {
@@ -60,7 +60,7 @@ namespace Jetproger.Tools.Convert.Commands
         private long _ticks;
 
         public CommandThread()
-        { 
+        {
             (new Thread(Working) { IsBackground = true }).Start();
         }
 
