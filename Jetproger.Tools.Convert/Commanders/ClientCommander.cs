@@ -14,7 +14,7 @@ namespace Jetproger.Tools.Convert.Commanders
         private readonly ConcurrentDictionary<Guid, CommandTransaction> _commands = new ConcurrentDictionary<Guid, CommandTransaction>();
         private readonly List<Guid> _deleteds = new List<Guid>();
 
-        public ClientCommander() : base(1000 * J_<ClientCommandPeriodSeconds>.Sz.As<int>())
+        public ClientCommander() : base(1000 * k<ClientCommandPeriodSeconds>.key.As<int>())
         {
         }
 
@@ -59,7 +59,7 @@ namespace Jetproger.Tools.Convert.Commanders
             catch (Exception e)
             {
                 _deleteds.Add(transaction.Request.Session);
-                Je.log.To(e);
+                f.log.To(e);
             }
         }
 

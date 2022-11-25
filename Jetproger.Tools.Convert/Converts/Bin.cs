@@ -10,32 +10,32 @@ namespace Jetproger.Tools.Convert.Converts
 {
     public static class BinExtensions
     {
-        public static byte[] Of(this Je.IBinExpander e, object value)
+        public static byte[] of(this f.IBinExpander e, object value)
         {
-            return Je<BinaryConverter>.Onu().Serialize(value);
+            return t<BinaryConverter>.one().Serialize(value);
         }
 
-        public static T To<T>(this Je.IBinExpander e, byte[] bytes)
+        public static T to<T>(this f.IBinExpander e, byte[] bytes)
         {
-            return (T)Je<BinaryConverter>.Onu().Deserialize(bytes, typeof(T));
+            return (T)t<BinaryConverter>.one().Deserialize(bytes, typeof(T));
         }
 
-        public static object To(this Je.IBinExpander e, byte[] bytes, Type type)
+        public static object To(this f.IBinExpander e, byte[] bytes, Type type)
         {
-            return Je<BinaryConverter>.Onu().Deserialize(bytes, type);
+            return t<BinaryConverter>.one().Deserialize(bytes, type);
         }
 
-        public static Guid HashOf(this Je.IBinExpander exp, object value)
+        public static Guid hashof(this f.IBinExpander exp, object value)
         {
-            return HashOf(exp, Of(exp, value));
+            return hashof(exp, of(exp, value));
         }
 
-        public static Guid HashOf(this Je.IBinExpander exp, byte[] bytes)
+        public static Guid hashof(this f.IBinExpander exp, byte[] bytes)
         {   
             return new Guid(MD5.Create().ComputeHash(bytes));
         }
 
-        public static byte[] Zip(this Je.IBinExpander exp, byte[] bytes)
+        public static byte[] zip(this f.IBinExpander exp, byte[] bytes)
         {
             if (bytes == null || bytes.Length == 0) return new byte[0];
             using (var ms = new MemoryStream())
@@ -48,7 +48,7 @@ namespace Jetproger.Tools.Convert.Converts
             }
         }
 
-        public static byte[] Unzip(this Je.IBinExpander exp, byte[] bytes)
+        public static byte[] unzip(this f.IBinExpander exp, byte[] bytes)
         {
             if (bytes == null || bytes.Length == 0) return new byte[0];
             using (var source = new MemoryStream())
@@ -72,7 +72,7 @@ namespace Jetproger.Tools.Convert.Converts
             }
         }
 
-        public static bool IsEqualBytes(this Je.IBinExpander exp, byte[] bytes1, byte[] bytes2)
+        public static bool IsEqualBytes(this f.IBinExpander exp, byte[] bytes1, byte[] bytes2)
         {
             if (bytes1 == null || bytes2 == null) return false;
             if (bytes1.Length != bytes2.Length) return false;

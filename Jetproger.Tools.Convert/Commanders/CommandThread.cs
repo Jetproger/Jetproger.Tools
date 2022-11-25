@@ -8,7 +8,7 @@ namespace Jetproger.Tools.Convert.Commanders
 {
     public class CommandThreads
     {
-        private static CommandThreads Threads { get { return Je.one.Get(ThreadsHolder, () => new CommandThreads()); } }
+        private static CommandThreads Threads { get { return f.one.Get(ThreadsHolder, () => new CommandThreads()); } }
         private static readonly CommandThreads[] ThreadsHolder = { null };
         private readonly ConcurrentBag<CommandThread> _threads = new ConcurrentBag<CommandThread>();
 
@@ -89,7 +89,7 @@ namespace Jetproger.Tools.Convert.Commanders
             }
             catch (Exception e)
             {
-                Je.log.To(e);
+                f.log.To(e);
             }
             finally
             {

@@ -5,9 +5,9 @@ using Jetproger.Tools.Convert.Settings;
 
 namespace Jetproger.Tools.Convert.Bases
 {
-    public static partial class Je
+    public static partial class f
     {
-        public static AppDomain own => Je.one.Get(OwnHolder, () => AppDomain.CurrentDomain.IsDefaultAppDomain() ? AppDomain.CurrentDomain : null);
+        public static AppDomain own => f.one.Get(OwnHolder, () => AppDomain.CurrentDomain.IsDefaultAppDomain() ? AppDomain.CurrentDomain : null);
         private static readonly AppDomain[] OwnHolder = { null };
 
         public static IAppExpander app => null;
@@ -22,7 +22,7 @@ namespace Jetproger.Tools.Convert.Bases
         public static ICmdExpander cmd => null;
         public interface ICmdExpander { }
 
-        public static CryExpander cry => Je.one.Get(CryExpanderHolder, () => new CryExpander());
+        public static CryExpander cry => f.one.Get(CryExpanderHolder, () => new CryExpander());
         private static readonly CryExpander[] CryExpanderHolder = { null };
 
         public static IErrExpander err => null;
@@ -55,101 +55,101 @@ namespace Jetproger.Tools.Convert.Bases
         public static ISysExpander sys => null;
         public interface ISysExpander { }
 
-        public static WebExpander web => Je.one.Get(WebExpanderHolder, () => new WebExpander());
+        public static WebExpander web => f.one.Get(WebExpanderHolder, () => new WebExpander());
         private static readonly WebExpander[] WebExpanderHolder = { null };
 
-        public static WinExpander win => Je.one.Get(WinExpanderHolder, () => new WinExpander());
+        public static WinExpander win => f.one.Get(WinExpanderHolder, () => new WinExpander());
         private static readonly WinExpander[] WinExpanderHolder = { null };
 
         public static IXmlExpander xml => null;
         public interface IXmlExpander { }
     }
 
-    public static class Je<T> where T : class
+    public static class t<T> where T : class
     {
-
         private static readonly IpcClient _IpcClient = new IpcClient();
         private static readonly Type _Type = typeof(T);
 
-        public static T New(params object[] args)
+        public static T _(params object[] args)
         {
             return (T)Activator.CreateInstance(_Type, args);
         }
 
-        public static T Onu()
+        public static T one()
         {
-            return One(() => New());
+            return one(() => _());
         }
 
-        public static T One(Func<T> factory)
+        public static T one(Func<T> factory)
         {
             return (T)_IpcClient.OfToOne(_Type, factory);
         }
 
-        public static T One()
+        public static bool one(out T value)
         {
-            return (T)_IpcClient.OfOne(_Type);
+            value = (T)_IpcClient.OfOne(_Type);
+            return value != null;
         }
 
-        public static void One(T value)
+        public static void one(T value)
         {
             _IpcClient.ToOne(_Type, value);
         }
 
-        public static T Fnu()
+        public static T few()
         {
-            return Few(() => New());
+            return few(() => _());
         }
 
-        public static T Few(Func<T> factory)
+        public static T few(Func<T> factory)
         {
             return (T)_IpcClient.OfToPool(_Type, factory);
         }
 
-        public static T Few()
+        public static bool few(out T value)
         {
-            return (T)_IpcClient.OfPool(_Type);
+            value = (T)_IpcClient.OfPool(_Type);
+            return value != null;
         }
 
-        public static void Few(T value)
+        public static void few(T value)
         {
             _IpcClient.ToPool(_Type, value);
         }
 
-        public static T Knu<TKey>(TKey key)
+        public static T key<TKey>(TKey k)
         {
-            return Key(key, x => New(x));
+            return key(k, x => _(x));
         }
 
-        public static T Key<TKey>(TKey key, Func<TKey, T> factory)
+        public static T key<TKey>(TKey key, Func<TKey, T> factory)
         { 
             return (T)_IpcClient.OfToStore(typeof(TKey), _Type, key, new Func<object, object>(x => factory((TKey)x)));
         }
 
-        public static T Key<TKey>(TKey key)
+        public static bool key<TKey>(TKey key, out T value)
         {
-            return (T)_IpcClient.OfStore(typeof(TKey), _Type, key);
+            value = (T)_IpcClient.OfStore(typeof(TKey), _Type, key);
+            return value != null;
         }
 
-        public static void Key<TKey>(TKey key, T value)
+        public static void key<TKey>(TKey key, T value)
         {
             _IpcClient.ToStore(typeof(TKey), _Type, key, value);
         }
     }
 
-    public static class J_<T> where T : Setting
+    public static class k<T> where T : Setting
     {
-
         private static readonly Type _Type = typeof(T);
 
-        public static bool Is
+        public static bool set
         {
-            get { return Je<T>.Knu(_Type).IsDeclared; }
+            get { return t<T>.key(_Type).IsDeclared; }
         }
-
-        public static string Sz
+        public static string key
         {
-            get { return Je<T>.Knu(_Type).Value; }
+            get { return t<T>.key(_Type).Value; }
         }
     }
 }

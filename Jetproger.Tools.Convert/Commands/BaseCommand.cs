@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using Jetproger.Tools.AppConfig;
 using Jetproger.Tools.Convert.Bases;
 using Jetproger.Tools.Convert.Commanders;
@@ -10,6 +11,31 @@ using Jetproger.Tools.Convert.Factories;
 
 namespace Jetproger.Tools.Convert.Commands
 {
+    public abstract class AsyncCommand<TResult, TValue, TCommand> : Command<TResult, TValue> where TCommand : Command<TResult, TValue>
+    {
+        private readonly ICommand _icommand;
+        private readonly TCommand _command;
+
+        protected AsyncCommand()
+        {
+            _command = (TCommand)Activator.CreateInstance(typeof(TCommand), this);
+            _icommand = _command;
+            _icommand.EndExecute += OnEndExecute;
+        }
+
+        private void OnEndExecute()
+        {
+            Error = _command.Error;
+            Result = _command.Result;
+        }
+
+        protected override void Execute()
+        {
+            _command.Value = Value;
+            CommandThreads.Run(_icommand.Execute);
+        }
+    }
+
     public class Command : Command<object, object>
     {
         public Command() { }
@@ -51,22 +77,33 @@ namespace Jetproger.Tools.Convert.Commands
         protected virtual ECommandState GetState() { return Get(_state); }
         private readonly ECommandState[] _state = { ECommandState.None };
 
-        private List<CommandMessage> Messages { get { return Je.one.Get(_ticketsHolder, () => new List<CommandMessage>()); } }
+        private List<CommandMessage> Messages { get { return f.one.Get(_ticketsHolder, () => new List<CommandMessage>()); } }
         private void WriteLine(CommandMessage ticket) { lock (Messages) { Messages.Add(ticket); } }
         public override void WriteLine(string message) { WriteLine((object)message); }
         public override void Write(string message) { WriteLine((object)message); }
         public override void Write(object message) { WriteLine(message); }
         private readonly List<CommandMessage>[] _ticketsHolder = { null };
 
+        public void StartExecute(TValue value) { Value = value; InterfaceCommand.Execute(); }
+        public void AwaitExecute(TValue value) { Value = value; AwaitExecute(); }
+        public void StartExecute() { InterfaceCommand.Execute(); }
+
         public override void WriteLine(object message)
         {
             if (message == null) return;
-            else
             if (message is CommandMessage) WriteLine((CommandMessage)message);
             else
             if (message is Exception) WriteLine(new CommandMessage((Exception)message));
             else
             if (true) WriteLine(new CommandMessage(message.ToString()));
+        }
+
+        public void AwaitExecute()
+        {
+            var mre = new ManualResetEvent(false);
+            InterfaceCommand.EndExecute += () => mre.Set();
+            InterfaceCommand.Execute();
+            mre.WaitOne();
         }
 
         CommandMessage[] ICommand.LogExecute()
@@ -77,12 +114,6 @@ namespace Jetproger.Tools.Convert.Commands
                 Messages.Clear();
                 return messages;
             }
-        }
-
-        public virtual void Execute(TValue value)
-        {
-            Value = value;
-            InterfaceCommand.Execute();
         }
 
         void ICommand.Execute()
@@ -138,7 +169,7 @@ namespace Jetproger.Tools.Convert.Commands
                 if (commandException == null)
                 {
                     commandException = new CommandException(exception);
-                    Je.log.To(commandException.Message);
+                    f.log.To(commandException.Message);
                     Set(_error, commandException);
                 }
             }
@@ -147,18 +178,12 @@ namespace Jetproger.Tools.Convert.Commands
 
         protected T Get<T>(T[] holder)
         {
-            lock (holder)
-            {
-                return holder[0];
-            }
+            lock (holder) { return holder[0]; }
         }
 
         protected void Set<T>(T[] holder, T value)
         {
-            lock (holder)
-            {
-                holder[0] = value;
-            }
+            lock (holder) { holder[0] = value; }
         }
     }
 

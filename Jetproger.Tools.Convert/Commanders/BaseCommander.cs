@@ -35,7 +35,7 @@ namespace Jetproger.Tools.Convert.Commanders
                 }
                 catch (Exception e)
                 {
-                    Je.log.To(e);
+                    f.log.To(e);
                 }
                 finally
                 {

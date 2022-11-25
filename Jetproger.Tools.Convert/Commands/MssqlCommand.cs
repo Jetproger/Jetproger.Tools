@@ -232,14 +232,14 @@ namespace Jetproger.Tools.Convert.Commands
             var type = typeof(TParameter);
             if (type == typeIgnore) return value;
             var originalType = type;
-            var isOutput = Je.sql.IsOutputType(ref type);
-            if (!Je.sys.IsSimple(type)) return value;
+            var isOutput = f.sql.IsOutputType(ref type);
+            if (!f.sys.IsSimple(type)) return value;
             if (isOutput)
             {
                 var parameterName = string.Format("P{0}", ordinal);
                 var parameterValue = cmd.Parameters[parameterName].Value.As(type);
                 value = Activator.CreateInstance<TParameter>();
-                originalType.GetProperty("Value", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(value, parameterValue != DBNull.Value && parameterValue != null ? parameterValue : Je.sys.DefaultOf(originalType), null);
+                originalType.GetProperty("Value", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(value, parameterValue != DBNull.Value && parameterValue != null ? parameterValue : f.sys.defaultof(originalType), null);
             }
             ordinal++;
             return value;
@@ -282,14 +282,14 @@ namespace Jetproger.Tools.Convert.Commands
         private void AddParameter(SqlCommand cmd, Type typeIgnore, Type type, object value, ref int ordinal)
         {
             if (type == typeIgnore) return;
-            var isOutput = Je.sql.IsOutputType(ref type);
-            if (!Je.sys.IsSimple(type)) return;
-            var sqlType = Je.sql.SqlTypeOf(type);
+            var isOutput = f.sql.IsOutputType(ref type);
+            if (!f.sys.IsSimple(type)) return;
+            var sqlType = f.sql.classof(type);
             var direction = ParameterDirection.Input;
             if (isOutput)
             {
                 direction = ParameterDirection.InputOutput;
-                value = Je.sql.SqlValueOf(value);
+                value = f.sql.valueof(value);
             }
             var p = new SqlParameter
             {
@@ -315,7 +315,7 @@ namespace Jetproger.Tools.Convert.Commands
 
         protected virtual string GetConnectionString()
         {
-            return J_<ConnectionString>.Sz;
+            return k<ConnectionString>.key;
         }
 
         private void MssqlConnectionInfoMessage(object sender, SqlInfoMessageEventArgs e)
@@ -358,8 +358,8 @@ namespace Jetproger.Tools.Convert.Commands
         private void AddQueryParameterScript(Type typeIgnore, Type type, StringBuilder sb, ref int ordinal)
         {
             if (type == typeIgnore) return;
-            var isOutput = Je.sql.IsOutputType(ref type);
-            if (!Je.sys.IsSimple(type)) return;
+            var isOutput = f.sql.IsOutputType(ref type);
+            if (!f.sys.IsSimple(type)) return;
             sb.AppendFormat("{0} @P{1}{2}", sb.Length > 0 ? "," : "", ordinal++, isOutput ? " OUTPUT" : "");
         }
 
@@ -386,8 +386,8 @@ namespace Jetproger.Tools.Convert.Commands
         private void GetScripts(Type typeIgnore, Type type, object value, List<MssqlCommandBulkCopyDataSet> datasets, StringBuilder sbDeclare, StringBuilder sbBinding, ref int ordinal)
         {
             if (type == typeIgnore) return;
-            var isOutput = Je.sql.IsOutputType(ref type);
-            if (!Je.sys.IsSimple(type))
+            var isOutput = f.sql.IsOutputType(ref type);
+            if (!f.sys.IsSimple(type))
             {
                 GetDataset(type, value, datasets);
                 return;
@@ -447,7 +447,7 @@ namespace Jetproger.Tools.Convert.Commands
 
         private string GetSqlTypeText(Type type)
         {
-            var sqlType = Je.sql.SqlTypeOf(type);
+            var sqlType = f.sql.classof(type);
             switch (sqlType)
             {
                 case SqlDbType.Char:
@@ -537,7 +537,7 @@ namespace Jetproger.Tools.Convert.Commands
 
         private string GetSqlTypeText(Type type, int size)
         {
-            var sqlType = Je.sql.SqlTypeOf(type);
+            var sqlType = f.sql.classof(type);
             switch (sqlType)
             {
                 case SqlDbType.Char:

@@ -1,11 +1,12 @@
 using System;
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Convert.Factories;
 
 namespace Jetproger.Tools.Trace.Bases
 {
     public static class TraceExtensions
     {
-        private static NlogTraceListener FileLogger { get { return Je.One.Get(FileLoggerHolder, InitializeFileLogger); } }
+        private static NlogTraceListener FileLogger { get { return f.one.Get(FileLoggerHolder, InitializeFileLogger); } }
 
         private static readonly NlogTraceListener[] FileLoggerHolder = { null };
 
@@ -30,7 +31,7 @@ namespace Jetproger.Tools.Trace.Bases
         {
             InitializeFileLogger(FileLogger);
             var ticket = new Ticket();
-            var jce = message as Je.Exception;
+            var jce = message as f.Exception;
             if (jce != null)
             {
                 WriteTicket(ticket, true, jce.Text, jce.Description);
@@ -39,7 +40,7 @@ namespace Jetproger.Tools.Trace.Bases
             var exception = message as Exception;
             if (exception != null)
             {
-                var ex = new Je.Exception(exception);
+                var ex = new f.Exception(exception);
                 WriteTicket(ticket, true, ex.Text, ex.Description);
                 return;
             }
@@ -57,7 +58,7 @@ namespace Jetproger.Tools.Trace.Bases
         {
             InitializeFileLogger(FileLogger);
             var ticket = new T();
-            var jce = message as Je.Exception;
+            var jce = message as f.Exception;
             if (jce != null)
             {
                 WriteTicket(ticket, true, jce.Text, jce.Description);
@@ -66,7 +67,7 @@ namespace Jetproger.Tools.Trace.Bases
             var exception = message as Exception;
             if (exception != null)
             {
-                var ex = new Je.Exception(exception);
+                var ex = new f.Exception(exception);
                 WriteTicket(ticket, true, ex.Text, ex.Description);
                 return;
             }

@@ -35,7 +35,7 @@ namespace Jetproger.Tools.Process.Commands
 
         public void Reset()
         {
-            if (_command.State != CommandState.Wait && _command.State != CommandState.Work) _command = (Command)Je.meta.CreateInstance(_command.GetType());
+            if (_command.State != CommandState.Wait && _command.State != CommandState.Work) _command = (Command)f.sys.valueof(_command.GetType());
         }
 
         public CommandAgent Copy()
@@ -187,17 +187,17 @@ namespace Jetproger.Tools.Process.Commands
             if (merger == null) return;
             var mergerType = typeof(IMerger<>);
             var commandType = _command.GetType();
-            var genericType = Je.meta.GenericOf(commandType);
+            var genericType = f.sys.genericof(commandType);
             if (genericType == null) return;
             mergerType = mergerType.MakeGenericType(genericType);
-            if (!Je.meta.IsTypeOf(commandType, mergerType)) return;
+            if (!f.sys.IsTypeOf(commandType, mergerType)) return;
             var sources = new Dictionary<int, Command>();
             var counter = 0;
             foreach (var agent in Parent.Items)
             {
                 if (agent == this) continue;
                 if (agent._command == null) continue;
-                if (Je.meta.IsTypeOf(agent._command.GetType(), genericType)) sources.Add(counter++, agent._command);
+                if (f.sys.IsTypeOf(agent._command.GetType(), genericType)) sources.Add(counter++, agent._command);
             }
             while (true)
             {
@@ -269,7 +269,7 @@ namespace Jetproger.Tools.Process.Commands
                 if (agent._command != null)
                 {
                     var type = agent._command.GetType();
-                    if (Je.meta.IsTypeOf(type, sourceType)) return agent._command;
+                    if (f.sys.IsTypeOf(type, sourceType)) return agent._command;
                 }
                 agent = agent.Parent;
             }

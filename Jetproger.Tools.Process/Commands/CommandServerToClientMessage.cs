@@ -10,7 +10,7 @@ namespace Jetproger.Tools.Process.Commands
         public CommandServerToClientMessage(string message, Exception exception)
         {
             IsException = exception != null;
-            var e = new Je.Exception(exception);
+            var e = new f.Exception(exception);
             Text = IsException ? e.Text : message;
             Description = IsException ? e.Description : message;
         }

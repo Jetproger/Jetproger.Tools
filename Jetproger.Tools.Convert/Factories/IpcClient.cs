@@ -14,11 +14,11 @@ namespace Jetproger.Tools.Convert.Factories
     public class IpcClient
     {
         private readonly ConcurrentDictionary<Type, bool> _localTypes = new ConcurrentDictionary<Type, bool>();
-        private IpcServer ContainerServer => Je.one.Get(_containerServerHolder, GetProxy);
+        private IpcServer ContainerServer => f.one.Get(_containerServerHolder, GetProxy);
         private readonly IpcServer[] _containerServerHolder = { null };
-        private IpcServer LocalServer => Je.one.Get(_localServerHolder, () => new IpcServer());
+        private IpcServer LocalServer => f.one.Get(_localServerHolder, () => new IpcServer());
         private readonly IpcServer[] _localServerHolder = { null };
-        private bool IsLocal => Je.one.Get(_isLocalHolder, () => UseLocalCalls());
+        private bool IsLocal => f.one.Get(_isLocalHolder, () => UseLocalCalls());
         private readonly bool?[] _isLocalHolder = { null };
 
         public object OfToOne(Type type, Func<object> func)
@@ -433,13 +433,13 @@ namespace Jetproger.Tools.Convert.Factories
             var type = typeof(IpcServer);
             var assemblyName = type.Assembly.GetName().Name;
             var typeName = type.FullName ?? string.Empty;
-            var instance = Je.own.CreateInstanceAndUnwrap(assemblyName, typeName) as IpcServer;
+            var instance = f.own.CreateInstanceAndUnwrap(assemblyName, typeName) as IpcServer;
             instance?.CreateChannel();
         }
 
         private static bool UseLocalCalls()
         {
-            return AppDomain.CurrentDomain.IsDefaultAppDomain() || Je.own == null;
+            return AppDomain.CurrentDomain.IsDefaultAppDomain() || f.own == null;
         }
     }
 }

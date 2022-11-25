@@ -7,7 +7,7 @@ namespace Jetproger.Tools.Convert.Bases
 {
     public static class LogExtensions
     {
-        public static void To(this Je.ILogExpander exp, object message)
+        public static void To(this f.ILogExpander exp, object message)
         {
             if (message == null) return;
             var s = message.ToString();
@@ -16,12 +16,12 @@ namespace Jetproger.Tools.Convert.Bases
             Trace.WriteLine(holder);
         }
 
-        public static CommandMessage[] Of(this Je.ILogExpander exp, ICommand command)
+        public static CommandMessage[] Of(this f.ILogExpander exp, ICommand command)
         {
             return command != null ? command.LogExecute() : new CommandMessage[0];
         }
 
-        public static void RegisterTracer(this Je.ILogExpander exp, TraceListener tracer)
+        public static void RegisterTracer(this f.ILogExpander exp, TraceListener tracer)
         {
             if (tracer == null) return;
             var i = IndexOfListeners(tracer);
@@ -29,7 +29,7 @@ namespace Jetproger.Tools.Convert.Bases
             lock (Trace.Listeners) { Trace.Listeners.Add(tracer); }
         }
 
-        public static void UnregisterTracer(this Je.ILogExpander exp, TraceListener tracer)
+        public static void UnregisterTracer(this f.ILogExpander exp, TraceListener tracer)
         {
             var i = IndexOfListeners(tracer);
             if (i < 0) return;

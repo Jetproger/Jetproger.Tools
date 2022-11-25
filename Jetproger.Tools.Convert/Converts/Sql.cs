@@ -13,22 +13,22 @@ namespace Jetproger.Tools.Convert.Converts
 {
     public static class SqlExtensions
     {
-        public static DataSet Of(this Je.ISqlExpander exp, object value)
+        public static DataSet of(this f.ISqlExpander exp, object value)
         {
-            return Je<SqlConverter>.Onu().Serialize(value);
+            return t<SqlConverter>.one().Serialize(value);
         }
 
-        public static T To<T>(this Je.ISqlExpander exp, DataSet ds)
+        public static T to<T>(this f.ISqlExpander exp, DataSet ds)
         {
-            return (T)Je<SqlConverter>.Onu().Deserialize(ds, typeof(T));
+            return (T)t<SqlConverter>.one().Deserialize(ds, typeof(T));
         }
 
-        public static object To(this Je.ISqlExpander exp, DataSet ds, Type type)
+        public static object to(this f.ISqlExpander exp, DataSet ds, Type type)
         {
-            return Je<SqlConverter>.Onu().Deserialize(ds, type);
+            return t<SqlConverter>.one().Deserialize(ds, type);
         }
 
-        public static SqlDbType SqlTypeOf(this Je.ISqlExpander exp, Type type)
+        public static SqlDbType classof(this f.ISqlExpander exp, Type type)
         {
             if (type.IsEnum
                 || type == typeof(bool)
@@ -63,7 +63,7 @@ namespace Jetproger.Tools.Convert.Converts
             return SqlDbType.NVarChar;
         }
 
-        public static object SqlValueOf(this Je.ISqlExpander exp, object value)
+        public static object valueof(this f.ISqlExpander exp, object value)
         {
             if (value == null)
             {
@@ -74,9 +74,9 @@ namespace Jetproger.Tools.Convert.Converts
             {
                 return type.GetProperty("Value", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(value, null);
             }
-            if (!Je.sys.IsSimple(type))
+            if (!f.sys.IsSimple(type))
             {
-                return Je.xml.Of(value);
+                return f.xml.of(value);
             }
             if (value is Guid)
             {
@@ -88,7 +88,7 @@ namespace Jetproger.Tools.Convert.Converts
                 var d = (DateTime)value;
                 if (SqlDateTime.MinValue.Value >= d || d >= SqlDateTime.MaxValue.Value) return DBNull.Value;
             }
-            if (value.Equals(Je.sys.DefaultOf(value.GetType())))
+            if (value.Equals(f.sys.defaultof(value.GetType())))
             {
                 return DBNull.Value;
             }
@@ -103,9 +103,9 @@ namespace Jetproger.Tools.Convert.Converts
             return value;
         }
 
-        public static bool IsOutputType(this Je.ISqlExpander exp, ref Type type)
+        public static bool IsOutputType(this f.ISqlExpander exp, ref Type type)
         {
-            var geType = type.IsGenericType && type.GetGenericTypeDefinition() == typeof(MssqlCommandParameterOutput<>) ? Je.sys.GenericOf(type) : null;
+            var geType = type.IsGenericType && type.GetGenericTypeDefinition() == typeof(MssqlCommandParameterOutput<>) ? f.sys.genericof(type) : null;
             var isOutput = geType != null;
             type = geType ?? type;
             return isOutput;

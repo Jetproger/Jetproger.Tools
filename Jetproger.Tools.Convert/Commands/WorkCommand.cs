@@ -5,72 +5,11 @@ using Jetproger.Tools.Convert.Converts;
 
 namespace Jetproger.Tools.Convert.Commands
 {
-    public static class CommandWorkExtensions
-    {
-
-        public static void ExecuteAsync(this ICommand command)
-        {
-            ((ICommand)(new WorkCommand(ExecutingCommand(command)))).Execute();
-        }
-
-        public static ICommand Execute(this ICommand command)
-        {
-            var work = (ICommand)new WorkCommand(ExecutingCommand(command));
-            var mre = new ManualResetEvent(false);
-            work.EndExecute += () => mre.Set();
-            work.Execute();
-            mre.WaitOne();
-            return command;
-        }
-
-        private static IEnumerable<ICommand> ExecutingCommand(ICommand cmd)
-        {
-            yield return cmd;
-        }
-
-        public static void ExecuteAsync(this IEnumerable<ICommand> commands)
-        {
-            var work = new WorkCommand(commands);
-            var cmd = (ICommand)work;
-            cmd.Execute();
-        }
-
-        public static void ExecuteAsync<TResult>(this IEnumerable<ICommand> commands)
-        {
-            var work = new WorkCommand<TResult>(commands);
-            var cmd = (ICommand)work;
-            cmd.Execute();
-        }
-
-        public static WorkCommand Execute(this IEnumerable<ICommand> commands)
-        {
-            var work = new WorkCommand(commands);
-            var cmd = (ICommand)work;
-            var mre = new ManualResetEvent(false);
-            cmd.EndExecute += () => mre.Set();
-            cmd.Execute();
-            mre.WaitOne();
-            return work;
-        }
-
-        public static WorkCommand<TResult> Execute<TResult>(this IEnumerable<ICommand> commands)
-        {
-            var work = new WorkCommand<TResult>(commands);
-            var cmd = (ICommand)work;
-            var mre = new ManualResetEvent(false);
-            cmd.EndExecute += () => mre.Set();
-            cmd.Execute();
-            mre.WaitOne();
-            return work;
-        }
-    }
-
     public class WorkCommand : WorkCommand<object, object>
     {
         public WorkCommand(IEnumerable<ICommand> commands) : base(commands) { }
         public WorkCommand() { }
     }
-
     public class WorkCommand<TResult> : WorkCommand<TResult, TResult>
     {
         public WorkCommand(IEnumerable<ICommand> commands) : base(commands) { }
@@ -85,8 +24,24 @@ namespace Jetproger.Tools.Convert.Commands
         private ICommand _command;
         public WorkCommand() { }
 
+        public void StartExecute(IEnumerable<ICommand> commands)
+        {
+            _commands = commands.GetEnumerator();
+            InterfaceCommand.Execute();
+        }
+
+        public void AwaitExecute(IEnumerable<ICommand> commands)
+        {
+            _commands = commands.GetEnumerator();
+            var mre = new ManualResetEvent(false);
+            InterfaceCommand.EndExecute += () => mre.Set();
+            InterfaceCommand.Execute();
+            mre.WaitOne();
+        }
+
         protected override void Execute()
         {
+            _command = null;
             ExecuteCommands();
         }
 

@@ -32,9 +32,9 @@ namespace Jetproger.Tools.Convert.Commanders
 
         public object DeserializeParameter()
         {
-            var parameterType = Je.sys.TypeOf(Parameter);
+            var parameterType = f.sys.classof(Parameter);
             if (parameterType == null) throw new TypeNotFoundException(Parameter);
-            return Je.xml.To(Document, parameterType);
+            return f.xml.to(Document, parameterType);
         }
     }
 }

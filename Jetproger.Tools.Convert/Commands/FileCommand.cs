@@ -30,7 +30,7 @@ namespace Jetproger.Tools.Convert.Commands
 
         protected FileCommand(string fileName, Encoding encoding, T content)
         {
-            FileName = Je.fss.UseFile(fileName).PathNameExt;
+            FileName = f.fss.UseFile(fileName).PathNameExt;
             _encoding = encoding;
             _isWriter = true;
             Value = content;
@@ -38,7 +38,7 @@ namespace Jetproger.Tools.Convert.Commands
 
         protected FileCommand(string fileName, Encoding encoding)
         {
-            FileName = Je.fss.UseFile(fileName).PathNameExt;
+            FileName = f.fss.UseFile(fileName).PathNameExt;
             _encoding = encoding;
             _isWriter = false;
         }

@@ -932,17 +932,17 @@ namespace Jetproger.Tools.Native
 
         public static void ShowCalendar(this WinExpander expander, IntPtr owner)
         {
-            ShellExecute(owner, "open", "Rundll32.exe", "shell32.dll,Control_RunDLL TIMEDATE.CPL", "C:\\WINDOWS\\SYSTEM32\\", Je.win.SW_SHOWNORMAL);
+            ShellExecute(owner, "open", "Rundll32.exe", "shell32.dll,Control_RunDLL TIMEDATE.CPL", "C:\\WINDOWS\\SYSTEM32\\", f.win.SW_SHOWNORMAL);
         }
 
         public static IntPtr CreateFile(this WinExpander expander, string fileName)
         {
             return CreateFile(fileName,
-                (uint)(Je.win.FILE_GENERIC_READ | Je.win.FILE_GENERIC_WRITE),
-                (uint)(Je.win.FILE_SHARE_READ | Je.win.FILE_SHARE_WRITE),
+                (uint)(f.win.FILE_GENERIC_READ | f.win.FILE_GENERIC_WRITE),
+                (uint)(f.win.FILE_SHARE_READ | f.win.FILE_SHARE_WRITE),
                 0,
-                (uint)Je.win.OPEN_ALWAYS,
-                (uint)Je.win.FILE_ATTRIBUTE_NORMAL, IntPtr.Zero);
+                (uint)f.win.OPEN_ALWAYS,
+                (uint)f.win.FILE_ATTRIBUTE_NORMAL, IntPtr.Zero);
         }
 
         public static int GetFileSize(this WinExpander expander, IntPtr hFile)
@@ -962,8 +962,8 @@ namespace Jetproger.Tools.Native
 
         public static bool SetFilePointer(this WinExpander expander, IntPtr hFile, int offset, SeekOrigin seekOrigin)
         {
-            uint result = SetFilePointer(hFile, offset, 0, (uint)(seekOrigin == SeekOrigin.Begin ? Je.win.FILE_BEGIN : seekOrigin == SeekOrigin.End ? Je.win.FILE_END : Je.win.FILE_CURRENT));
-            return result == (int)Je.win.INVALID_SET_FILE_POINTER;
+            uint result = SetFilePointer(hFile, offset, 0, (uint)(seekOrigin == SeekOrigin.Begin ? f.win.FILE_BEGIN : seekOrigin == SeekOrigin.End ? f.win.FILE_END : f.win.FILE_CURRENT));
+            return result == (int)f.win.INVALID_SET_FILE_POINTER;
         }
 
         public static bool WriteFile(this WinExpander expander, IntPtr hFile, object data)
@@ -1026,8 +1026,8 @@ namespace Jetproger.Tools.Native
             var p = (WindowPosStruct*)lParam.ToPointer();
             WindowPosStruct wp = *p;
             var flags = wp.flags;
-            if ((flags & Je.win.SWP_HIDEWINDOW) == Je.win.SWP_HIDEWINDOW) return -1;
-            if ((flags & Je.win.SWP_SHOWWINDOW) == Je.win.SWP_SHOWWINDOW) return 1;
+            if ((flags & f.win.SWP_HIDEWINDOW) == f.win.SWP_HIDEWINDOW) return -1;
+            if ((flags & f.win.SWP_SHOWWINDOW) == f.win.SWP_SHOWWINDOW) return 1;
             return 0;
         }
 
@@ -1060,7 +1060,7 @@ namespace Jetproger.Tools.Native
 
         public static string[] GetSqlServers(this WinExpander expander)
         {
-            var sqlServers = new LanCollection((uint)Je.win.SV_TYPE_SQLSERVER);
+            var sqlServers = new LanCollection((uint)f.win.SV_TYPE_SQLSERVER);
             var list = new List<string>();
             foreach (var sqlServer in sqlServers) list.Add(sqlServer.As<string>());
             return list.ToArray();
@@ -1069,11 +1069,11 @@ namespace Jetproger.Tools.Native
         public static SHFILEINFO ShellInfo(this WinExpander expander, string fileName)
         {
             var flags = (
-                Je.win.SHGFI_DISPLAYNAME |
-                Je.win.SHGFI_ICON |
-                Je.win.SHGFI_TYPENAME |
-                Je.win.SHGFI_USEFILEATTRIBUTES);
-            var fileAttributes = Je.win.FILE_ATTRIBUTE_NORMAL;
+                f.win.SHGFI_DISPLAYNAME |
+                f.win.SHGFI_ICON |
+                f.win.SHGFI_TYPENAME |
+                f.win.SHGFI_USEFILEATTRIBUTES);
+            var fileAttributes = f.win.FILE_ATTRIBUTE_NORMAL;
             var shellFileInfo = new SHFILEINFO(true);
             var size = (uint)Marshal.SizeOf(shellFileInfo);
             var fullName = fileName;//FileNameAsPathFileExt(fileName);
@@ -1094,9 +1094,9 @@ namespace Jetproger.Tools.Native
             foreach (Control control in form.Controls)
             {
                 if (!(control is MdiClient)) continue;
-                var oldWindowStyle = GetWindowLong(control.Handle, Je.win.GWL_EXSTYLE);
-                var newWindowStyle = new IntPtr(oldWindowStyle ^ Je.win.WS_EX_CLIENTEDGE);
-                SetWindowLongPtr(expander, control.Handle, Je.win.GWL_EXSTYLE, newWindowStyle);
+                var oldWindowStyle = GetWindowLong(control.Handle, f.win.GWL_EXSTYLE);
+                var newWindowStyle = new IntPtr(oldWindowStyle ^ f.win.WS_EX_CLIENTEDGE);
+                SetWindowLongPtr(expander, control.Handle, f.win.GWL_EXSTYLE, newWindowStyle);
                 nonScrollableMdiClient.AssignHandle(control.Handle);
                 control.HandleDestroyed += nonScrollableMdiClient.OnHandleDestroyed;
                 return control as MdiClient;
@@ -1154,15 +1154,15 @@ namespace Jetproger.Tools.Native
             var containers = new List<string>();
             uint pdwDataLen = 0;
             var hProv = IntPtr.Zero;
-            var dwFlags = (uint)Je.win.CRYPT_FIRST;
+            var dwFlags = (uint)f.win.CRYPT_FIRST;
             StringBuilder sb = null;
             try
             {
-                CryptAcquireContext(ref hProv, null, null, (uint)Je.win.CRYPT_PROV_TYPE, Je.win.CRYPT_VERIFYCONTEXT);
-                CryptGetProvParam(hProv, (uint)Je.win.PP_ENUMCONTAINERS, sb, ref pdwDataLen, dwFlags);
+                CryptAcquireContext(ref hProv, null, null, (uint)f.win.CRYPT_PROV_TYPE, f.win.CRYPT_VERIFYCONTEXT);
+                CryptGetProvParam(hProv, (uint)f.win.PP_ENUMCONTAINERS, sb, ref pdwDataLen, dwFlags);
                 var buffsize = (int)(2 * pdwDataLen);
                 sb = new StringBuilder(buffsize);
-                while (CryptGetProvParam(hProv, (uint)Je.win.PP_ENUMCONTAINERS, sb, ref pdwDataLen, dwFlags | (uint)Je.win.CRYPT_FQCN))
+                while (CryptGetProvParam(hProv, (uint)f.win.PP_ENUMCONTAINERS, sb, ref pdwDataLen, dwFlags | (uint)f.win.CRYPT_FQCN))
                 {
                     dwFlags = 0; //required to continue entire enumeration
                     containers.Add(sb.ToString());
@@ -1184,11 +1184,11 @@ namespace Jetproger.Tools.Native
             try
             {
                 var i = 0;
-                CryptAcquireContext(ref hProv, container, null, (uint)Je.win.CRYPT_PROV_TYPE, 0);
-                CryptExportPublicKeyInfo(hProv, (uint)Je.win.AT_KEYEXCHANGE, (uint)Je.win.X509_ASN_ENCODING | (uint)Je.win.PKCS_7_ASN_ENCODING, IntPtr.Zero, ref pcbInfo);
+                CryptAcquireContext(ref hProv, container, null, (uint)f.win.CRYPT_PROV_TYPE, 0);
+                CryptExportPublicKeyInfo(hProv, (uint)f.win.AT_KEYEXCHANGE, (uint)f.win.X509_ASN_ENCODING | (uint)f.win.PKCS_7_ASN_ENCODING, IntPtr.Zero, ref pcbInfo);
                 pInfo = Marshal.AllocHGlobal((int)pcbInfo);
                 Marshal.StructureToPtr(info, pInfo, false);
-                CryptExportPublicKeyInfo(hProv, (uint)Je.win.AT_KEYEXCHANGE, (uint)Je.win.X509_ASN_ENCODING | (uint)Je.win.PKCS_7_ASN_ENCODING, pInfo, ref pcbInfo);
+                CryptExportPublicKeyInfo(hProv, (uint)f.win.AT_KEYEXCHANGE, (uint)f.win.X509_ASN_ENCODING | (uint)f.win.PKCS_7_ASN_ENCODING, pInfo, ref pcbInfo);
                 info = (CERT_PUBLIC_KEY_INFO)Marshal.PtrToStructure(pInfo, typeof(CERT_PUBLIC_KEY_INFO));
                 var bytes = new byte[66];
                 Marshal.Copy(info.PublicKey.pbData, bytes, 0, bytes.Length);

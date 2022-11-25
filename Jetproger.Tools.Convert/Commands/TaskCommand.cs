@@ -6,12 +6,12 @@ namespace Jetproger.Tools.Convert.Commands
     public class TaskCommand : WorkCommand<object, object>
     {
         public CommandGroup OnExecute { get { return _onExecute; } set {; } }
-        private readonly CommandGroup _onExecute;
+        private readonly CommandGroup _onExecute = new CommandGroup();
 
-        public TaskCommand()
+        protected override void Execute()
         {
             AddCommands(Executing());
-            _onExecute = new CommandGroup();
+            base.Execute();
         }
 
         private IEnumerable<ICommand> Executing()

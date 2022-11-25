@@ -28,7 +28,7 @@ namespace Jetproger.Tools.Trace.Bases
         public override void WriteLine(object message)
         {
             Ticket ticket;
-            var jce = message as Je.Exception;
+            var jce = message as f.Exception;
             if (jce != null)
             {
                 ticket = new Ticket { IsException = true, Text = jce.Text, Description = jce.Description };
@@ -39,7 +39,7 @@ namespace Jetproger.Tools.Trace.Bases
             var exception = message as Exception;
             if (exception != null)
             {
-                var ex = new Je.Exception(exception);
+                var ex = new f.Exception(exception);
                 ticket = new Ticket { IsException = true, Text = ex.Text, Description = ex.Description };
                 if (string.IsNullOrWhiteSpace(ticket.Text) && string.IsNullOrWhiteSpace(ticket.Description)) return;
                 TraceExtensions.WriteToFileLogger(NlogConfig.GetMainTraceName(), ticket);

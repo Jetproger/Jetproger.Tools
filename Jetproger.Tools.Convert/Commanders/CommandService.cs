@@ -17,7 +17,7 @@ namespace Jetproger.Tools.Convert.Commanders
 
         public CommandService()
         {
-            ServiceName = J_<AppServiceName>.Sz;
+            ServiceName = k<AppServiceName>.key;
         }
 
         public void Start()
@@ -36,14 +36,14 @@ namespace Jetproger.Tools.Convert.Commanders
             {
                 if (_server != null) return;
                 //GTINNlogTracer.Run();
-                Je.err.Guard<AppPortNotSpecifiedException>(string.IsNullOrWhiteSpace(J_<AppPort>.Sz));
+                f.err.Guard<AppPortNotSpecifiedException>(string.IsNullOrWhiteSpace(k<AppPort>.key));
                 var hostName = GetHostName();
                 var config = new HttpSelfHostConfiguration(hostName)
                 {
                     MaxReceivedMessageSize = int.MaxValue,
                     MaxBufferSize = int.MaxValue
                 };
-                var hostNameComparisonMode = (HostNameComparisonMode)J_<AppHostNameComparisonMode>.Sz.As<int>();
+                var hostNameComparisonMode = (HostNameComparisonMode)k<AppHostNameComparisonMode>.key.As<int>();
                 config.HostNameComparisonMode = hostNameComparisonMode;
                 config.Routes.MapHttpRoute(
                     name: "cmd",
@@ -52,14 +52,14 @@ namespace Jetproger.Tools.Convert.Commanders
                 );
                 _server = new HttpSelfHostServer(config);
                 var task = _server.OpenAsync();
-                Je.log.To("Service start");
-                Je.log.To($"Service listening: {hostName}");
+                f.log.To("Service start");
+                f.log.To($"Service listening: {hostName}");
                 Task.WaitAll(task);
             }
             catch (Exception e)
             {
-                Je.log.To("Error start service");
-                Je.log.To(e);
+                f.log.To("Error start service");
+                f.log.To(e);
             }
         }
 
@@ -70,9 +70,9 @@ namespace Jetproger.Tools.Convert.Commanders
 
         private static string GetHostName()
         {
-            var cert = Je.cry.App;
-            string host = J_<AppHost>.Sz;
-            return cert != null ? $"https://{host}:{J_<AppPort>.Sz.As<int>()}" : $"http://{host}:{J_<AppPort>.Sz.As<int>()}";
+            var cert = f.cry.App;
+            string host = k<AppHost>.key;
+            return cert != null ? $"https://{host}:{k<AppPort>.key.As<int>()}" : $"http://{host}:{k<AppPort>.key.As<int>()}";
         }
     }
 }

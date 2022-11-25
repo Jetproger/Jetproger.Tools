@@ -9,34 +9,34 @@ namespace Jetproger.Tools.Convert.Converts
 {
     public static class StrExtensions
     {
-        private static readonly StringConverter Converter = Je<StringConverter>.Onu();
+        private static readonly StringConverter Converter = t<StringConverter>.one();
 
-        public static string Of(this Je.IStrExpander e, object value, StringConverter converter = null)
+        public static string of(this f.IStrExpander e, object value, StringConverter converter = null)
         {
             return (converter ?? Converter).Serialize(value);
         }
 
-        public static string Of<TConverter>(this Je.IStrExpander e, object value) where TConverter : StringConverter
+        public static string of<TConverter>(this f.IStrExpander e, object value) where TConverter : StringConverter
         {
-            return (Je.sys.InstanceOf<TConverter>()).Serialize(value);
+            return (f.sys.valueof<TConverter>()).Serialize(value);
         }
 
-        public static object To(this Je.IStrExpander e, string s, Type type, StringConverter converter = null)
+        public static object to(this f.IStrExpander e, string s, Type type, StringConverter converter = null)
         {
             return (converter ?? Converter).Deserialize(s, type);
         }
 
-        public static T To<T>(this Je.IStrExpander exp, string json, StringConverter converter = null)
+        public static T to<T>(this f.IStrExpander exp, string json, StringConverter converter = null)
         {
             return (T)(converter ?? Converter).Deserialize(json, typeof(T));
         }
 
-        public static TResult To<TResult, TConverter>(this Je.IStrExpander exp, string json) where TConverter : StringConverter
+        public static TResult to<TResult, TConverter>(this f.IStrExpander exp, string json) where TConverter : StringConverter
         {
-            return (TResult)(Je.sys.InstanceOf<TConverter>()).Deserialize(json, typeof(TResult));
+            return (TResult)(f.sys.valueof<TConverter>()).Deserialize(json, typeof(TResult));
         }
 
-        public static string Op(this Je.IStrExpander e, string fileName, string args)
+        public static string op(this f.IStrExpander e, string fileName, string args)
         {
             var sb = new StringBuilder();
             var psi = new ProcessStartInfo
@@ -62,7 +62,7 @@ namespace Jetproger.Tools.Convert.Converts
             return result;
         }
 
-        public static string Repeat(this Je.IStrExpander e, string s, int count)
+        public static string Repeat(this f.IStrExpander e, string s, int count)
         {
             if (s == null) return null;
             if (s == string.Empty || count <= 0) return s;
@@ -72,7 +72,7 @@ namespace Jetproger.Tools.Convert.Converts
             return sb.ToString();
         }
 
-        public static string Reverse(this Je.IStrExpander e, string s)
+        public static string Reverse(this f.IStrExpander e, string s)
         {
             if (string.IsNullOrWhiteSpace(s)) return s;
             var sb = new StringBuilder();
@@ -83,7 +83,7 @@ namespace Jetproger.Tools.Convert.Converts
             return sb.ToString();
         }
 
-        public static string Left(this Je.IStrExpander e, string s, int length)
+        public static string Left(this f.IStrExpander e, string s, int length)
         {
             if (string.IsNullOrEmpty(s)) return string.Empty;
             if (length < 1) return string.Empty;
@@ -91,7 +91,7 @@ namespace Jetproger.Tools.Convert.Converts
             return s.Substring(0, length);
         }
 
-        public static string Right(this Je.IStrExpander e, string s, int length)
+        public static string Right(this f.IStrExpander e, string s, int length)
         {
             if (string.IsNullOrEmpty(s)) return string.Empty;
             if (length < 1) return string.Empty;
@@ -99,7 +99,7 @@ namespace Jetproger.Tools.Convert.Converts
             return s.Substring(s.Length - length);
         }
 
-        public static string Replace(this Je.IStrExpander e, string s, string substringOld, string substringNew)
+        public static string Replace(this f.IStrExpander e, string s, string substringOld, string substringNew)
         {
             if (substringOld == substringNew) return s;
             if (substringOld == null) return s;
@@ -109,7 +109,7 @@ namespace Jetproger.Tools.Convert.Converts
             return s.Replace(substringOld, substringNew);
         }
 
-        public static string NewLen(this Je.IStrExpander exp, string s, int len)
+        public static string NewLen(this f.IStrExpander exp, string s, int len)
         {
             s = s ?? string.Empty;
             var oldLen = s.Length;
@@ -144,7 +144,7 @@ namespace Jetproger.Tools.Convert.Converts
             if (value is decimal || value is float || value is double) return ConvertExtensions.Cast<double>(value).ToString("#################0.00", Culture);
             if (value is long || value is ulong || value is int || value is uint || value is short || value is ushort || value is byte || value is sbyte) return ConvertExtensions.Cast<long>(value).ToString("#################0", Culture);
             if (value.GetType().IsEnum) return value.ToString();
-            return Je.sys.BuildMetaName(value);
+            return f.sys.printof(value);
         }
 
         public virtual object Deserialize(string s, Type type)
@@ -173,7 +173,7 @@ namespace Jetproger.Tools.Convert.Converts
             if (type == typeof(double) || type == typeof(double?)) return ToDouble(s);
             if (type == typeof(DateTime) || type == typeof(DateTime?)) return ToDateTime(s);
             if (type == typeof(Guid) || type == typeof(Guid?)) return ToGuid(s);
-            return Je.sys.InstanceOf(s);
+            return f.sys.valueof(s);
         }
 
         protected virtual CultureInfo GetFormatter()

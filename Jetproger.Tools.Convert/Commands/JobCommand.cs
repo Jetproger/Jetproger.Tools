@@ -21,7 +21,8 @@ namespace Jetproger.Tools.Convert.Commands
 
         private InfinityCursor _branchesInfinityCursor;
         private InfinityCursor _trunkInfinityCursor;
-        private TaskCommand _trunkCommand;
+        private TaskCommand _trunkTask;
+
         public int Level { get { return GetLevel(); } }
         public JobCommand Parent { get; private set; }
         public int Enabled { get; set; }
@@ -114,14 +115,13 @@ namespace Jetproger.Tools.Convert.Commands
 
         private InfinityCursor GetTrunkInfinityCursor()
         {
-            _trunkCommand = new TaskCommand { Value = Value };
-            ((ICommand)_trunkCommand).EndExecute += OnEndExecuteCurrentTrunkCommand;
+            _trunkTask = new TaskCommand { Value = Value };
             if (Level >= Enabled)
             {
                 for (int i = 0; i < OnExecute.Count; i++)
                 {
                     var command = OnExecute[i];
-                    if (command != null) _trunkCommand.OnExecute += command;
+                    if (command != null) _trunkTask.OnExecute += command;
                 }
             }
             var command0 = _commands.Count > 0 ? _commands[0] : null;
@@ -129,18 +129,21 @@ namespace Jetproger.Tools.Convert.Commands
             {
                 var job = command0 as JobCommand;
                 if (job != null) job.Enabled = Enabled;
-                _trunkCommand.OnExecute += command0;
+                _trunkTask.OnExecute += command0;
             }
-            if (_trunkCommand.OnExecute.Count == 0) return null;
+            if (_trunkTask.OnExecute.Count == 0) return null;
+            var cursorTask0 = _trunkTask.OnExecute.Count == 1 ? _trunkTask.OnExecute[0] as TaskCommand : null;
+            if (cursorTask0 != null && !(cursorTask0 is JobCommand)) _trunkTask = cursorTask0;
+            ((ICommand)_trunkTask).EndExecute += OnEndExecuteTrunkTask;
             var cursor = new InfinityCursor();
-            cursor.Add(_trunkCommand);
+            cursor.Add(_trunkTask);
             return cursor;
         }
 
-        private void OnEndExecuteCurrentTrunkCommand()
+        private void OnEndExecuteTrunkTask()
         {
-            Error = _trunkCommand.Error;
-            Value = _trunkCommand.Result;
+            Error = _trunkTask.Error;
+            Value = _trunkTask.Result;
             IsRunningTrunk = Error == null;
         }
 
@@ -160,7 +163,7 @@ namespace Jetproger.Tools.Convert.Commands
 
         private void OnEndExecute()
         {
-            if (Error != null) ExecutingError(this).Execute();
+            if (Error != null) AwaitExecute(ExecutingError(this));
         }
 
         private IEnumerable<ICommand> ExecutingError(ICommand command)
@@ -199,7 +202,7 @@ namespace Jetproger.Tools.Convert.Commands
 
         private void RemoveCommand(JobCommand job, ICommand command)
         {
-            var i = Je.cmd.IndexOf(job.Commands, command);
+            var i = f.sys.indexof(job.Commands, command);
             if (i > -1) job._commands.RemoveAt(i);
         }
 
@@ -208,6 +211,7 @@ namespace Jetproger.Tools.Convert.Commands
             _commands.Clear();
             _commands.AddRange(commands);
         }
+
         private class InfinityCursor
         {
             private readonly List<ICommand> _commands = new List<ICommand>();
@@ -215,6 +219,7 @@ namespace Jetproger.Tools.Convert.Commands
             private int _completed = 0;
             private int _running = 0;
             private int _curcor = -1;
+            
             public object Next()
             {
                 if (_commands.Count == 0) return null;
@@ -223,11 +228,11 @@ namespace Jetproger.Tools.Convert.Commands
                     _curcor++;
                     if (_curcor >= _commands.Count)
                     {
-                        if (_completed == _commands.Count) return null;
-                        if (_running == _commands.Count) return this;
-                        _completed = 0;
-                        _running = 0;
-                        _curcor = 0;
+                        var running = _running;
+                        var completed = _completed;
+                        _completed = _running = _curcor = 0;
+                        if (running == _commands.Count) return this;
+                        if (completed == _commands.Count) return null;
                     }
                     var command = _commands[_curcor];
                     if (command.State == ECommandState.None) return command;

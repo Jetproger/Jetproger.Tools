@@ -7,17 +7,38 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Resources;
 using System.Web;
+using Jetproger.Tools.Convert.Commands;
 using Jetproger.Tools.Convert.Converts;
 
 namespace Jetproger.Tools.Convert.Bases
 {
     public static class SysExtensions
     {
-        public static ResourceManager GetResourceManager(this Je.ISysExpander e, string resourceName, string assemblyName)
+        public static ICommand commandof(this f.ISysExpander exp, string commandTypeName)
+        {
+            var commandType = classof(exp, commandTypeName);
+            f.err.GuardTypeNotFound(commandType == null, commandTypeName);
+            var command = valueof(exp, commandType) as ICommand;
+            f.err.GuardTypeNotSubtype(command == null, commandTypeName, typeof(ICommand).FullName);
+            return command;
+        }
+
+        public static int indexof(this f.ISysExpander exp, IEnumerable items, object item)
+        {
+            var i = 0;
+            foreach (object obj in items)
+            {
+                if (ReferenceEquals(obj, item)) return i;
+                i++;
+            }
+            return -1;
+        }
+
+        public static ResourceManager resourceof(this f.ISysExpander e, string resourceName, string assemblyName)
         {
             try
             {
-                var assembly = AssemblyOf(e, assemblyName);
+                var assembly = moduleof(e, assemblyName);
                 var baseName = $"{assemblyName}.Bases.{resourceName}";
                 return new ResourceManager(baseName, assembly);
             }
@@ -27,7 +48,7 @@ namespace Jetproger.Tools.Convert.Bases
             }
         }
 
-        public static string GetResourceValue(this Je.ISysExpander e, ResourceManager resourceManager, string resourceKey)
+        public static string valueof(this f.ISysExpander e, ResourceManager resourceManager, string resourceKey)
         {
             try
             {
@@ -39,36 +60,36 @@ namespace Jetproger.Tools.Convert.Bases
             }
         }
 
-        public static T InstanceOf<T>(this Je.ISysExpander e, string metaName, object[] args = null)
+        public static T valueof<T>(this f.ISysExpander e, string metaName, object[] args = null)
         {
-            return (T)InstanceOf(e, metaName, args);
+            return (T)valueof(e, metaName, args);
         }
 
-        public static object InstanceOf(this Je.ISysExpander e, string metaName, object[] args = null)
+        public static object valueof(this f.ISysExpander e, string metaName, object[] args = null)
         {
             string assemblyName, typeName, value;
-            ParseMetaName(e, metaName, out assemblyName, out typeName, out value);
-            if (string.IsNullOrWhiteSpace(value)) return InstanceOf(e, assemblyName, typeName, args);
-            var type = TypeOf(e, assemblyName, typeName);
-            return IsSimple(e, type) ? value.As(type) : InstanceOf(e, assemblyName, typeName, args);
+            nameof(e, metaName, out assemblyName, out typeName, out value);
+            if (string.IsNullOrWhiteSpace(value)) return valueof(e, assemblyName, typeName, args);
+            var type = classof(e, assemblyName, typeName);
+            return IsSimple(e, type) ? value.As(type) : valueof(e, assemblyName, typeName, args);
         }
 
-        public static T InstanceOf<T>(this Je.ISysExpander e, string assemblyName, string typeName, object[] args = null)
+        public static T valueof<T>(this f.ISysExpander e, string assemblyName, string typeName, object[] args = null)
         {
-            return (T)InstanceOf(e, assemblyName, typeName, args);
+            return (T)valueof(e, assemblyName, typeName, args);
         }
 
-        public static object InstanceOf(this Je.ISysExpander e, string assemblyName, string typeName, object[] args = null)
+        public static object valueof(this f.ISysExpander e, string assemblyName, string typeName, object[] args = null)
         {
-            return InstanceOf(e, TypeOf(e, assemblyName, typeName), args);
+            return valueof(e, classof(e, assemblyName, typeName), args);
         }
 
-        public static T InstanceOf<T>(this Je.ISysExpander e, object[] args = null)
+        public static T valueof<T>(this f.ISysExpander e, object[] args = null)
         {
-            return (T)InstanceOf(e, typeof(T), args);
+            return (T)valueof(e, typeof(T), args);
         }
 
-        public static object InstanceOf(this Je.ISysExpander e, Type type, object[] args = null)
+        public static object valueof(this f.ISysExpander e, Type type, object[] args = null)
         {
             if (type == null) return null;
             if (type == typeof(string)) return Activator.CreateInstance(type, new char[0]);
@@ -76,14 +97,14 @@ namespace Jetproger.Tools.Convert.Bases
             return Activator.CreateInstance(type, args);
         }
 
-        public static Type TypeOf(this Je.ISysExpander e, string name)
+        public static Type classof(this f.ISysExpander e, string name)
         {
             string assemblyName, typeName, value;
-            ParseMetaName(e, name, out assemblyName, out typeName, out value);
-            return TypeOf(e, assemblyName, typeName);
+            nameof(e, name, out assemblyName, out typeName, out value);
+            return classof(e, assemblyName, typeName);
         }
 
-        public static Type TypeOf(this Je.ISysExpander e, string assemblyName, string typeName)
+        public static Type classof(this f.ISysExpander e, string assemblyName, string typeName)
         {
             if (string.IsNullOrWhiteSpace(typeName)) return null;
             assemblyName = assemblyName ?? string.Empty;
@@ -92,7 +113,7 @@ namespace Jetproger.Tools.Convert.Bases
             Type type;
             if (!string.IsNullOrWhiteSpace(assemblyName))
             {
-                assembly = AssemblyOf(e, assemblyName);
+                assembly = moduleof(e, assemblyName);
                 if (assembly != null)
                 {
                     type = assembly.GetType(typeName, false, true);
@@ -109,7 +130,7 @@ namespace Jetproger.Tools.Convert.Bases
                     pos = typeName.LastIndexOf(".", pos - 1, StringComparison.Ordinal);
                     if (pos < 1) return null;
                     assemblyName = typeName.Substring(0, pos);
-                    assembly = AssemblyOf(e, assemblyName);
+                    assembly = moduleof(e, assemblyName);
                     if (assembly == null) continue;
                     type = assembly.GetType(typeName);
                     if (type != null) return type;
@@ -124,7 +145,7 @@ namespace Jetproger.Tools.Convert.Bases
             }
         }
 
-        public static Assembly AssemblyOf(this Je.ISysExpander e, string assemblyName)
+        public static Assembly moduleof(this f.ISysExpander e, string assemblyName)
         {
             return assemblyName != string.Empty ? LoadAssembly(assemblyName) : null;
         }
@@ -142,7 +163,7 @@ namespace Jetproger.Tools.Convert.Bases
             {
                 var httpContext = HttpContext.Current;
                 if (httpContext != null) name = Path.Combine("bin", name);
-                name = Path.Combine(Je.fss.AppDir(), name);
+                name = Path.Combine(f.fss.AppDir(), name);
             }
             return TryLoadAssemblyWithExtension(name);
         }
@@ -171,7 +192,7 @@ namespace Jetproger.Tools.Convert.Bases
             }
         }
 
-        public static void ParseMetaName(this Je.ISysExpander e, object value, out string assemblyName, out string typeName, out string valueName)
+        public static void nameof(this f.ISysExpander e, object value, out string assemblyName, out string typeName, out string valueName)
         {
             assemblyName = null;
             typeName = null;
@@ -179,15 +200,15 @@ namespace Jetproger.Tools.Convert.Bases
             if (value == null) return;
             var type = value.GetType();
             valueName = value.As<string>();
-            ParseMetaName(e, type, out assemblyName, out typeName);
+            nameof(e, type, out assemblyName, out typeName);
         }
 
-        public static void ParseMetaName<T>(this Je.ISysExpander e, out string assemblyName, out string typeName)
+        public static void nameof<T>(this f.ISysExpander e, out string assemblyName, out string typeName)
         {
-            ParseMetaName(e, typeof(T), out assemblyName, out typeName);
+            nameof(e, typeof(T), out assemblyName, out typeName);
         }
 
-        public static void ParseMetaName(this Je.ISysExpander e, Type type, out string assemblyName, out string typeName)
+        public static void nameof(this f.ISysExpander e, Type type, out string assemblyName, out string typeName)
         {
             assemblyName = null;
             typeName = null;
@@ -198,7 +219,7 @@ namespace Jetproger.Tools.Convert.Bases
             typeName = type.ToString();
         }
 
-        public static void ParseMetaName(this Je.ISysExpander e, string metaName, out string assemblyName, out string typeName)
+        public static void nameof(this f.ISysExpander e, string metaName, out string assemblyName, out string typeName)
         {
             assemblyName = null;
             typeName = null;
@@ -208,7 +229,7 @@ namespace Jetproger.Tools.Convert.Bases
             typeName = names.Length > 1 ? names[1] : null;
         }
 
-        public static void ParseMetaName(this Je.ISysExpander e, string metaName, out string assemblyName, out string typeName, out string value)
+        public static void nameof(this f.ISysExpander e, string metaName, out string assemblyName, out string typeName, out string value)
         {
             var names = (metaName ?? "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             assemblyName = names.Length > 0 ? names[0] : string.Empty;
@@ -216,30 +237,30 @@ namespace Jetproger.Tools.Convert.Bases
             value = names.Length > 2 ? names[2] : string.Empty;
         }
 
-        public static string BuildMetaName(this Je.ISysExpander e, object value)
+        public static string printof(this f.ISysExpander e, object value)
         {
             if (value == null) return string.Empty;
             var type = value.GetType();
             var stringValue = IsSimple(e, type) ? $", {value.As<string>()}" : string.Empty;
-            return $"{BuildMetaName(e, type)}{stringValue}";
+            return $"{printof(e, type)}{stringValue}";
         }
 
-        public static string BuildMetaName<T>(this Je.ISysExpander e)
+        public static string printof<T>(this f.ISysExpander e)
         {
-            return BuildMetaName(e, typeof(T));
+            return printof(e, typeof(T));
         }
 
-        public static string BuildMetaName(this Je.ISysExpander e, Type type)
+        public static string printof(this f.ISysExpander e, Type type)
         {
             return type != null ? $"{Path.GetFileNameWithoutExtension(type.Assembly.Location)}, {type}" : string.Empty;
         }
 
-        public static string BuildMetaName(this Je.ISysExpander e, string assemblyName, string typeName)
+        public static string printof(this f.ISysExpander e, string assemblyName, string typeName)
         {
             return $"{assemblyName}, {typeName}";
         }
 
-        public static string MemberNameOf(this Je.ISysExpander e, LambdaExpression memberSelector)
+        public static string printof(this f.ISysExpander e, LambdaExpression memberSelector)
         {
             if (memberSelector == null)
             {
@@ -262,42 +283,41 @@ namespace Jetproger.Tools.Convert.Bases
             }
         }
 
-        public static T DefaultOf<T>(this Je.ISysExpander e)
+        public static T defaultof<T>(this f.ISysExpander e)
         {
-            return (T)DefaultOf(e, typeof(T));
+            return (T)defaultof(e, typeof(T));
         }
 
-        public static object DefaultOf(this Je.ISysExpander e, Type type)
+        public static object defaultof(this f.ISysExpander e, Type type)
         {
             return type.IsValueType ? Activator.CreateInstance(type) : null;
         }
 
-        public static Type GenericOf(this Je.ISysExpander e, Type type)
+        public static Type genericof(this f.ISysExpander e, Type type)
         {
             var types = type.GetGenericArguments();
             if (types.Length > 0) return types[0];
             return type.HasElementType ? type.GetElementType() : null;
         }
 
-        public static bool IsList(this Je.ISysExpander e, Type type)
+        public static bool IsList(this f.ISysExpander e, Type type)
         {
             if (type == null) return false;
-            var genericType = GenericOf(e, type);
+            var genericType = genericof(e, type);
             return genericType != null && type.GetGenericTypeDefinition() == typeof(List<>) && genericType.IsClass && !typeof(IEnumerable).IsAssignableFrom(genericType);
         }
 
-        public static bool IsTypeOf(this Je.ISysExpander e, Type type, Type sample)
+        public static bool IsTypeOf(this f.ISysExpander e, Type type, Type sample)
         {
             return type == sample || type.IsSubclassOf(sample) || type.GetInterfaces().Any(x => x == sample);
         }
 
-        public static bool IsSimple(this Je.ISysExpander e, Type type)
+        public static bool IsSimple(this f.ISysExpander e, Type type)
         {
             return type != null && (type.IsEnum || SimpleTypes.Contains(type));
         }
 
-        private static readonly HashSet<Type> SimpleTypes = new HashSet<Type>
-        {
+        private static readonly HashSet<Type> SimpleTypes = new HashSet<Type> {
             typeof(string), typeof(char), typeof(char?),
             typeof(bool), typeof(bool?),
             typeof(byte), typeof(byte?), typeof(sbyte), typeof(sbyte?),

@@ -61,7 +61,7 @@ namespace Jetproger.Tools.Convert.Factories
             return typeof(OneExtensions<>).MakeGenericType(type);
         }
 
-        public static T Get<T>(this Je.IOneExpander e, T[] holder, Func<T> factory) where T : class
+        public static T Get<T>(this f.IOneExpander e, T[] holder, Func<T> factory) where T : class
         {
             if (holder[0] == null)
             {
@@ -73,7 +73,7 @@ namespace Jetproger.Tools.Convert.Factories
             return holder[0];
         }
 
-        public static T Get<T>(this Je.IOneExpander e, T?[] holder, Func<T> factory) where T : struct
+        public static T Get<T>(this f.IOneExpander e, T?[] holder, Func<T> factory) where T : struct
         {
             if (holder[0] == null)
             {
@@ -85,7 +85,7 @@ namespace Jetproger.Tools.Convert.Factories
             return (T) holder[0];
         }
 
-        public static T Get<T>(this Je.IOneExpander e, T[] holder) where T : class
+        public static T Get<T>(this f.IOneExpander e, T[] holder) where T : class
         {
             lock (holder)
             {
@@ -93,7 +93,7 @@ namespace Jetproger.Tools.Convert.Factories
             }
         }
 
-        public static T Get<T>(this Je.IOneExpander e, T?[] holder) where T : struct
+        public static T Get<T>(this f.IOneExpander e, T?[] holder) where T : struct
         {
             lock (holder)
             {
@@ -101,7 +101,7 @@ namespace Jetproger.Tools.Convert.Factories
             }
         }
 
-        public static void Set<T>(this Je.IOneExpander e, T[] holder, T value) where T : class
+        public static void Set<T>(this f.IOneExpander e, T[] holder, T value) where T : class
         {
             lock (holder)
             {
@@ -109,7 +109,7 @@ namespace Jetproger.Tools.Convert.Factories
             }
         }
 
-        public static void Set<T>(this Je.IOneExpander e, T?[] holder, T value) where T : struct
+        public static void Set<T>(this f.IOneExpander e, T?[] holder, T value) where T : struct
         {
             lock (holder)
             {

@@ -16,11 +16,11 @@ namespace Jetproger.Tools.Convert.Converts
     { 
         public static T As<T>(this object value, Encoding encoding = null)
         {
-            if (value == null || value == DBNull.Value) return Je.sys.DefaultOf<T>();
+            if (value == null || value == DBNull.Value) return f.sys.defaultof<T>();
             var typeFr = value.GetType();
             var typeTo = typeof(T);
             if (typeFr == typeTo) return (T)value;
-            if (Je.sys.IsTypeOf(typeFr, typeTo)) return (T)value;
+            if (f.sys.IsTypeOf(typeFr, typeTo)) return (T)value;
             // commands                                                                                           
             if (typeTo == typeof(CommandException) && value is CommandMessage[]) return (T)(object)CommandMessagesAsCommandException((CommandMessage[])value);
             if (typeTo == typeof(CommandException) && value is CommandMessage) return (T)(object)CommandMessageAsCommandException((CommandMessage)value);
@@ -41,9 +41,9 @@ namespace Jetproger.Tools.Convert.Converts
             if (value is Icon && typeTo == typeof(Image)) return (T)(object)IconAsImage((Icon)value);
             if (value is Image && typeTo == typeof(Icon)) return (T)(object)ImageAsIcon((Image)value);
             // strings
-            if (value is string) return Je.str.To<T>(value.ToString());
-            if (typeTo == typeof(string) && Je.sys.IsTypeOf(typeFr, typeof(Exception))) return (T)(object)ExceptionAsString((Exception)value);
-            if (typeTo == typeof(string)) return (T)(object)Je.str.Of(value);
+            if (value is string) return f.str.to<T>(value.ToString());
+            if (typeTo == typeof(string) && f.sys.IsTypeOf(typeFr, typeof(Exception))) return (T)(object)ExceptionAsString((Exception)value);
+            if (typeTo == typeof(string)) return (T)(object)f.str.of(value);
             // bools
             if (typeTo == typeof(bool)) return (T)(object)ObjectAsBool(value);
             // dates
@@ -67,14 +67,14 @@ namespace Jetproger.Tools.Convert.Converts
         {
             var nullType = Nullable.GetUnderlyingType(typeTo);
             if (nullType != null) return As(value, nullType);
-            var method = Je<MethodInfo>.Key(typeTo, GetConvertMethod);
+            var method = t<MethodInfo>.key(typeTo, GetConvertMethod);
             return method != null ? method.Invoke(null, new[] { value }) : null;
         }
 
         private static bool ObjectAsBool(object value)
         {
             if (value == null || value == DBNull.Value) return false;
-            if (!Je.sys.IsSimple(value.GetType())) return true;
+            if (!f.sys.IsSimple(value.GetType())) return true;
             if (value is string)
             {
                 var s = value.ToString().ToLower();
@@ -145,7 +145,7 @@ namespace Jetproger.Tools.Convert.Converts
             if (str != null) return StringAsBytesArray(str, encoding);
             var doc = obj as XmlDocument;
             if (doc != null) return StringAsBytesArray(doc.InnerXml, encoding);
-            return StringAsBytesArray(Je.web.Of(obj), encoding);
+            return StringAsBytesArray(f.web.of(obj), encoding);
         }
 
         private static T BytesArrayAsObject<T>(byte[] bytes, Encoding encoding = null)
@@ -160,7 +160,7 @@ namespace Jetproger.Tools.Convert.Converts
             var str = encoding.GetString(bytes);
             if (type == typeof(string)) return str;
             if (type == typeof(XmlDocument)) return StringAsXmlDocument(str);
-            return Je.web.To(str, type);
+            return f.web.to(str, type);
         }
 
         private static XmlDocument StringAsXmlDocument(string xml)
@@ -187,7 +187,7 @@ namespace Jetproger.Tools.Convert.Converts
             }
             catch
             {
-                return Je.gui.DefaultImage();
+                return f.gui.DefaultImage();
             }
         }
 
@@ -195,11 +195,11 @@ namespace Jetproger.Tools.Convert.Converts
         {
             try
             {
-                return Je.gui.ImageAsIcon(image, image.Size.Width, image.Size.Height);
+                return f.gui.ImageAsIcon(image, image.Size.Width, image.Size.Height);
             }
             catch
             {
-                return Je.gui.DefaultIcon();
+                return f.gui.DefaultIcon();
             }
         }
 

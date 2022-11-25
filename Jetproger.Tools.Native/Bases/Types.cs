@@ -512,7 +512,7 @@ namespace Jetproger.Tools.Native
 
         protected override void WndProc(ref System.Windows.Forms.Message m)
         {
-            if (m.Msg == Je.win.WM_SCROLL)
+            if (m.Msg == f.win.WM_SCROLL)
             {
                 return;
             }
@@ -527,7 +527,7 @@ namespace Jetproger.Tools.Native
 
         public LanCollection()
         {
-            Type = (uint)Je.win.SV_NONE;
+            Type = (uint)f.win.SV_NONE;
         }
 
         public LanCollection(uint serverType)
@@ -554,14 +554,14 @@ namespace Jetproger.Tools.Native
 
         public static uint GetServerType(string serverName)
         {
-            var result = (uint)Je.win.SV_NONE;
+            var result = (uint)f.win.SV_NONE;
             IntPtr serverInfoPtr = IntPtr.Zero;
-            uint status = Je.win.NetServerGetInfo(serverName, 101, ref serverInfoPtr);
+            uint status = f.win.NetServerGetInfo(serverName, 101, ref serverInfoPtr);
             if (status != 0)
             {
                 var serverInfo = (SERVER_INFO_101)Marshal.PtrToStructure(serverInfoPtr, typeof(SERVER_INFO_101));
                 result = (uint)serverInfo.dwType;
-                Je.win.NetApiBufferFree(serverInfoPtr);
+                f.win.NetApiBufferFree(serverInfoPtr);
             }
             return result;
         }
@@ -587,7 +587,7 @@ namespace Jetproger.Tools.Native
                 uint totalEntries = 0;
                 Reset();
                 _serverInfoPtr = IntPtr.Zero;
-                Je.win.NetServerEnum(
+                f.win.NetServerEnum(
                     IntPtr.Zero, // Server Name: Reserved; must be NULL. 		
                     level,
                     // Return server names, types, and associated software. The bufptr parameter points to an array of SERVER_INFO_101 structures.			
@@ -630,7 +630,7 @@ namespace Jetproger.Tools.Native
             ~LanEnumerator()
             {
                 if (_serverInfoPtr.Equals(IntPtr.Zero)) return;
-                Je.win.NetApiBufferFree(_serverInfoPtr);
+                f.win.NetApiBufferFree(_serverInfoPtr);
                 _serverInfoPtr = IntPtr.Zero;
             }
         }
@@ -691,7 +691,7 @@ namespace Jetproger.Tools.Native
         public uint RepeatCount
         {
             get { return Value & 0x0000ffff; }
-            set { Value = Je.win.LoWord(Value); }
+            set { Value = f.win.LoWord(Value); }
         }
 
         public uint ScanCode
@@ -814,7 +814,7 @@ namespace Jetproger.Tools.Native
         {
             input = new Input
             {
-                Type = Je.win.INPUT_HARDWARE,
+                Type = f.win.INPUT_HARDWARE,
                 Packet = new InputPacket
                 {
                     HardwareInput = new HardwareInput
@@ -836,46 +836,46 @@ namespace Jetproger.Tools.Native
         {
             input = new Input
             {
-                Type = Je.win.INPUT_KEYBOARD,
+                Type = f.win.INPUT_KEYBOARD,
                 Packet = new InputPacket
                 {
                     KeyboardInput =
                     {
                         Time = timestampMillis,
-                        Flags = Je.win.KEYEVENTF_SCANCODE,
+                        Flags = f.win.KEYEVENTF_SCANCODE,
                         ScanCode = scanCode,
                         VirtualKeyCode = 0
                     }
                 }
             };
-            if (isKeyUp) input.Packet.KeyboardInput.Flags |= Je.win.KEYEVENTF_KEYUP;
-            if (isExtendedKey) input.Packet.KeyboardInput.Flags |= Je.win.KEYEVENTF_EXTENDEDKEY;
+            if (isKeyUp) input.Packet.KeyboardInput.Flags |= f.win.KEYEVENTF_KEYUP;
+            if (isExtendedKey) input.Packet.KeyboardInput.Flags |= f.win.KEYEVENTF_EXTENDEDKEY;
         }
 
         public static void InitKeyboardInput(out Input input, char charCode, bool isKeyUp, uint timestampMillis = 0)
         {
             input = new Input
             {
-                Type = Je.win.INPUT_KEYBOARD,
+                Type = f.win.INPUT_KEYBOARD,
                 Packet = new InputPacket
                 {
                     KeyboardInput =
                     {
                         Time = timestampMillis,
-                        Flags = Je.win.KEYEVENTF_UNICODE,
+                        Flags = f.win.KEYEVENTF_UNICODE,
                         ScanCode = charCode,
                         VirtualKeyCode = 0
                     }
                 }
             };
-            if (isKeyUp) input.Packet.KeyboardInput.Flags |= Je.win.KEYEVENTF_KEYUP;
+            if (isKeyUp) input.Packet.KeyboardInput.Flags |= f.win.KEYEVENTF_KEYUP;
         }
 
         public static void InitKeyboardInput(out Input input, int key, bool isKeyUp, uint timestampMillis = 0)
         {
             input = new Input
             {
-                Type = Je.win.INPUT_KEYBOARD,
+                Type = f.win.INPUT_KEYBOARD,
                 Packet = new InputPacket
                 {
                     KeyboardInput =
@@ -887,14 +887,14 @@ namespace Jetproger.Tools.Native
                     }
                 }
             };
-            if (isKeyUp) input.Packet.KeyboardInput.Flags |= Je.win.KEYEVENTF_KEYUP;
+            if (isKeyUp) input.Packet.KeyboardInput.Flags |= f.win.KEYEVENTF_KEYUP;
         }
 
         public static void InitMouseInput(out Input input, int x, int y, int flags, uint data = 0, uint timestampMillis = 0)
         {
             input = new Input
             {
-                Type = Je.win.INPUT_MOUSE,
+                Type = f.win.INPUT_MOUSE,
                 Packet = new InputPacket
                 {
                     MouseInput =

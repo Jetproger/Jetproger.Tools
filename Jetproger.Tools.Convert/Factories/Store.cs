@@ -18,7 +18,7 @@ namespace Jetproger.Tools.Convert.Factories
         public static TValue Get(TKey key)
         {
             TValue value;
-            return Store.TryGetValue(key, out value) ? value : Je.sys.DefaultOf<TValue>();
+            return Store.TryGetValue(key, out value) ? value : f.sys.defaultof<TValue>();
         }
 
         public static void Set(TKey key, TValue value)

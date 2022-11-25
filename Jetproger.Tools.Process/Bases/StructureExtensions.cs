@@ -24,7 +24,7 @@ namespace Jetproger.Tools.Process.Bases
             if (value != null)
             {
                 var type = value.GetType();
-                stringValue = ValueExtensions.IsPrimitive(type) ? value.As<string>() : Je.Json.Of(value);
+                stringValue = ValueExtensions.IsPrimitive(type) ? value.As<string>() : f.web.Of(value);
             }
             item.Value = stringValue;
         }

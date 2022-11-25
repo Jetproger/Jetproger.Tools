@@ -13,14 +13,14 @@ namespace Jetproger.Tools.Convert.Converts
 {
     public static class XmlExtensions
     {
-        private static readonly XmlConverter Converter = Je<XmlConverter>.Onu();
+        private static readonly XmlConverter Converter = t<XmlConverter>.one();
 
-        public static string Of(this Je.IXmlExpander e, object value, XmlConverter converter = null)
+        public static string of(this f.IXmlExpander e, object value, XmlConverter converter = null)
         {
             return (converter ?? Converter).SerializeToString(value);
         }
 
-        public static TResult Of<TResult>(this Je.IXmlExpander e, object value, XmlConverter converter = null)
+        public static TResult of<TResult>(this f.IXmlExpander e, object value, XmlConverter converter = null)
         {
             var type = typeof(TResult);
             converter = converter ?? Converter;
@@ -29,46 +29,46 @@ namespace Jetproger.Tools.Convert.Converts
             throw new XmlConverterInvalidResultTypeException();
         }
 
-        public static TResult Of<TResult, TConverter>(this Je.IXmlExpander e, object value) where TConverter : XmlConverter
+        public static TResult of<TResult, TConverter>(this f.IXmlExpander e, object value) where TConverter : XmlConverter
         {
             var type = typeof(TResult);
-            var converter = Je.sys.InstanceOf<TConverter>();
+            var converter = f.sys.valueof<TConverter>();
             if (type == typeof(string)) return (TResult)(object)converter.SerializeToString(value);
             if (type == typeof(byte[])) return (TResult)(object)converter.SerializeToBytes(value);
             throw new XmlConverterInvalidResultTypeException();
         }
 
-        public static object To(this Je.IXmlExpander e, string s, Type type, XmlConverter converter = null)
+        public static object to(this f.IXmlExpander e, string s, Type type, XmlConverter converter = null)
         {
             return (converter ?? Converter).Deserialize(s, type);
         }
 
-        public static TResult To<TResult>(this Je.IXmlExpander e, string s, XmlConverter converter = null)
+        public static TResult to<TResult>(this f.IXmlExpander e, string s, XmlConverter converter = null)
         {
             return (TResult)(converter ?? Converter).Deserialize(s, typeof(TResult));
         }
 
-        public static TResult To<TResult, TConverter>(this Je.IXmlExpander e, string s) where TConverter : XmlConverter
+        public static TResult to<TResult, TConverter>(this f.IXmlExpander e, string s) where TConverter : XmlConverter
         {
-            return (TResult)Je.sys.InstanceOf<TConverter>().Deserialize(s, typeof(TResult));
+            return (TResult)f.sys.valueof<TConverter>().Deserialize(s, typeof(TResult));
         }
 
-        public static object To(this Je.IXmlExpander e, byte[] bytes, Type type, XmlConverter converter = null)
+        public static object to(this f.IXmlExpander e, byte[] bytes, Type type, XmlConverter converter = null)
         {
             return (converter ?? Converter).Deserialize(bytes, type);
         }
 
-        public static TResult To<TResult>(this Je.IXmlExpander e, byte[] bytes, XmlConverter converter = null)
+        public static TResult to<TResult>(this f.IXmlExpander e, byte[] bytes, XmlConverter converter = null)
         {
             return (TResult)(converter ?? Converter).Deserialize(bytes, typeof(TResult));
         }
 
-        public static TResult To<TResult, TConverter>(this Je.IXmlExpander e, byte[] bytes) where TConverter : XmlConverter
+        public static TResult to<TResult, TConverter>(this f.IXmlExpander e, byte[] bytes) where TConverter : XmlConverter
         {
-            return (TResult)Je.sys.InstanceOf<TConverter>().Deserialize(bytes, typeof(TResult));
+            return (TResult)f.sys.valueof<TConverter>().Deserialize(bytes, typeof(TResult));
         }
 
-        public static string Op(this Je.IXmlExpander e, string xml, string xslt)
+        public static string op(this f.IXmlExpander e, string xml, string xslt)
         {
             using (var sw = new StringWriter())
             {
@@ -89,7 +89,7 @@ namespace Jetproger.Tools.Convert.Converts
             }
         }
 
-        public static string ValidateXml(this Je.IXmlExpander e, string xml, string xsd)
+        public static string ValidateXml(this f.IXmlExpander e, string xml, string xsd)
         {
             var error = new StringBuilder();
             var doc = new XmlDocument();
@@ -108,61 +108,61 @@ namespace Jetproger.Tools.Convert.Converts
             return error.ToString();
         }
 
-        public static T GetNode<T>(this Je.IXmlExpander e, XmlNode root, int index)
+        public static T GetNode<T>(this f.IXmlExpander e, XmlNode root, int index)
         {
             return GetNode(e, root, index).As<T>();
         }
 
-        public static object GetNode(this Je.IXmlExpander e, XmlNode root, int index)
+        public static object GetNode(this f.IXmlExpander e, XmlNode root, int index)
         {
             return root != null && index >= 0 && index < root.ChildNodes.Count ? root.ChildNodes[index].InnerText : null;
         }
 
-        public static T GetNode<T>(this Je.IXmlExpander e, XmlNode root, string name)
+        public static T GetNode<T>(this f.IXmlExpander e, XmlNode root, string name)
         {
             return GetNode(e, root, name).As<T>();
         }
 
-        public static object GetNode(this Je.IXmlExpander e, XmlNode root, string name)
+        public static object GetNode(this f.IXmlExpander e, XmlNode root, string name)
         {
             if (root == null || string.IsNullOrWhiteSpace(name)) return null;
             var node = root.SelectSingleNode(name);
             return node?.InnerText;
         }
 
-        public static T GetNode<T>(this Je.IXmlExpander e, XmlDocument doc, string xpath)
+        public static T GetNode<T>(this f.IXmlExpander e, XmlDocument doc, string xpath)
         {
             return GetNode(e, doc, xpath).As<T>();
         }
 
-        public static object GetNode(this Je.IXmlExpander e, XmlDocument doc, string xpath)
+        public static object GetNode(this f.IXmlExpander e, XmlDocument doc, string xpath)
         {
             if (doc == null || string.IsNullOrWhiteSpace(xpath)) return null;
             var node = doc.SelectSingleNode(xpath);
             return node?.InnerText;
         }
 
-        public static void SetNode(this Je.IXmlExpander e, XmlNode root, int index, object value)
+        public static void SetNode(this f.IXmlExpander e, XmlNode root, int index, object value)
         {
             if (root == null || value == null || index < 0 && index >= root.ChildNodes.Count) return;
             var node = root.ChildNodes[index];
             if (node != null) node.InnerText = value.As<string>();
         }
 
-        public static void SetNode(this Je.IXmlExpander e, XmlNode root, string name, object value)
+        public static void SetNode(this f.IXmlExpander e, XmlNode root, string name, object value)
         {
             if (root == null || string.IsNullOrWhiteSpace(name)) return;
             var node = root.SelectSingleNode(name);
             if (node != null) node.InnerText = value.As<string>();
         }
 
-        public static void SetNode(this Je.IXmlExpander e, XmlDocument doc, string xpath, object value)
+        public static void SetNode(this f.IXmlExpander e, XmlDocument doc, string xpath, object value)
         {
             var node = doc.SelectSingleNode(xpath) ?? AddNode(e, doc, xpath);
             node.InnerText = value.As<string>();
         }
 
-        public static XmlNode AddNode(this Je.IXmlExpander e)
+        public static XmlNode AddNode(this f.IXmlExpander e)
         {
             var doc = new XmlDocument();
             XmlNode node = doc.CreateNode(XmlNodeType.Element, "XML", null);
@@ -170,7 +170,7 @@ namespace Jetproger.Tools.Convert.Converts
             return node;
         }
 
-        public static XmlNode AddNode(this Je.IXmlExpander e, XmlDocument doc, string xpath)
+        public static XmlNode AddNode(this f.IXmlExpander e, XmlDocument doc, string xpath)
         {
             string[] data = xpath.Split('/');
             var current = (XmlNode)doc.DocumentElement;
@@ -184,61 +184,61 @@ namespace Jetproger.Tools.Convert.Converts
             return current;
         }
 
-        public static XmlNode AddNode(this Je.IXmlExpander e, XmlNode root, string name)
+        public static XmlNode AddNode(this f.IXmlExpander e, XmlNode root, string name)
         {
             return AddNode(e, root, name, "");
         }
 
-        public static XmlNode AddNode(this Je.IXmlExpander e, XmlNode root, string name, object value, string namespaceUri = null)
+        public static XmlNode AddNode(this f.IXmlExpander e, XmlNode root, string name, object value, string namespaceUri = null)
         {
             if (value == null || value == DBNull.Value) return null;
             var doc = root.OwnerDocument ?? (XmlDocument)root;
             var node = doc.CreateNode(XmlNodeType.Element, name, namespaceUri);
-            node.InnerText = Je.str.Of(value);
+            node.InnerText = f.str.of(value);
             root.AppendChild(node);
             return node;
         }
 
-        public static XmlNode AddAttr(this Je.IXmlExpander e, XmlNode root, string name, object value)
+        public static XmlNode AddAttr(this f.IXmlExpander e, XmlNode root, string name, object value)
         {
             if (value == null || value == DBNull.Value) return null;
             var doc = root.OwnerDocument ?? (XmlDocument)root;
             var attr = doc.CreateAttribute(name);
-            attr.InnerText = Je.str.Of(value);
+            attr.InnerText = f.str.of(value);
             root.Attributes?.Append(attr);
             return root;
         }
 
-        public static T GetAttr<T>(this Je.IXmlExpander e, XmlNode root, int index)
+        public static T GetAttr<T>(this f.IXmlExpander e, XmlNode root, int index)
         {
             return GetAttr(e, root, index).As<T>();
         }
 
-        public static object GetAttr(this Je.IXmlExpander e, XmlNode root, int index)
+        public static object GetAttr(this f.IXmlExpander e, XmlNode root, int index)
         {
             return root != null && root.Attributes != null && index >= 0 && index < root.Attributes.Count ? root.Attributes[index].InnerText : null;
         }
 
-        public static T GetAttr<T>(this Je.IXmlExpander e, XmlNode root, string name)
+        public static T GetAttr<T>(this f.IXmlExpander e, XmlNode root, string name)
         {
             return GetAttr(e, root, name).As<T>();
         }
 
-        public static object GetAttr(this Je.IXmlExpander e, XmlNode root, string name)
+        public static object GetAttr(this f.IXmlExpander e, XmlNode root, string name)
         {
             if (root == null || root.Attributes == null || string.IsNullOrWhiteSpace(name)) return null;
             var attr = root.Attributes[name];
             return attr?.InnerText;
         }
 
-        public static void SetAttr(this Je.IXmlExpander e, XmlNode root, int index, object value)
+        public static void SetAttr(this f.IXmlExpander e, XmlNode root, int index, object value)
         {
             if (root == null || root.Attributes == null || index < 0 && index >= root.Attributes.Count) return;
             var attr = root.Attributes[index];
             if (attr != null) attr.InnerText = value.As<string>();
         }
 
-        public static void SetAttr(this Je.IXmlExpander e, XmlNode root, string name, object value)
+        public static void SetAttr(this f.IXmlExpander e, XmlNode root, string name, object value)
         {
             if (root == null || root.Attributes == null || string.IsNullOrWhiteSpace(name)) return;
             var attr = root.Attributes[name];
@@ -281,7 +281,7 @@ namespace Jetproger.Tools.Convert.Converts
 
         public override object Deserialize(byte[] bytes, Type type)
         {
-            if (bytes == null || bytes.Length == 0) return Je.sys.DefaultOf(type);
+            if (bytes == null || bytes.Length == 0) return f.sys.defaultof(type);
             using (var ms = new MemoryStream(bytes))
             {
                 var xs = new XmlSerializer(type);

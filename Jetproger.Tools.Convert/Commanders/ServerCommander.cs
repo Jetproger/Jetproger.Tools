@@ -15,7 +15,7 @@ namespace Jetproger.Tools.Convert.Commanders
         private readonly ConcurrentDictionary<Guid, CommandTransaction> _commands = new ConcurrentDictionary<Guid, CommandTransaction>();
         private readonly List<Guid> _deleteds = new List<Guid>();
 
-        public ServerCommander() : base(1000 * J_<ServerCommandPeriodSeconds>.Sz.As<int>())
+        public ServerCommander() : base(1000 * k<ServerCommandPeriodSeconds>.key.As<int>())
         {
         }
 
@@ -35,7 +35,7 @@ namespace Jetproger.Tools.Convert.Commanders
                 if (existsTransaction.Command.State == ECommandState.Completed)
                 {
                     _commands.TryRemove(session, out existsTransaction);
-                    result = (existsTransaction.Command.Result != null ? Je.xml.Of(existsTransaction.Command.Result) : string.Empty) ?? string.Empty;
+                    result = (existsTransaction.Command.Result != null ? f.xml.of(existsTransaction.Command.Result) : string.Empty) ?? string.Empty;
                 }
                 return new CommandResponse { Session = session, Result = result, Report = report };
             }

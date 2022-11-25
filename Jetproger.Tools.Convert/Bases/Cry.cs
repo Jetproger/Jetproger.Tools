@@ -20,10 +20,10 @@ namespace Jetproger.Tools.Convert.Bases
 
     public static class CryptoExtensions
     {
-        public static X509Certificate2 AppCertificate { get { return Je.one.Get(AppCertificateHolder, () => FindCertificateByThumbprint(null, J_<AppCert>.Sz)); } }
+        public static X509Certificate2 AppCertificate { get { return f.one.Get(AppCertificateHolder, () => FindCertificateByThumbprint(null, k<AppCert>.key)); } }
         private static readonly X509Certificate2[] AppCertificateHolder = { null };
 
-        public static X509Certificate2 OutCertificate { get { return Je.one.Get(OutCertificateHolder, () => FindCertificateByThumbprint(null, J_<OutCert>.Sz)); } }
+        public static X509Certificate2 OutCertificate { get { return f.one.Get(OutCertificateHolder, () => FindCertificateByThumbprint(null, k<OutCert>.key)); } }
         private static readonly X509Certificate2[] OutCertificateHolder = { null };
 
         public static bool ExistsKeyContainer(this CryExpander exp)
@@ -40,10 +40,10 @@ namespace Jetproger.Tools.Convert.Bases
 
         private static X509Certificate2 FindSignerCertificate()
         {
-            var cert = FindCertificateByThumbprint(null, J_<OutCert>.Sz);
-            if (cert == null) throw new CertificateStoreException(J_<OutCert>.Sz, "OuterCert");
+            var cert = FindCertificateByThumbprint(null, k<OutCert>.key);
+            if (cert == null) throw new CertificateStoreException(k<OutCert>.key, "OuterCert");
             cert = FindSignerCertInKeyContainer(null, cert);
-            if (cert == null) throw new CertificateKeyException(J_<OutCert>.Sz, "OuterCert");
+            if (cert == null) throw new CertificateKeyException(k<OutCert>.key, "OuterCert");
             return cert;
         }
 
@@ -51,8 +51,8 @@ namespace Jetproger.Tools.Convert.Bases
         {
             var store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
             store.Open(OpenFlags.OpenExistingOnly | OpenFlags.ReadOnly);
-            if (!J_<OutCert>.Is) return null;
-            var configThumbprint = (J_<OutCert>.Sz ?? string.Empty).ToUpper();
+            if (!k<OutCert>.set) return null;
+            var configThumbprint = (k<OutCert>.key ?? string.Empty).ToUpper();
             if (string.IsNullOrWhiteSpace(configThumbprint)) return null;
             try
             {
@@ -80,7 +80,7 @@ namespace Jetproger.Tools.Convert.Bases
             foreach (var container in containers)
             {
                 var containerKey = GetPublicKeyOfContainer(container);
-                if (Je.bin.IsEqualBytes(containerKey, certificateKey)) return certificate;
+                if (f.bin.IsEqualBytes(containerKey, certificateKey)) return certificate;
             }
             return null;
         }
@@ -120,7 +120,7 @@ namespace Jetproger.Tools.Convert.Bases
             foreach (X509Certificate2 certificate in store.Certificates)
             {
                 var certificateThumbprintBytes = Encoding.UTF8.GetBytes(certificate.Thumbprint ?? string.Empty);
-                if (Je.bin.IsEqualBytes(thumbprintBytes, certificateThumbprintBytes)) return certificate;
+                if (f.bin.IsEqualBytes(thumbprintBytes, certificateThumbprintBytes)) return certificate;
             }
             return null;
         }
@@ -164,7 +164,7 @@ namespace Jetproger.Tools.Convert.Bases
         public const uint CRYPT_VERIFYCONTEXT = 0xF0000000;
         public const uint CRYPT_FQCN = 0x10;
         public const uint CRYPT_FIRST = 0x00000001;
-        private static readonly uint CRYPT_PROV_TYPE = J_<CryptProviderType>.Sz.As<uint>();
+        private static readonly uint CRYPT_PROV_TYPE = k<CryptProviderType>.key.As<uint>();
 
         public const uint PP_ENUMREADERS = 114;
         public const uint PP_ENUMCONTAINERS = 0x2;

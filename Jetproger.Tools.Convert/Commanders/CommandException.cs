@@ -8,7 +8,11 @@ namespace Jetproger.Tools.Convert.Commanders
 {
     public class CommandException : Exception
     {
-        public override string Message { get { return !string.IsNullOrWhiteSpace(_message) ? _message : base.Message; } } 
+        
+        public override string Message { get { return !string.IsNullOrWhiteSpace(_message) ? _message : base.Message; } }
+        
+        public int Status { get; private set; }
+        
         private readonly string _message;
 
         public CommandException(string message)
@@ -30,6 +34,12 @@ namespace Jetproger.Tools.Convert.Commanders
                 return;
             }
             exception = FirstExceptionOf(exception);
+            var we = exception as WebException;
+            if (we != null)
+            { 
+                var httpWebResponse = we.Response as HttpWebResponse;
+                Status = httpWebResponse != null ? (int)httpWebResponse.StatusCode : Status;
+            }
             _message = exception.As<string>();
         }
 

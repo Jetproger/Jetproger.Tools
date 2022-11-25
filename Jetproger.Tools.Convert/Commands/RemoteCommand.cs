@@ -29,7 +29,7 @@ namespace Jetproger.Tools.Convert.Commands
             if (!_isSend)
             {
                 _isSend = true;
-                _request.Document = Je.xml.Of(Value);
+                _request.Document = f.xml.of(Value);
                 request = new CommandRequest(_request);
                 ClientCommander.Run(this, request);
             }
@@ -37,7 +37,7 @@ namespace Jetproger.Tools.Convert.Commands
             webCmd.AddHeader(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
             webCmd.AddHeader(HttpRequestHeader.ContentType, "application/json");
             webCmd.AddHeader(HttpRequestHeader.ContentLength, "0");
-            webCmd.Certificate = Je.cry.App;
+            webCmd.Certificate = f.cry.App;
             AddCommands(Executing(webCmd));
             base.Execute();
         }
@@ -58,7 +58,7 @@ namespace Jetproger.Tools.Convert.Commands
             {
                 _isSend = false;
                 _isCompleted = true;
-                cmdResult.Value = string.IsNullOrWhiteSpace(response.Result) ? cmdResult.Value : Je.xml.To<TResult>(response.Result);
+                cmdResult.Value = string.IsNullOrWhiteSpace(response.Result) ? cmdResult.Value : f.xml.to<TResult>(response.Result);
             }
             else
             {
@@ -72,7 +72,7 @@ namespace Jetproger.Tools.Convert.Commands
 
     public class AppRemoteCommand : PostWebCommand<CommandResponse, CommandRequest>
     {
-        public AppRemoteCommand(CommandRequest content) : base(Je.web.AppHost, content)
+        public AppRemoteCommand(CommandRequest content) : base(f.web.AppHost, content)
         {
 
         }

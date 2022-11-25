@@ -15,37 +15,37 @@ namespace Jetproger.Tools.Convert.Converts
         private static readonly HashSet<char> InvalidFileNameChars = new HashSet<char> { '"', '<', '>', '|', char.MinValue, '\x0001', '\x0002', '\x0003', '\x0004', '\x0005', '\x0006', '\a', '\b', '\t', '\n', '\v', '\f', '\r', '\x000E', '\x000F', '\x0010', '\x0011', '\x0012', '\x0013', '\x0014', '\x0015', '\x0016', '\x0017', '\x0018', '\x0019', '\x001A', '\x001B', '\x001C', '\x001D', '\x001E', '\x001F', ':', '*', '?', '\\', '/' };
         private static readonly HashSet<char> InvalidPathChars = new HashSet<char> { '"', '<', '>', '|', char.MinValue, '\x0001', '\x0002', '\x0003', '\x0004', '\x0005', '\x0006', '\a', '\b', '\t', '\n', '\v', '\f', '\r', '\x000E', '\x000F', '\x0010', '\x0011', '\x0012', '\x0013', '\x0014', '\x0015', '\x0016', '\x0017', '\x0018', '\x0019', '\x001A', '\x001B', '\x001C', '\x001D', '\x001E', '\x001F' };
      
-        public static string AppDir(this Je.IFssExpander e)
+        public static string AppDir(this f.IFssExpander e)
         {
             return (HttpContext.Current == null ? AppDomain.CurrentDomain.BaseDirectory : HttpContext.Current.Server.MapPath("~"));
         }
 
-        public static string AppFile(this Je.IFssExpander e)
+        public static string AppFile(this f.IFssExpander e)
         {
             return (HttpContext.Current == null ? Process.GetCurrentProcess().MainModule.FileName : null);
         }
 
-        public static string TmpFile(this Je.IFssExpander e)
+        public static string TmpFile(this f.IFssExpander e)
         {
             return $"{Guid.NewGuid()}.tmp";
         }
 
-        public static FileWay UseFile(this Je.IFssExpander e, string fileName)
+        public static FileWay UseFile(this f.IFssExpander e, string fileName)
         {
-            return Je<FileWay>.Key(fileName.ToLower(), x => new FileWay(x));
+            return t<FileWay>.key(fileName.ToLower());
         }
 
-        public static bool IsValidFileName(this Je.IFssExpander e, string fileName)
+        public static bool IsValidFileName(this f.IFssExpander e, string fileName)
         {
             return !string.IsNullOrWhiteSpace(fileName) && fileName.All(c => !InvalidFileNameChars.Contains(c));
         }
 
-        public static bool IsValidPath(this Je.IFssExpander e, string path)
+        public static bool IsValidPath(this f.IFssExpander e, string path)
         {
             return !string.IsNullOrWhiteSpace(path) && path.All(c => !InvalidPathChars.Contains(c));
         }
 
-        public static bool RemoveFile(this Je.IFssExpander e, string fileName)
+        public static bool RemoveFile(this f.IFssExpander e, string fileName)
         {
             if (!System.IO.File.Exists(fileName)) return true;
             int counter = 0;
@@ -66,7 +66,7 @@ namespace Jetproger.Tools.Convert.Converts
             return !System.IO.File.Exists(fileName);
         }
 
-        public static bool RemoveFolder(this Je.IFssExpander e, string path)
+        public static bool RemoveFolder(this f.IFssExpander e, string path)
         {
             if (!Directory.Exists(path)) return true;
             int counter = 0;
@@ -131,17 +131,17 @@ namespace Jetproger.Tools.Convert.Converts
         {
             fileName = fileName ?? string.Empty;
             var args = fileName.Split(new[] { System.IO.Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
-            if (args.Length == 0) return System.IO.Path.Combine(Je.fss.AppDir(), Je.fss.TmpFile());
-            if (args.Length == 1 && !fileName.EndsWith("\\")) return System.IO.Path.Combine(Je.fss.AppDir(), Je.fss.IsValidFileName(args[0]) ? args[0] : Je.fss.TmpFile());
+            if (args.Length == 0) return System.IO.Path.Combine(f.fss.AppDir(), f.fss.TmpFile());
+            if (args.Length == 1 && !fileName.EndsWith("\\")) return System.IO.Path.Combine(f.fss.AppDir(), f.fss.IsValidFileName(args[0]) ? args[0] : f.fss.TmpFile());
             if (fileName.EndsWith("\\"))
             {
                 var newArgs = new string[args.Length + 1];
                 for (var i = 0; i < args.Length; i++) newArgs[i] = args[i];
-                newArgs[newArgs.Length - 1] = Je.fss.TmpFile();
+                newArgs[newArgs.Length - 1] = f.fss.TmpFile();
                 args = newArgs;
             }
-            var file = Je.fss.IsValidFileName(args[args.Length - 1]) ? args[args.Length - 1] : Je.fss.TmpFile();
-            var root = System.IO.Path.IsPathRooted(args[0]) ? args[0] : Je.fss.AppDir();
+            var file = f.fss.IsValidFileName(args[args.Length - 1]) ? args[args.Length - 1] : f.fss.TmpFile();
+            var root = System.IO.Path.IsPathRooted(args[0]) ? args[0] : f.fss.AppDir();
             var full = root + "\\";
             if (fileName.StartsWith("\\\\")) full = "\\\\" + full;
             foreach (var arg in args)
@@ -150,7 +150,7 @@ namespace Jetproger.Tools.Convert.Converts
                 {
                     continue;
                 }
-                if (!Je.fss.IsValidPath(arg))
+                if (!f.fss.IsValidPath(arg))
                 {
                     full = root;
                     break;
@@ -162,12 +162,12 @@ namespace Jetproger.Tools.Convert.Converts
 
         public string FindFile(string mask)
         {
-            return GetFiles(Path, null).FirstOrDefault(x => mask == Je.fss.UseFile(x).NameExt);
+            return GetFiles(Path, null).FirstOrDefault(x => mask == f.fss.UseFile(x).NameExt);
         }
 
         public string FindFolder(string fileName, string mask)
         {
-            return GetFolders(Path).FirstOrDefault(x => mask == Je.fss.UseFile(x).Folder);
+            return GetFolders(Path).FirstOrDefault(x => mask == f.fss.UseFile(x).Folder);
         }
 
         public IEnumerable<string> AllFiles()
@@ -211,11 +211,11 @@ namespace Jetproger.Tools.Convert.Converts
             FolderFullAccess();
             foreach (var file in GetFiles(Path, null))
             {
-                if (!Je.fss.RemoveFile(file)) return false;
+                if (!f.fss.RemoveFile(file)) return false;
             }
             foreach (var folder in GetFolders(Path))
             {
-                if (!Je.fss.RemoveFolder(folder)) return false;
+                if (!f.fss.RemoveFolder(folder)) return false;
             }
             return true;
         }

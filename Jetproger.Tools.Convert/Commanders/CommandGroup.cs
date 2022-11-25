@@ -22,7 +22,7 @@ namespace Jetproger.Tools.Convert.Commanders
 
         protected CommandGroup Remove(ICommand command)
         {
-            var i = Je.cmd.IndexOf(_commands, command);
+            var i = f.sys.indexof(_commands, command);
             if (i > -1) _commands.RemoveAt(i);
             return this;
         }

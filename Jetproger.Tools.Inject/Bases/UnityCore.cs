@@ -6,15 +6,16 @@ using System.Reflection;
 using System.Web;
 using System.Xml;
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Convert.Factories;
 using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Jetproger.Tools.Inject.Bases
 {
     public static class UnityCore
     {
-        private static string CurrentAssemblyName { get { return Je.One.Get(CurrentAssemblyNameHolder, () => CurrentAssembly.GetName().Name); } }
-        private static Assembly CurrentAssembly { get { return Je.One.Get(CurrentAssemblyHolder, () => typeof(UnityCore).Assembly); } }
-        public static string Config => Je.One.Get(ConfigHolder, RegisterConfig);
+        private static string CurrentAssemblyName { get { return f.one.Get(CurrentAssemblyNameHolder, () => CurrentAssembly.GetName().Name); } }
+        private static Assembly CurrentAssembly { get { return f.one.Get(CurrentAssemblyHolder, () => typeof(UnityCore).Assembly); } }
+        public static string Config => f.one.Get(ConfigHolder, RegisterConfig);
         private static readonly string[] CurrentAssemblyNameHolder = { null };
         private static readonly Assembly[] CurrentAssemblyHolder = { null };
         private static readonly string[] ConfigHolder = { null };

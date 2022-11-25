@@ -8,13 +8,13 @@ namespace Jetproger.Tools.Trace.Bases
     public static class TraceCore
     {
         private static readonly Dictionary<string, Logger> Loggers = new Dictionary<string, Logger>();
-        private static NlogConfig Config { get { return Je.one.Get(ConfigHolder, ReadConfig); } }
+        private static NlogConfig Config { get { return f.one.Get(ConfigHolder, ReadConfig); } }
         private static readonly NlogConfig[] ConfigHolder = { null };
         private static readonly string[] AppUserHolder = { null };
 
         public static string AppUser
         {
-            get { return Je.one.Get(AppUserHolder); }
+            get { return f.one.Get(AppUserHolder); }
         }
 
         public static void SetAppUser(string appUser)

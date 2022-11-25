@@ -40,10 +40,10 @@ namespace Jetproger.Tools.Convert.Commanders
             _entity = entity;
             if (_entity == null) return;
             _type = _entity.GetType();
-            _geType = Je.sys.GenericOf(_type) ?? _type;
+            _geType = f.sys.genericof(_type) ?? _type;
             _geType = geType != null && geType.IsAssignableFrom(_geType) ? geType : _geType;
             _map = CommandEntity.GetMap(_geType);
-            if (Je.sys.IsSimple(_type))
+            if (f.sys.IsSimple(_type))
             {
                 _source.Add(_entity);
                 _fields = null;
@@ -183,7 +183,7 @@ namespace Jetproger.Tools.Convert.Commanders
 
         private static PropertyInfo[] GetFields(Type type)
         {
-            return Je.sys.IsSimple(type) ? null : type.GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(p => Je.sys.IsSimple(p.PropertyType)).ToArray();
+            return f.sys.IsSimple(type) ? null : type.GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(p => f.sys.IsSimple(p.PropertyType)).ToArray();
         }
 
         public static DataTable ToDataTable(object entity, Type geType = null)
@@ -292,7 +292,7 @@ namespace Jetproger.Tools.Convert.Commanders
         {
             _reader = reader;
             _type = typeof(T);
-            _geType = Je.sys.GenericOf(_type) ?? _type;
+            _geType = f.sys.genericof(_type) ?? _type;
             _map = CommandEntity.GetMap(_geType);
         }
 
@@ -303,7 +303,7 @@ namespace Jetproger.Tools.Convert.Commanders
             {
                 if (_type.IsArray) return (T)(object)Array.CreateInstance(_geType, 0);
                 if (typeof(IList).IsAssignableFrom(_type)) return (T)Activator.CreateInstance(_type);
-                return (T)Je.sys.DefaultOf(_type);
+                return (T)f.sys.defaultof(_type);
             }
             if (_type.IsArray)
             {
@@ -364,7 +364,7 @@ namespace Jetproger.Tools.Convert.Commanders
         private object CreateInstance(Type type, string[] fields)
         {
             if (type == null) return null;
-            if (Je.sys.IsSimple(type)) return !_reader.IsDBNull(0) ? _reader.GetValue(0) : Je.sys.DefaultOf(type);
+            if (f.sys.IsSimple(type)) return !_reader.IsDBNull(0) ? _reader.GetValue(0) : f.sys.defaultof(type);
             var obj = Activator.CreateInstance(type);
             var schema = CommandEntity.GetSchema(type);
             for (int i = 0; i < fields.Length; i++)
@@ -372,7 +372,7 @@ namespace Jetproger.Tools.Convert.Commanders
                 var field = fields[i];
                 var value = !_reader.IsDBNull(i) ? _reader.GetValue(i) : null;
                 var p = schema.ContainsKey(field) ? schema[field] : null;
-                if (p != null) p.SetValue(obj, value != null ? value.As(p.PropertyType) : Je.sys.DefaultOf(p.PropertyType), null);
+                if (p != null) p.SetValue(obj, value != null ? value.As(p.PropertyType) : f.sys.defaultof(p.PropertyType), null);
             }
             return obj;
         }

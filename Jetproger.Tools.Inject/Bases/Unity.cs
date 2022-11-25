@@ -2,6 +2,7 @@ using System;
 using System.Reflection;
 using System.Text;
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Convert.Factories;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 
@@ -9,11 +10,11 @@ namespace Jetproger.Tools.Inject.Bases
 {
     public static class UnityExtensions
     {
-        private static IUnityContainer Container => Je.One.Get(ContainerHolder, RegisterContainer);
+        private static IUnityContainer Container => f.one.Get(ContainerHolder, RegisterContainer);
         private static readonly IUnityContainer[] ContainerHolder = { null };
         private static void Register(IUnityContainer container) { }
 
-        public static void Register(this Je.IInjectExpander expander)
+        public static void Register(this f.IInjectExpander expander)
         {
             Register(Container);
         }
@@ -27,41 +28,41 @@ namespace Jetproger.Tools.Inject.Bases
             return container;
         }
 
-        public static Type TypeOf<T>(this Je.IInjectExpander expander)
+        public static Type TypeOf<T>(this f.IInjectExpander expander)
         {
             return Container.Resolve<T>().GetType();
         }
 
-        public static Type TypeOf(this Je.IInjectExpander expander, Type type)
+        public static Type TypeOf(this f.IInjectExpander expander, Type type)
         {
             return Container.Resolve(type).GetType();
         }
 
-        public static T Resolve<T>(this Je.IInjectExpander expander, Action<T> initialize)
+        public static T Resolve<T>(this f.IInjectExpander expander, Action<T> initialize)
         {
             var instance = Resolve<T>(expander);
             initialize(instance);
             return instance;
         }
 
-        public static T Resolve<T>(this Je.IInjectExpander expander)
+        public static T Resolve<T>(this f.IInjectExpander expander)
         {
             return Container.Resolve<T>();
         }
 
-        public static object Resolve(this Je.IInjectExpander expander, Type type, Action<object> initialize)
+        public static object Resolve(this f.IInjectExpander expander, Type type, Action<object> initialize)
         {
             var instance = Resolve(expander, type);
             initialize(instance);
             return instance;
         }
 
-        public static object Resolve(this Je.IInjectExpander expander, Type type)
+        public static object Resolve(this f.IInjectExpander expander, Type type)
         {
             return Container.Resolve(type);
         }
 
-        public static IMethodReturn Call(this Je.IInjectExpander expander, IMethodInvocation input, GetNextHandlerDelegate getNext)
+        public static IMethodReturn Call(this f.IInjectExpander expander, IMethodInvocation input, GetNextHandlerDelegate getNext)
         {
             var next = getNext();
             if (next == null) return input.CreateMethodReturn(null);
@@ -71,7 +72,7 @@ namespace Jetproger.Tools.Inject.Bases
             throw result.Exception;
         }
 
-        public static string Info(this Je.IInjectExpander expander, IMethodInvocation input, string typeName = null)
+        public static string Info(this f.IInjectExpander expander, IMethodInvocation input, string typeName = null)
         {
             var method = (MethodInfo)input.MethodBase;
             var parameters = method.GetParameters();
@@ -86,7 +87,7 @@ namespace Jetproger.Tools.Inject.Bases
             return sb.ToString();
         }
 
-        public static string InfoEx(this Je.IInjectExpander expander, IMethodInvocation input)
+        public static string InfoEx(this f.IInjectExpander expander, IMethodInvocation input)
         {
             var method = (MethodInfo)input.MethodBase;
             var parameters = method.GetParameters();

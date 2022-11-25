@@ -9,7 +9,7 @@ namespace Jetproger.Tools.Convert.Commanders
         [HttpPost]
         public CommandResponse ExecuteCommand(CommandRequest request)
         {
-            return Je.cmd.ServerExecute(request);
+            return f.cmd.ServerExecute(request);
         }
     }
 }

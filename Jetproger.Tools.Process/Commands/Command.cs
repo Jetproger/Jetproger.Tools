@@ -6,6 +6,7 @@ using System.Threading;
 using Jetproger.Tools.Cache.Bases;
 using Jetproger.Tools.Convert.Bases;
 using Jetproger.Tools.Convert.Converts;
+using Jetproger.Tools.Convert.Factories;
 using Jetproger.Tools.Inject.Bases;
 using Jetproger.Tools.Process.Aspects;
 using Jetproger.Tools.Process.Bases;
@@ -40,8 +41,8 @@ namespace Jetproger.Tools.Process.Commands
 
         public CommandState State
         {
-            get { return Je.One.Get(_stateHolder); }
-            private set { Je.One.Reset(_stateHolder); Je.One.Get(_stateHolder, () => value); }
+            get { return f.one.Get(_stateHolder); }
+            private set { f.one.Reset(_stateHolder); f.one.Get(_stateHolder, () => value); }
         }
 
         public override void Write(string message)
