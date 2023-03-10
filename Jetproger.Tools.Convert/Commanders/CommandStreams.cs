@@ -4,7 +4,7 @@ using System.IO;
 using System.Net;
 
 namespace Jetproger.Tools.Convert.Commanders
-{ 
+{
     public class WebStreams : CommandStreams
     {
         public HttpWebResponse Response { get; set; }

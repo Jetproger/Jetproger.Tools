@@ -190,14 +190,14 @@ namespace Jetproger.Tools.Process.Commands
             var genericType = f.sys.genericof(commandType);
             if (genericType == null) return;
             mergerType = mergerType.MakeGenericType(genericType);
-            if (!f.sys.IsTypeOf(commandType, mergerType)) return;
+            if (!f.sys.isof(commandType, mergerType)) return;
             var sources = new Dictionary<int, Command>();
             var counter = 0;
             foreach (var agent in Parent.Items)
             {
                 if (agent == this) continue;
                 if (agent._command == null) continue;
-                if (f.sys.IsTypeOf(agent._command.GetType(), genericType)) sources.Add(counter++, agent._command);
+                if (f.sys.isof(agent._command.GetType(), genericType)) sources.Add(counter++, agent._command);
             }
             while (true)
             {
@@ -269,7 +269,7 @@ namespace Jetproger.Tools.Process.Commands
                 if (agent._command != null)
                 {
                     var type = agent._command.GetType();
-                    if (f.sys.IsTypeOf(type, sourceType)) return agent._command;
+                    if (f.sys.isof(type, sourceType)) return agent._command;
                 }
                 agent = agent.Parent;
             }

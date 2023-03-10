@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -15,67 +14,67 @@ using MssqlCommandException = Jetproger.Tools.Convert.Bases.MssqlCommandExceptio
 
 namespace Jetproger.Tools.Convert.Commands
 {
-    #region MssqlCommand 
+    #region MssqlCommand
 
-    public abstract class MssqlCommand : BaseMssqlCommand<MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore>
+    public abstract class MssqlCommand : BaseMssqlCommand<object, object, object, object, object, object, object, object, object, object, object>
     {
         protected MssqlCommand(string commandString) : base(commandString) { }
     }
 
-    public abstract class MssqlCommand<T> : BaseMssqlCommand<T, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore>
+    public abstract class MssqlCommand<T> : BaseMssqlCommand<T, object, object, object, object, object, object, object, object, object, object>
     {
         protected MssqlCommand(string commandString) : base(commandString) { }
     }
 
-    public abstract class MssqlCommand<T, T0> : BaseMssqlCommand<T, T0, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore>
+    public abstract class MssqlCommand<T, T0> : BaseMssqlCommand<T, T0, object, object, object, object, object, object, object, object, object>
     {
         public void Execute(T0 p0) { Execute(p0, null, null, null, null, null, null, null, null, null); }
         protected MssqlCommand(string commandString) : base(commandString) { }
     }
 
-    public abstract class MssqlCommand<T, T0, T1> : BaseMssqlCommand<T, T0, T1, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore>
+    public abstract class MssqlCommand<T, T0, T1> : BaseMssqlCommand<T, T0, T1, object, object, object, object, object, object, object, object>
     {
         public void Execute(T0 p0, T1 p1) { Execute(p0, p1, null, null, null, null, null, null, null, null); }
         protected MssqlCommand(string commandString) : base(commandString) { }
     }
 
-    public abstract class MssqlCommand<T, T0, T1, T2> : BaseMssqlCommand<T, T0, T1, T2, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore>
+    public abstract class MssqlCommand<T, T0, T1, T2> : BaseMssqlCommand<T, T0, T1, T2, object, object, object, object, object, object, object>
     {
         public void Execute(T0 p0, T1 p1, T2 p2) { Execute(p0, p1, p2, null, null, null, null, null, null, null); }
         protected MssqlCommand(string commandString) : base(commandString) { }
     }
 
-    public abstract class MssqlCommand<T, T0, T1, T2, T3> : BaseMssqlCommand<T, T0, T1, T2, T3, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore>
+    public abstract class MssqlCommand<T, T0, T1, T2, T3> : BaseMssqlCommand<T, T0, T1, T2, T3, object, object, object, object, object, object>
     {
         public void Execute(T0 p0, T1 p1, T2 p2, T3 p3) { Execute(p0, p1, p2, p3, null, null, null, null, null, null); }
         protected MssqlCommand(string commandString) : base(commandString) { }
     }
 
-    public abstract class MssqlCommand<T, T0, T1, T2, T3, T4> : BaseMssqlCommand<T, T0, T1, T2, T3, T4, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore>
+    public abstract class MssqlCommand<T, T0, T1, T2, T3, T4> : BaseMssqlCommand<T, T0, T1, T2, T3, T4, object, object, object, object, object>
     {
         public void Execute(T0 p0, T1 p1, T2 p2, T3 p3, T4 p4) { Execute(p0, p1, p2, p3, p4, null, null, null, null, null); }
         protected MssqlCommand(string commandString) : base(commandString) { }
     }
 
-    public abstract class MssqlCommand<T, T0, T1, T2, T3, T4, T5> : BaseMssqlCommand<T, T0, T1, T2, T3, T4, T5, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore>
+    public abstract class MssqlCommand<T, T0, T1, T2, T3, T4, T5> : BaseMssqlCommand<T, T0, T1, T2, T3, T4, T5, object, object, object, object>
     {
         public void Execute(T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5) { Execute(p0, p1, p2, p3, p4, p5, null, null, null, null); }
         protected MssqlCommand(string commandString) : base(commandString) { }
     }
 
-    public abstract class MssqlCommand<T, T0, T1, T2, T3, T4, T5, T6> : BaseMssqlCommand<T, T0, T1, T2, T3, T4, T5, T6, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore>
+    public abstract class MssqlCommand<T, T0, T1, T2, T3, T4, T5, T6> : BaseMssqlCommand<T, T0, T1, T2, T3, T4, T5, T6, object, object, object>
     {
         public void Execute(T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6) { Execute(p0, p1, p2, p3, p4, p5, p6, null, null, null); }
         protected MssqlCommand(string commandString) : base(commandString) { }
     }
 
-    public abstract class MssqlCommand<T, T0, T1, T2, T3, T4, T5, T6, T7> : BaseMssqlCommand<T, T0, T1, T2, T3, T4, T5, T6, T7, MssqlCommandParameterIgnore, MssqlCommandParameterIgnore>
+    public abstract class MssqlCommand<T, T0, T1, T2, T3, T4, T5, T6, T7> : BaseMssqlCommand<T, T0, T1, T2, T3, T4, T5, T6, T7, object, object>
     {
         public void Execute(T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7) { Execute(p0, p1, p2, p3, p4, p5, p6, p7, null, null); }
         protected MssqlCommand(string commandString) : base(commandString) { }
     }
 
-    public abstract class MssqlCommand<T, T0, T1, T2, T3, T4, T5, T6, T7, T8> : BaseMssqlCommand<T, T0, T1, T2, T3, T4, T5, T6, T7, T8, MssqlCommandParameterIgnore>
+    public abstract class MssqlCommand<T, T0, T1, T2, T3, T4, T5, T6, T7, T8> : BaseMssqlCommand<T, T0, T1, T2, T3, T4, T5, T6, T7, T8, object>
     {
         public void Execute(T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, T8 p8) { Execute(p0, p1, p2, p3, p4, p5, p6, p7, p8, null); }
         protected MssqlCommand(string commandString) : base(commandString) { }
@@ -88,58 +87,14 @@ namespace Jetproger.Tools.Convert.Commands
 
     #endregion
 
-    public abstract class BaseMssqlCommand<T, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9> : Command<T, object>
-    {
-        private string _commandString;
+    public abstract class BaseMssqlCommand<T, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9> : Command<T, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>
+    { 
+        protected virtual void BeforeExecute(SqlConnection sqlConnection) { }
+        private readonly string _commandString;
 
         protected BaseMssqlCommand(string commandString)
         {
             _commandString = commandString;
-        }
-
-        protected T0 P0 { get; set; }
-        protected T1 P1 { get; set; }
-        protected T2 P2 { get; set; }
-        protected T3 P3 { get; set; }
-        protected T4 P4 { get; set; }
-        protected T5 P5 { get; set; }
-        protected T6 P6 { get; set; }
-        protected T7 P7 { get; set; }
-        protected T8 P8 { get; set; }
-        protected T9 P9 { get; set; }
-
-        protected override object GetValue()
-        {
-            return new object[] { P0, P1, P2, P3, P4, P5, P6, P7, P8, P9 };
-        }
-
-        protected override void SetValue(object value)
-        {
-            var enumerable = value as IEnumerable;
-            if (enumerable == null)
-            {
-                P0 = value.As<T0>();
-                return;
-            }
-            var enumerator = enumerable.GetEnumerator();
-            var i = 0;
-            while (enumerator.MoveNext())
-            {
-                if (i++ >= 9) break;
-                switch (i)
-                {
-                    case 0: P0 = enumerator.Current.As<T0>(); break;
-                    case 1: P1 = enumerator.Current.As<T1>(); break;
-                    case 2: P2 = enumerator.Current.As<T2>(); break;
-                    case 3: P3 = enumerator.Current.As<T3>(); break;
-                    case 4: P4 = enumerator.Current.As<T4>(); break;
-                    case 5: P5 = enumerator.Current.As<T5>(); break;
-                    case 6: P6 = enumerator.Current.As<T6>(); break;
-                    case 7: P7 = enumerator.Current.As<T7>(); break;
-                    case 8: P8 = enumerator.Current.As<T8>(); break;
-                    case 9: P9 = enumerator.Current.As<T9>(); break;
-                }
-            }
         }
 
         public void Execute(T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, T8 p8, T9 p9)
@@ -158,6 +113,7 @@ namespace Jetproger.Tools.Convert.Commands
             var datasets = new List<MssqlCommandBulkCopyDataSet>();
             var cmd = BuildCommand(datasets);
             if (cmd.Connection.State != ConnectionState.Open) cmd.Connection.Open();
+            BeforeExecute(cmd.Connection);
             MssqlCommandBulkCopy.WriteToServer(cmd.Connection, datasets);
             var state = new MssqlCommandState(cmd);
             cmd.BeginExecuteReader(EndExecuteReader, state);
@@ -171,7 +127,7 @@ namespace Jetproger.Tools.Convert.Commands
                 if (state == null) return;
                 var reader = state.Command.EndExecuteReader(ar);
                 state.Reader = reader;
-                CommandThreads.Run(() => Completing(state));
+                f.sys.threadof(() => Completing(state));
             }
             catch (Exception e)
             {
@@ -184,7 +140,7 @@ namespace Jetproger.Tools.Convert.Commands
             try
             {
                 var result = state.Reader != null ? GetResult(state.Reader) : default(T);
-                var typeIgnore = typeof(MssqlCommandParameterIgnore);
+                var typeIgnore = typeof(object);
                 var ordinal = 0;
                 P0 = GetParameterValue(state.Command, typeIgnore, P0, ref ordinal);
                 P1 = GetParameterValue(state.Command, typeIgnore, P1, ref ordinal);
@@ -224,7 +180,7 @@ namespace Jetproger.Tools.Convert.Commands
                 }
                 return (T)result;
             }
-            return EntityWriter.To<T>(reader);
+            return reader.As<T>();
         }
 
         private TParameter GetParameterValue<TParameter>(SqlCommand cmd, Type typeIgnore, TParameter value, ref int ordinal)
@@ -232,14 +188,14 @@ namespace Jetproger.Tools.Convert.Commands
             var type = typeof(TParameter);
             if (type == typeIgnore) return value;
             var originalType = type;
-            var isOutput = f.sql.IsOutputType(ref type);
-            if (!f.sys.IsSimple(type)) return value;
+            var isOutput = f.sql.isout(ref type);
+            if (!f.sys.issimple(type)) return value;
             if (isOutput)
             {
                 var parameterName = string.Format("P{0}", ordinal);
                 var parameterValue = cmd.Parameters[parameterName].Value.As(type);
                 value = Activator.CreateInstance<TParameter>();
-                originalType.GetProperty("Value", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(value, parameterValue != DBNull.Value && parameterValue != null ? parameterValue : f.sys.defaultof(originalType), null);
+                originalType.GetProperty("Value", BindingFlags.Instance | BindingFlags.NonPublic)?.SetValue(value, parameterValue != DBNull.Value && parameterValue != null ? parameterValue : f.sys.defaultof(originalType), null);
             }
             ordinal++;
             return value;
@@ -263,7 +219,7 @@ namespace Jetproger.Tools.Convert.Commands
                 Size = 4000,
             });
             var ordinal = 0;
-            var typeIgnore = typeof(MssqlCommandParameterIgnore);
+            var typeIgnore = typeof(object);
             AddParameter(cmd, typeIgnore, typeof(T0), P0, ref ordinal);
             AddParameter(cmd, typeIgnore, typeof(T1), P1, ref ordinal);
             AddParameter(cmd, typeIgnore, typeof(T2), P2, ref ordinal);
@@ -282,8 +238,8 @@ namespace Jetproger.Tools.Convert.Commands
         private void AddParameter(SqlCommand cmd, Type typeIgnore, Type type, object value, ref int ordinal)
         {
             if (type == typeIgnore) return;
-            var isOutput = f.sql.IsOutputType(ref type);
-            if (!f.sys.IsSimple(type)) return;
+            var isOutput = f.sql.isout(ref type);
+            if (!f.sys.issimple(type)) return;
             var sqlType = f.sql.classof(type);
             var direction = ParameterDirection.Input;
             if (isOutput)
@@ -315,7 +271,7 @@ namespace Jetproger.Tools.Convert.Commands
 
         protected virtual string GetConnectionString()
         {
-            return k<ConnectionString>.key;
+            return k<ConnectionString>.As<string>();
         }
 
         private void MssqlConnectionInfoMessage(object sender, SqlInfoMessageEventArgs e)
@@ -339,7 +295,7 @@ namespace Jetproger.Tools.Convert.Commands
             {
                 var ordinal = 0;
                 var sb = new StringBuilder();
-                var typeIgnore = typeof(MssqlCommandParameterIgnore);
+                var typeIgnore = typeof(object);
                 AddQueryParameterScript(typeIgnore, typeof(T0), sb, ref ordinal);
                 AddQueryParameterScript(typeIgnore, typeof(T1), sb, ref ordinal);
                 AddQueryParameterScript(typeIgnore, typeof(T2), sb, ref ordinal);
@@ -358,8 +314,8 @@ namespace Jetproger.Tools.Convert.Commands
         private void AddQueryParameterScript(Type typeIgnore, Type type, StringBuilder sb, ref int ordinal)
         {
             if (type == typeIgnore) return;
-            var isOutput = f.sql.IsOutputType(ref type);
-            if (!f.sys.IsSimple(type)) return;
+            var isOutput = f.sql.isout(ref type);
+            if (!f.sys.issimple(type)) return;
             sb.AppendFormat("{0} @P{1}{2}", sb.Length > 0 ? "," : "", ordinal++, isOutput ? " OUTPUT" : "");
         }
 
@@ -368,7 +324,7 @@ namespace Jetproger.Tools.Convert.Commands
             var ordinal = 0;
             var sbDeclare = new StringBuilder();
             var sbBinding = new StringBuilder();
-            var typeIgnore = typeof(MssqlCommandParameterIgnore);
+            var typeIgnore = typeof(object);
             GetScripts(typeIgnore, typeof(T0), P0, datasets, sbDeclare, sbBinding, ref ordinal);
             GetScripts(typeIgnore, typeof(T1), P1, datasets, sbDeclare, sbBinding, ref ordinal);
             GetScripts(typeIgnore, typeof(T2), P2, datasets, sbDeclare, sbBinding, ref ordinal);
@@ -386,8 +342,8 @@ namespace Jetproger.Tools.Convert.Commands
         private void GetScripts(Type typeIgnore, Type type, object value, List<MssqlCommandBulkCopyDataSet> datasets, StringBuilder sbDeclare, StringBuilder sbBinding, ref int ordinal)
         {
             if (type == typeIgnore) return;
-            var isOutput = f.sql.IsOutputType(ref type);
-            if (!f.sys.IsSimple(type))
+            var isOutput = f.sql.isout(ref type);
+            if (!f.sys.issimple(type))
             {
                 GetDataset(type, value, datasets);
                 return;
@@ -631,5 +587,4 @@ namespace Jetproger.Tools.Convert.Commands
             }
         }
     }
-    public class MssqlCommandParameterIgnore { }
 }

@@ -37,6 +37,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\.Newtonsoft.Json\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Drawing" />
@@ -63,9 +67,9 @@
     <Compile Include="..\Bases\Win.cs"><Link>Bases\Win.cs</Link></Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Converts\Cast.cs"><Link>Converts\Cast.cs</Link></Compile>
     <Compile Include="..\Converts\Bin.cs"><Link>Converts\Bin.cs</Link></Compile>
     <Compile Include="..\Converts\Fss.cs"><Link>Converts\Fss.cs</Link></Compile>
-    <Compile Include="..\Converts\Cast.cs"><Link>Converts\Cast.cs</Link></Compile>
     <Compile Include="..\Converts\Sql.cs"><Link>Converts\Sql.cs</Link></Compile>
     <Compile Include="..\Converts\Str.cs"><Link>Converts\Str.cs</Link></Compile>
     <Compile Include="..\Converts\Web.cs"><Link>Converts\Web.cs</Link></Compile>
@@ -73,34 +77,31 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Factories\One.cs"><Link>Factories\One.cs</Link></Compile>
-    <Compile Include="..\Factories\Store.cs"><Link>Factories\Store.cs</Link></Compile>
     <Compile Include="..\Factories\Pool.cs"><Link>Factories\Pool.cs</Link></Compile>
+    <Compile Include="..\Factories\Store.cs"><Link>Factories\Store.cs</Link></Compile>
     <Compile Include="..\Factories\IpcServer.cs"><Link>Factories\IpcServer.cs</Link></Compile>
     <Compile Include="..\Factories\IpcClient.cs"><Link>Factories\IpcClient.cs</Link></Compile>
+    <Compile Include="..\Factories\SimpleCreator.cs"><Link>Factories\SimpleCreator.cs</Link></Compile>
+    <Compile Include="..\Factories\ParameterizedCreator.cs"><Link>Factories\ParameterizedCreator.cs</Link></Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Commanders\BaseCommander.cs"><Link>Commanders\BaseCommander.cs</Link></Compile>
-    <Compile Include="..\Commanders\ClientCommander.cs"><Link>Commanders\ClientCommander.cs</Link></Compile>
+    <Compile Include="..\Commanders\CommandCommander.cs"><Link>Commanders\CommandCommander.cs</Link></Compile>
     <Compile Include="..\Commanders\CommandController.cs"><Link>Commanders\CommandController.cs</Link></Compile>
+    <Compile Include="..\Commanders\CommandExtensions.cs"><Link>Commanders\CommandExtensions.cs</Link></Compile>
     <Compile Include="..\Commanders\CommandGroup.cs"><Link>Commanders\CommandGroup.cs</Link></Compile>
-    <Compile Include="..\Commanders\ContainerController.cs"><Link>Commanders\ContainerController.cs</Link></Compile>
-    <Compile Include="..\Commanders\CommandException.cs"><Link>Commanders\CommandException.cs</Link></Compile>
     <Compile Include="..\Commanders\CommandEntity.cs"><Link>Commanders\CommandEntity.cs</Link></Compile>
     <Compile Include="..\Commanders\CommandRequest.cs"><Link>Commanders\CommandRequest.cs</Link></Compile>
     <Compile Include="..\Commanders\CommandResponse.cs"><Link>Commanders\CommandResponse.cs</Link></Compile>
     <Compile Include="..\Commanders\CommandMessage.cs"><Link>Commanders\CommandMessage.cs</Link></Compile>
+    <Compile Include="..\Commanders\CommandParams.cs"><Link>Commanders\CommandParams.cs</Link></Compile>
     <Compile Include="..\Commanders\CommandService.cs"><Link>Commanders\CommandService.cs</Link><SubType>Component</SubType></Compile>
     <Compile Include="..\Commanders\CommandStreams.cs"><Link>Commanders\CommandStreams.cs</Link></Compile>
-    <Compile Include="..\Commanders\CommandThread.cs"><Link>Commanders\CommandThread.cs</Link></Compile>
     <Compile Include="..\Commanders\CommandTransaction.cs"><Link>Commanders\CommandTransaction.cs</Link></Compile>
-    <Compile Include="..\Commanders\ServerCommander.cs"><Link>Commanders\ServerCommander.cs</Link></Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Commands\BaseCommand.cs"><Link>Commands\BaseCommand.cs</Link></Compile>
-    <Compile Include="..\Commands\ErrorCommand.cs"><Link>Commands\ErrorCommand.cs</Link></Compile>
     <Compile Include="..\Commands\JobCommand.cs"><Link>Commands\JobCommand.cs</Link></Compile>
     <Compile Include="..\Commands\TaskCommand.cs"><Link>Commands\TaskCommand.cs</Link></Compile>
-    <Compile Include="..\Commands\CommandExtensions.cs"><Link>Commands\CommandExtensions.cs</Link></Compile>
     <Compile Include="..\Commands\WorkCommand.cs"><Link>Commands\WorkCommand.cs</Link></Compile>
     <Compile Include="..\Commands\ContainerCommand.cs"><Link>Commands\ContainerCommand.cs</Link></Compile>
     <Compile Include="..\Commands\FileCommand.cs"><Link>Commands\FileCommand.cs</Link></Compile>

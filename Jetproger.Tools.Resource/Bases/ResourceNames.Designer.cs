@@ -250,6 +250,15 @@ namespace Jetproger.Tools.Resource.Bases {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Container not found by identifier &quot;{0}&quot;.
+        /// </summary>
+        internal static string ContainerNotFoundName {
+            get {
+                return ResourceManager.GetString("ContainerNotFoundName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Local scope.
         /// </summary>
         internal static string Context {

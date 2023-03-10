@@ -1,33 +1,18 @@
 using System;
-using System.Drawing;
 using System.IO;
 using System.IO.Compression;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Cryptography;
+using System.Text;
 using Jetproger.Tools.Convert.Bases;
 
 namespace Jetproger.Tools.Convert.Converts
 {
     public static class BinExtensions
     {
-        public static byte[] of(this f.IBinExpander e, object value)
-        {
-            return t<BinaryConverter>.one().Serialize(value);
-        }
-
-        public static T to<T>(this f.IBinExpander e, byte[] bytes)
-        {
-            return (T)t<BinaryConverter>.one().Deserialize(bytes, typeof(T));
-        }
-
-        public static object To(this f.IBinExpander e, byte[] bytes, Type type)
-        {
-            return t<BinaryConverter>.one().Deserialize(bytes, type);
-        }
-
         public static Guid hashof(this f.IBinExpander exp, object value)
         {
-            return hashof(exp, of(exp, value));
+            return hashof(exp, value.As<byte[]>());
         }
 
         public static Guid hashof(this f.IBinExpander exp, byte[] bytes)
@@ -72,7 +57,7 @@ namespace Jetproger.Tools.Convert.Converts
             }
         }
 
-        public static bool IsEqualBytes(this f.IBinExpander exp, byte[] bytes1, byte[] bytes2)
+        public static bool equals(this f.IBinExpander exp, byte[] bytes1, byte[] bytes2)
         {
             if (bytes1 == null || bytes2 == null) return false;
             if (bytes1.Length != bytes2.Length) return false;
@@ -84,9 +69,14 @@ namespace Jetproger.Tools.Convert.Converts
         }
     }
 
-    public class BinaryConverter
+    public class BinaryConverter : Converter
     {
-        public virtual byte[] Serialize(object value)
+        protected override string ValueAsChars(object value) { return System.Convert.ToBase64String(ValueAsBytes(value), Base64FormattingOptions.None); }
+        protected override object CharsAsValue(string chars, Type typeTo) { return BytesAsValue(System.Convert.FromBase64String(chars), typeTo); }
+        public BinaryConverter(Encoding encoder = null) { Encoder = encoder ?? base.Encoder; }
+        protected override Encoding Encoder { get; }
+
+        protected override byte[] ValueAsBytes(object value)
         {
             if (value == null || value == DBNull.Value) return default(byte[]);
             if (value is byte[]) return (byte[])value;
@@ -107,45 +97,30 @@ namespace Jetproger.Tools.Convert.Converts
             if (value is float) return BitConverter.GetBytes((float)value);
             if (value is decimal) return BitConverter.GetBytes((double)value);
             if (value is double) return BitConverter.GetBytes((double)value);
-            if (value is Icon) return value.As<byte[]>();
-            if (value is Image) return value.As<byte[]>();
             return SerializeObject(value);
-        } 
-
-        protected virtual byte[] SerializeObject(object obj)
-        {
-            using (var ms = new MemoryStream())
-            {
-                var bf = new BinaryFormatter();
-                bf.Serialize(ms, obj);
-                return ms.ToArray();
-            }
         }
 
-        public virtual object Deserialize(byte[] bytes, Type type)
+        protected override object BytesAsValue(byte[] bytes, Type typeTo)
         {
-            if (type == null) return null;
-            if (bytes == null || bytes.Length == 0) return type.IsValueType ? Activator.CreateInstance(type) : null;
-            if (type == typeof(byte[])) return bytes;
-            if (type == typeof(string)) return System.Convert.ToBase64String(bytes, Base64FormattingOptions.None);
-            if (type == typeof(char[])) return DeserializeChars(bytes);
-            if (type == typeof(Guid)) return new Guid(bytes);
-            if (type == typeof(DateTime)) return DateTime.FromOADate(BitConverter.ToDouble(bytes, 0));
-            if (type == typeof(bool)) return BitConverter.ToBoolean(bytes, 0);
-            if (type == typeof(byte)) return (byte)BitConverter.ToUInt16(bytes, 0);
-            if (type == typeof(sbyte)) return (sbyte)BitConverter.ToUInt16(bytes, 0);
-            if (type == typeof(char)) return BitConverter.ToChar(bytes, 0);
-            if (type == typeof(short)) return BitConverter.ToInt16(bytes, 0);
-            if (type == typeof(ushort)) return BitConverter.ToUInt16(bytes, 0);
-            if (type == typeof(int)) return BitConverter.ToInt32(bytes, 0);
-            if (type == typeof(uint)) return BitConverter.ToUInt32(bytes, 0);
-            if (type == typeof(long)) return BitConverter.ToInt64(bytes, 0);
-            if (type == typeof(ulong)) return BitConverter.ToUInt64(bytes, 0);
-            if (type == typeof(float)) return BitConverter.ToSingle(bytes, 0);
-            if (type == typeof(decimal)) return (decimal)BitConverter.ToDouble(bytes, 0);
-            if (type == typeof(double)) return BitConverter.ToDouble(bytes, 0);
-            if (type == typeof(Icon)) return bytes.As<Icon>();
-            if (type == typeof(Image)) return bytes.As<Image>();
+            if (bytes == null || bytes.Length == 0) return f.sys.defaultof(typeTo);
+            if (typeTo == typeof(byte[])) return bytes;
+            if (typeTo == typeof(string)) return System.Convert.ToBase64String(bytes, Base64FormattingOptions.None);
+            if (typeTo == typeof(char[])) return DeserializeChars(bytes);
+            if (typeTo == typeof(Guid)) return new Guid(bytes);
+            if (typeTo == typeof(DateTime)) return DateTime.FromOADate(BitConverter.ToDouble(bytes, 0));
+            if (typeTo == typeof(bool)) return BitConverter.ToBoolean(bytes, 0);
+            if (typeTo == typeof(byte)) return BitConverter.ToUInt16(bytes, 0);
+            if (typeTo == typeof(sbyte)) return BitConverter.ToUInt16(bytes, 0);
+            if (typeTo == typeof(char)) return BitConverter.ToChar(bytes, 0);
+            if (typeTo == typeof(short)) return BitConverter.ToInt16(bytes, 0);
+            if (typeTo == typeof(ushort)) return BitConverter.ToUInt16(bytes, 0);
+            if (typeTo == typeof(int)) return BitConverter.ToInt32(bytes, 0);
+            if (typeTo == typeof(uint)) return BitConverter.ToUInt32(bytes, 0);
+            if (typeTo == typeof(long)) return BitConverter.ToInt64(bytes, 0);
+            if (typeTo == typeof(ulong)) return BitConverter.ToUInt64(bytes, 0);
+            if (typeTo == typeof(float)) return BitConverter.ToSingle(bytes, 0);
+            if (typeTo == typeof(decimal)) return BitConverter.ToDouble(bytes, 0);
+            if (typeTo == typeof(double)) return BitConverter.ToDouble(bytes, 0);
             return DeserializeObject(bytes);
         }
 
@@ -164,6 +139,16 @@ namespace Jetproger.Tools.Convert.Converts
                 ms.Write(bytes, 0, bytes.Length);
                 ms.Seek(0, SeekOrigin.Begin);
                 return bin.Deserialize(ms);
+            }
+        }
+
+        protected virtual byte[] SerializeObject(object obj)
+        {
+            using (var ms = new MemoryStream())
+            {
+                var bin = new BinaryFormatter();
+                bin.Serialize(ms, obj);
+                return ms.ToArray();
             }
         }
     }

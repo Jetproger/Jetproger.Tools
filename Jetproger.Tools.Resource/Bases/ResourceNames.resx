@@ -450,4 +450,7 @@
   <data name="AppPortNotSpecifiedName" xml:space="preserve">
     <value>The config does not specify a listening port (node &lt;AppPort&gt;)</value>
   </data>
+  <data name="ContainerNotFoundName" xml:space="preserve">
+    <value>Container not found by identifier "{0}"</value>
+  </data>
 </root>

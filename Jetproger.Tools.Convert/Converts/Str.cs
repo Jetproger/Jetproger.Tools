@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.Globalization;
 using System.Text;
 using Jetproger.Tools.Convert.Bases;
@@ -8,35 +7,8 @@ using Jetproger.Tools.Convert.Bases;
 namespace Jetproger.Tools.Convert.Converts
 {
     public static class StrExtensions
-    {
-        private static readonly StringConverter Converter = t<StringConverter>.one();
-
-        public static string of(this f.IStrExpander e, object value, StringConverter converter = null)
-        {
-            return (converter ?? Converter).Serialize(value);
-        }
-
-        public static string of<TConverter>(this f.IStrExpander e, object value) where TConverter : StringConverter
-        {
-            return (f.sys.valueof<TConverter>()).Serialize(value);
-        }
-
-        public static object to(this f.IStrExpander e, string s, Type type, StringConverter converter = null)
-        {
-            return (converter ?? Converter).Deserialize(s, type);
-        }
-
-        public static T to<T>(this f.IStrExpander exp, string json, StringConverter converter = null)
-        {
-            return (T)(converter ?? Converter).Deserialize(json, typeof(T));
-        }
-
-        public static TResult to<TResult, TConverter>(this f.IStrExpander exp, string json) where TConverter : StringConverter
-        {
-            return (TResult)(f.sys.valueof<TConverter>()).Deserialize(json, typeof(TResult));
-        }
-
-        public static string op(this f.IStrExpander e, string fileName, string args)
+    { 
+        public static string Script(this f.IStrExpander e, string fileName, string args)
         {
             var sb = new StringBuilder();
             var psi = new ProcessStartInfo
@@ -76,10 +48,7 @@ namespace Jetproger.Tools.Convert.Converts
         {
             if (string.IsNullOrWhiteSpace(s)) return s;
             var sb = new StringBuilder();
-            for (int i = s.Length - 1; i >= 0; i--)
-            {
-                sb.Append(s[i]);
-            }
+            for (int i = s.Length - 1; i >= 0; i--) sb.Append(s[i]);
             return sb.ToString();
         }
 
@@ -116,143 +85,59 @@ namespace Jetproger.Tools.Convert.Converts
             var newLen = len > 0 ? len : oldLen;
             if (newLen == oldLen) return s;
             var sb = new StringBuilder();
-            for (int i = 0; i < newLen; i++)
-            {
-                sb.Append(i < s.Length ? s[i] : ' ');
-            }
+            for (int i = 0; i < newLen; i++) sb.Append(i < s.Length ? s[i] : ' ');
             return sb.ToString();
         }
     }
 
-    public class StringConverter
+    public class StringConverter : Converter
     {
-        private CultureInfo Culture => _culture ?? (_culture = GetFormatter());
-        
-        private CultureInfo _culture;
+        private static readonly IConverter Bin = new BinaryConverter();
+        protected override object BytesAsValue(byte[] bytes, Type typeTo) { return CharsAsValue(BytesAsChars(bytes), typeTo); } 
+        protected override byte[] ValueAsBytes(object value) { return CharsAsBytes(ValueAsChars(value)); } 
+        public StringConverter(Encoding encoder = null) { Encoder = encoder ?? base.Encoder; }
+        protected override Encoding Encoder { get; }
 
-        public virtual string Serialize(object value)
+        protected override string ValueAsChars(object value)
         {
             if (value == null || value == DBNull.Value) return null;
-            if (value is string) return (string)value;
-            if (value is bool) return (bool)value ? "1" : "0";
-            if (value is byte[]) return System.Convert.ToBase64String((byte[])value, Base64FormattingOptions.None);
-            if (value is char[]) return string.Concat((char[])value);
-            if (value is Icon) return System.Convert.ToBase64String(value.As<byte[]>());
-            if (value is Image) return System.Convert.ToBase64String(value.As<byte[]>());
-            if (value is DateTime) return ((DateTime)value).ToString("yyyy-MM-ddTHH:mm:ss.fff", Culture);
+            if (value is string s) return s;
+            if (value is bool b) return b ? "1" : "0"; 
+            if (value is byte[] bytes) return BytesAsChars(bytes);
+            if (value is char[] chars) return new string(chars);
+            if (value is DateTime time) return time.ToString("yyyy-MM-ddTHH:mm:ss.fff", Culture);
             if (value is Guid || value is char || value is StringBuilder || value.GetType().IsEnum) return value.ToString();
-            if (value is decimal || value is float || value is double) return ConvertExtensions.Cast<double>(value).ToString("#################0.00", Culture);
-            if (value is long || value is ulong || value is int || value is uint || value is short || value is ushort || value is byte || value is sbyte) return ConvertExtensions.Cast<long>(value).ToString("#################0", Culture);
-            if (value.GetType().IsEnum) return value.ToString();
-            return f.sys.printof(value);
+            if (value is decimal || value is float || value is double) return value.As<double>().ToString("#################0.00", Culture);
+            if (value is long || value is ulong || value is int || value is uint || value is short || value is ushort || value is byte || value is sbyte) return value.As<long>().ToString("#################0", Culture);
+            Bin.Is(value);
+            return System.Convert.ToBase64String((byte[])Bin.As(typeof(byte[])));
         }
 
-        public virtual object Deserialize(string s, Type type)
+        protected override object CharsAsValue(string s, Type typeTo)
         {
-            if (type == null) return null;
-            if (string.IsNullOrWhiteSpace(s)) return type.IsValueType ? Activator.CreateInstance(type) : null;
-            if (type.IsEnum) return ToEnum(s, type);
-            if (type == typeof(string)) return s;
-            if (type == typeof(Icon)) return System.Convert.FromBase64String(s).As<Icon>();
-            if (type == typeof(Image)) return System.Convert.FromBase64String(s).As<Image>();
-            if (type == typeof(byte[])) return System.Convert.FromBase64String(s);
-            if (type == typeof(char[])) return s.ToCharArray();
-            if (type == typeof(StringBuilder)) return new StringBuilder(s);
-            if (type == typeof(bool) || type == typeof(bool?)) return s == "1" || s == "true" || s == "yes" || s == "да";
-            if (type == typeof(byte) || type == typeof(byte?)) return ToByte(s);
-            if (type == typeof(sbyte) || type == typeof(sbyte?)) return ToSbyte(s);
-            if (type == typeof(char) || type == typeof(char?)) return ToChar(s);
-            if (type == typeof(short) || type == typeof(short?)) return ToShort(s);
-            if (type == typeof(ushort) || type == typeof(ushort?)) return ToUshort(s);
-            if (type == typeof(int) || type == typeof(int?)) return ToInt(s);
-            if (type == typeof(uint) || type == typeof(uint?)) return ToUint(s);
-            if (type == typeof(long) || type == typeof(long?)) return ToLong(s);
-            if (type == typeof(ulong) || type == typeof(ulong?)) return ToUlong(s);
-            if (type == typeof(float) || type == typeof(float?)) return ToFloat(s);
-            if (type == typeof(decimal) || type == typeof(decimal?)) return ToDecimal(s);
-            if (type == typeof(double) || type == typeof(double?)) return ToDouble(s);
-            if (type == typeof(DateTime) || type == typeof(DateTime?)) return ToDateTime(s);
-            if (type == typeof(Guid) || type == typeof(Guid?)) return ToGuid(s);
-            return f.sys.valueof(s);
-        }
-
-        protected virtual CultureInfo GetFormatter()
-        {
-            return new CultureInfo("en-us")
-            {
-                NumberFormat = { NumberGroupSeparator = string.Empty, NumberDecimalSeparator = "." },
-                DateTimeFormat = { DateSeparator = "-", TimeSeparator = ":" }
-            };
-        }
-
-        private byte ToByte(string s)
-        {
-            byte x; return byte.TryParse(s, NumberStyles.Any, Culture, out x) ? x : default(byte);
-        }
-
-        private sbyte ToSbyte(string s)
-        {
-            sbyte x; return sbyte.TryParse(s, NumberStyles.Any, Culture, out x) ? x : default(sbyte);
-        }
-
-        private char ToChar(string s)
-        {
-            char x; return char.TryParse(s, out x) ? x : default(char);
-        }
-
-        private short ToShort(string s)
-        {
-            short x; return short.TryParse(s, NumberStyles.Any, Culture, out x) ? x : default(short);
-        }
-
-        private ushort ToUshort(string s)
-        {
-            ushort x; return ushort.TryParse(s, NumberStyles.Any, Culture, out x) ? x : default(ushort);
-        }
-
-        private int ToInt(string s)
-        {
-            int x; return int.TryParse(s, NumberStyles.Any, Culture, out x) ? x : default(int);
-        }
-
-        private uint ToUint(string s)
-        {
-            uint x; return uint.TryParse(s, NumberStyles.Any, Culture, out x) ? x : default(uint);
-        }
-
-        private long ToLong(string s)
-        {
-            long x; return long.TryParse(s, NumberStyles.Any, Culture, out x) ? x : default(long);
-        }
-
-        private ulong ToUlong(string s)
-        {
-            ulong x; return ulong.TryParse(s, NumberStyles.Any, Culture, out x) ? x : default(ulong);
-        }
-
-        private float ToFloat(string s)
-        {
-            float x; return float.TryParse(s, NumberStyles.Any, Culture, out x) ? x : default(float);
-        }
-
-        private decimal ToDecimal(string s)
-        {
-            decimal x; return decimal.TryParse(s, NumberStyles.Any, Culture, out x) ? x : default(decimal);
-        }
-
-        private double ToDouble(string s)
-        {
-            double x; return double.TryParse(s, NumberStyles.Any, Culture, out x) ? x : default(double);
-        }
-
-        private DateTime ToDateTime(string s)
-        {
-            DateTime x; return DateTime.TryParse(s, Culture, DateTimeStyles.None, out x) ? x : default(DateTime);
-        }
-
-        private Guid ToGuid(string s)
-        {
-            Guid x; return Guid.TryParse(s, out x) ? x : default(Guid);
+            if (string.IsNullOrWhiteSpace(s)) return f.sys.defaultof(typeTo);
+            if (typeTo.IsEnum) return ToEnum(s, typeTo);
+            if (typeTo == typeof(string)) return s;
+            if (typeTo == typeof(byte[])) return CharsAsBytes(s);
+            if (typeTo == typeof(char[])) return s.ToCharArray();
+            if (typeTo == typeof(StringBuilder)) return new StringBuilder(s);
+            if (typeTo == typeof(bool) || typeTo == typeof(bool?)) return (s == "1" || s == "true" || s == "yes" || s == @"??");
+            if (typeTo == typeof(byte) || typeTo == typeof(byte?)) return ToByte(s);
+            if (typeTo == typeof(sbyte) || typeTo == typeof(sbyte?)) return ToSbyte(s);
+            if (typeTo == typeof(char) || typeTo == typeof(char?)) return ToChar(s);
+            if (typeTo == typeof(short) || typeTo == typeof(short?)) return ToShort(s);
+            if (typeTo == typeof(ushort) || typeTo == typeof(ushort?)) return ToUshort(s);
+            if (typeTo == typeof(int) || typeTo == typeof(int?)) return ToInt(s);
+            if (typeTo == typeof(uint) || typeTo == typeof(uint?)) return ToUint(s);
+            if (typeTo == typeof(long) || typeTo == typeof(long?)) return ToLong(s);
+            if (typeTo == typeof(ulong) || typeTo == typeof(ulong?)) return ToUlong(s);
+            if (typeTo == typeof(float) || typeTo == typeof(float?)) return ToFloat(s);
+            if (typeTo == typeof(decimal) || typeTo == typeof(decimal?)) return ToDecimal(s);
+            if (typeTo == typeof(double) || typeTo == typeof(double?)) return ToDouble(s);
+            if (typeTo == typeof(DateTime) || typeTo == typeof(DateTime?)) return ToDateTime(s);
+            if (typeTo == typeof(Guid) || typeTo == typeof(Guid?)) return ToGuid(s);
+            Bin.Is(System.Convert.FromBase64String(s));
+            return Bin.As(typeTo);
         }
 
         private object ToEnum(string s, Type enumType)
@@ -266,5 +151,20 @@ namespace Jetproger.Tools.Convert.Converts
                 return Activator.CreateInstance(enumType);
             }
         }
+
+        private byte ToByte(string s) { return byte.TryParse(s, NumberStyles.Any, Culture, out var x) ? x : default(byte); }
+        private sbyte ToSbyte(string s) { return sbyte.TryParse(s, NumberStyles.Any, Culture, out var x) ? x : default(sbyte); }
+        private char ToChar(string s) { return char.TryParse(s, out var x) ? x : default(char); }
+        private short ToShort(string s) { return short.TryParse(s, NumberStyles.Any, Culture, out var x) ? x : default(short); }
+        private ushort ToUshort(string s) { return ushort.TryParse(s, NumberStyles.Any, Culture, out var x) ? x : default(ushort); }
+        private int ToInt(string s) { return int.TryParse(s, NumberStyles.Any, Culture, out var x) ? x : default(int); }
+        private uint ToUint(string s) { return uint.TryParse(s, NumberStyles.Any, Culture, out var x) ? x : default(uint); }
+        private long ToLong(string s) { return long.TryParse(s, NumberStyles.Any, Culture, out var x) ? x : default(long); }
+        private ulong ToUlong(string s) { return ulong.TryParse(s, NumberStyles.Any, Culture, out var x) ? x : default(ulong); }
+        private float ToFloat(string s) { return float.TryParse(s, NumberStyles.Any, Culture, out var x) ? x : default(float); }
+        private decimal ToDecimal(string s) { return decimal.TryParse(s, NumberStyles.Any, Culture, out var x) ? x : default(decimal); }
+        private double ToDouble(string s) { return double.TryParse(s, NumberStyles.Any, Culture, out var x) ? x : default(double); }
+        private DateTime ToDateTime(string s) { return DateTime.TryParse(s, Culture, DateTimeStyles.None, out var x) ? x : default(DateTime); }
+        private Guid ToGuid(string s) { return Guid.TryParse(s, out var x) ? x : default(Guid); }
     }
 }

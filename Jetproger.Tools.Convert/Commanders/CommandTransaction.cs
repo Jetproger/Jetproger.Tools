@@ -1,4 +1,5 @@
 ﻿using Jetproger.Tools.Convert.Commands;
+using Jetproger.Tools.Convert.Converts;
 
 namespace Jetproger.Tools.Convert.Commanders
 {
@@ -7,19 +8,18 @@ namespace Jetproger.Tools.Convert.Commanders
         public CommandResponse Response { get; private set; }
         public CommandRequest Request { get; private set; } 
         public ICommand Command { get; private set; }
+        private int _expirationCounter = 0;
 
-        public CommandTransaction(ICommand command, CommandRequest request)
+        public CommandTransaction(CommandRequest request)
         {
-            Response = new CommandResponse { Session = request.Session };
             Request = request;
-            Command = command;
+            Command = request.As<ICommand>();
+            Response = new CommandResponse { Session = request.Session };
         }
 
-        private int _expirationCounter = 0;
-        public bool IsExpiration()
+        public bool IsExpired()
         {
-            if (Command.State == ECommandState.Completed) _expirationCounter++;
-            return _expirationCounter > 9;
+            _expirationCounter = Command.State == ECommandState.Completed ? _expirationCounter + 1 : _expirationCounter; return _expirationCounter > 9;
         }
     }
 }

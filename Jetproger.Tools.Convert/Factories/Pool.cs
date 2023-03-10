@@ -2,7 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
+using Jetproger.Tools.Convert.Bases;
 
 namespace Jetproger.Tools.Convert.Factories
 {
@@ -15,61 +15,41 @@ namespace Jetproger.Tools.Convert.Factories
             Pool.Add(value);
         }
 
-        public static T GetSet(FuncWrapper creator)
-        {
-            T value;
-            return Get(out value) ? value : (T)creator.Execute();
-        }
-
         public static T Get()
         {
-            T value;
-            return Get(out value) ? value : default(T);
+            return Pool.TryTake(out var value) ? value : f.sys.defaultof<T>();
         }
 
-        private static bool Get(out T value)
+        public static T GetSet(SimpleCreator creator)
         {
-            value = default(T);
-            var counter = 0;
-            while (true)
-            {
-                if (counter++ > 3) break;
-                if (Pool.TryTake(out value)) return true;
-                Thread.Sleep(999);
-            }
-            return false;
+            return Pool.TryTake(out var value) ? value : (T)creator.Create();
         }
     }
 
     public static class PoolExtensions
     {
-        private static readonly ConcurrentDictionary<Type, MethodInfo> GetMethods = new ConcurrentDictionary<Type, MethodInfo>();
+        private static MethodInfo _M(Type type, string name) { return type.GetMethods(BindingFlags.Static | BindingFlags.Public).FirstOrDefault(x => x.Name == name); }
+        
+        private static Type _T(Type type) { return GenericTypes.GetOrAdd(type, x => typeof(PoolExtensions<>).MakeGenericType(x)); }
+        private static readonly ConcurrentDictionary<Type, Type> GenericTypes = new ConcurrentDictionary<Type, Type>();
 
+        private static readonly ConcurrentDictionary<Type, MethodInfo> GetSetMethods = new ConcurrentDictionary<Type, MethodInfo>();
+        private static readonly ConcurrentDictionary<Type, MethodInfo> GetMethods = new ConcurrentDictionary<Type, MethodInfo>();
         private static readonly ConcurrentDictionary<Type, MethodInfo> SetMethods = new ConcurrentDictionary<Type, MethodInfo>();
 
-        public static object GetSet(Type type, FuncWrapper creator)
+        public static void Set(Type type, object value)
         {
-            return GetMethods.GetOrAdd(GenericOf(type), x => FindMethod(x, "GetSet"))?.Invoke(null, new[] { creator as object });
+            SetMethods.GetOrAdd(_T(type), x => _M(x, "Set"))?.Invoke(null, new object[] { value });
         }
 
         public static object Get(Type type)
         {
-            return GetMethods.GetOrAdd(GenericOf(type), x => FindMethod(x, "Get"))?.Invoke(null, new object[0]);
+            return GetMethods.GetOrAdd(_T(type), x => _M(x, "Get"))?.Invoke(null, new object[0]);
         }
 
-        public static void Set(Type type, object value)
+        public static object GetSet(Type type, SimpleCreator creator)
         {
-            SetMethods.GetOrAdd(GenericOf(type), x => FindMethod(x, "Set"))?.Invoke(null, new[] { value });
-        }
-
-        private static MethodInfo FindMethod(Type type, string name)
-        { 
-            return type.GetMethods(BindingFlags.Static | BindingFlags.Public).FirstOrDefault(x => x.Name == name);
-        }
-
-        private static Type GenericOf(Type type)
-        {
-            return typeof(PoolExtensions<>).MakeGenericType(type);
+            return GetSetMethods.GetOrAdd(_T(type), x => _M(x, "GetSet"))?.Invoke(null, new object[] { creator });
         }
     }
 }

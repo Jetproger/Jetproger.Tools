@@ -1,45 +1,50 @@
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using Jetproger.Tools.Convert.Converts;
 
 namespace Jetproger.Tools.Convert.Settings
 {
     public class SettingCache
     {
-        private readonly ConcurrentDictionary<string, setting> _cache = new ConcurrentDictionary<string, setting>();
+        private readonly ConcurrentDictionary<string, _Setting> _cache = new ConcurrentDictionary<string, _Setting>();
 
-        public void Set(string key, object value)
+        public void SetValue(string key, object value)
         {
-            var setting = new setting(value.As<string>(), true);
-            _cache.AddOrUpdate(key, x => setting, (x, y) => setting);
+            _cache.AddOrUpdate(normof(key), x => new _Setting(value.As<string>(), true), (x, y) => new _Setting(value.As<string>(), true));
         }
 
-        public bool Is(string key, string defaultValue)
+        public bool IsDeclared(string key, string defaultValue)
         {
-            return GetSetting(key, defaultValue).is_declared;
+            return GetSetting(key, defaultValue).IsDeclared;
         }
 
-        public string Get(string key, string defaultValue)
+        public string GetValue(string key, string defaultValue)
         {
-            return GetSetting(key, defaultValue).value;
+            return GetSetting(key, defaultValue).Value;
         }
 
-        private setting GetSetting(string key, string defaultValue)
+        private _Setting GetSetting(string key, string defaultValue)
         {
-            var setting = new setting(defaultValue, false);
-            setting = _cache.GetOrAdd(key, x => setting);
-            return setting;
+            return _cache.GetOrAdd(normof(key), x => new _Setting(defaultValue, false));
         }
 
-        private class setting
+        private static string normof(string key)
         {
-            public readonly bool is_declared;
-            public readonly string value;
-            public setting(string value, bool is_declared)
+            return (key ?? string.Empty).ToLower().Trim(' ', '\n', '\r', 't');
+        }
+
+        #region inner types
+
+        private class _Setting
+        {
+            public readonly bool IsDeclared;
+            public readonly string Value;
+            public _Setting(string value, bool isDeclared)
             {
-                this.is_declared = is_declared;
-                this.value = value;
+                IsDeclared = isDeclared;
+                Value = value;
             }
         }
+
+        #endregion
     }
 }

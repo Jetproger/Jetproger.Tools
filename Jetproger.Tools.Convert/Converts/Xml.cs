@@ -13,62 +13,7 @@ namespace Jetproger.Tools.Convert.Converts
 {
     public static class XmlExtensions
     {
-        private static readonly XmlConverter Converter = t<XmlConverter>.one();
-
-        public static string of(this f.IXmlExpander e, object value, XmlConverter converter = null)
-        {
-            return (converter ?? Converter).SerializeToString(value);
-        }
-
-        public static TResult of<TResult>(this f.IXmlExpander e, object value, XmlConverter converter = null)
-        {
-            var type = typeof(TResult);
-            converter = converter ?? Converter;
-            if (type == typeof(string)) return (TResult)(object)converter.SerializeToString(value);
-            if (type == typeof(byte[])) return (TResult)(object)converter.SerializeToBytes(value);
-            throw new XmlConverterInvalidResultTypeException();
-        }
-
-        public static TResult of<TResult, TConverter>(this f.IXmlExpander e, object value) where TConverter : XmlConverter
-        {
-            var type = typeof(TResult);
-            var converter = f.sys.valueof<TConverter>();
-            if (type == typeof(string)) return (TResult)(object)converter.SerializeToString(value);
-            if (type == typeof(byte[])) return (TResult)(object)converter.SerializeToBytes(value);
-            throw new XmlConverterInvalidResultTypeException();
-        }
-
-        public static object to(this f.IXmlExpander e, string s, Type type, XmlConverter converter = null)
-        {
-            return (converter ?? Converter).Deserialize(s, type);
-        }
-
-        public static TResult to<TResult>(this f.IXmlExpander e, string s, XmlConverter converter = null)
-        {
-            return (TResult)(converter ?? Converter).Deserialize(s, typeof(TResult));
-        }
-
-        public static TResult to<TResult, TConverter>(this f.IXmlExpander e, string s) where TConverter : XmlConverter
-        {
-            return (TResult)f.sys.valueof<TConverter>().Deserialize(s, typeof(TResult));
-        }
-
-        public static object to(this f.IXmlExpander e, byte[] bytes, Type type, XmlConverter converter = null)
-        {
-            return (converter ?? Converter).Deserialize(bytes, type);
-        }
-
-        public static TResult to<TResult>(this f.IXmlExpander e, byte[] bytes, XmlConverter converter = null)
-        {
-            return (TResult)(converter ?? Converter).Deserialize(bytes, typeof(TResult));
-        }
-
-        public static TResult to<TResult, TConverter>(this f.IXmlExpander e, byte[] bytes) where TConverter : XmlConverter
-        {
-            return (TResult)f.sys.valueof<TConverter>().Deserialize(bytes, typeof(TResult));
-        }
-
-        public static string op(this f.IXmlExpander e, string xml, string xslt)
+        public static string xsltof(this f.IXmlExpander e, string xslt, string xml)
         {
             using (var sw = new StringWriter())
             {
@@ -89,7 +34,7 @@ namespace Jetproger.Tools.Convert.Converts
             }
         }
 
-        public static string ValidateXml(this f.IXmlExpander e, string xml, string xsd)
+        public static string isxsd(this f.IXmlExpander e, string xsd, string xml)
         {
             var error = new StringBuilder();
             var doc = new XmlDocument();
@@ -194,7 +139,7 @@ namespace Jetproger.Tools.Convert.Converts
             if (value == null || value == DBNull.Value) return null;
             var doc = root.OwnerDocument ?? (XmlDocument)root;
             var node = doc.CreateNode(XmlNodeType.Element, name, namespaceUri);
-            node.InnerText = f.str.of(value);
+            node.InnerText = value.As<string>();
             root.AppendChild(node);
             return node;
         }
@@ -204,7 +149,7 @@ namespace Jetproger.Tools.Convert.Converts
             if (value == null || value == DBNull.Value) return null;
             var doc = root.OwnerDocument ?? (XmlDocument)root;
             var attr = doc.CreateAttribute(name);
-            attr.InnerText = f.str.of(value);
+            attr.InnerText = value.As<string>();
             root.Attributes?.Append(attr);
             return root;
         }
@@ -246,16 +191,30 @@ namespace Jetproger.Tools.Convert.Converts
         }
     }
 
-    public class KizXmlConverter : XmlConverter
+    public class KizXml : Converter
     {
-        public override string SerializeToString(object value)
-        {
-            return Encoding.UTF8.GetString(SerializeToBytes(value));
-        }
+        private static readonly IConverter Sql = new SqlConverter();
+        protected override object CharsAsValue(string chars, Type typeTo) { return BytesAsValue(!string.IsNullOrWhiteSpace(chars) ? Encoder.GetBytes(chars) : new byte[0], typeTo); }
+        protected override string ValueAsChars(object value) { return Encoder.GetString(ValueAsBytes(value)); }
+        
+        public KizXml(Encoding encoder = null) { Encoder = encoder ?? base.Encoder; }
+        protected override Encoding Encoder { get; }
 
-        public override byte[] SerializeToBytes(object value)
+        protected override byte[] ValueAsBytes(object value)
         {
-            if (value == null)  return null;
+            if (value == null)
+            {
+                return null;
+            }
+            if (value is DataSet || value is DataTable)
+            {
+                Sql.Is(value);
+                return (byte[])Sql.As(typeof(byte[]));
+            }
+            if (value is XmlDocument doc)
+            {
+                return Encoder.GetBytes(doc.InnerXml);
+            }
             using (var ms = new MemoryStream())
             {
                 var ns = new XmlSerializerNamespaces();
@@ -274,17 +233,26 @@ namespace Jetproger.Tools.Convert.Converts
             }
         }
 
-        public override object Deserialize(string xml, Type type)
+        protected override object BytesAsValue(byte[] bytes, Type typeTo)
         {
-            return !string.IsNullOrWhiteSpace(xml) ? Deserialize(Encoding.UTF8.GetBytes(xml), type) : Deserialize(new byte[0], type);
-        }
-
-        public override object Deserialize(byte[] bytes, Type type)
-        {
-            if (bytes == null || bytes.Length == 0) return f.sys.defaultof(type);
+            if (bytes == null || bytes.Length == 0)
+            {
+                return f.sys.defaultof(typeTo);
+            }
+            if (typeTo == typeof(DataSet) || typeTo == typeof(DataTable))
+            {
+                Sql.Is(bytes);
+                return Sql.As(typeTo);
+            }
+            if (typeTo == typeof(XmlDocument))
+            {
+                var doc = new XmlDocument();
+                doc.LoadXml(Encoder.GetString(bytes));
+                return doc;
+            }
             using (var ms = new MemoryStream(bytes))
             {
-                var xs = new XmlSerializer(type);
+                var xs = new XmlSerializer(typeTo);
                 var xtr = new XmlTextReader(new StreamReader(ms, Encoding.UTF8));
                 xtr.Namespaces = false;
                 var xrs = new XmlReaderSettings();
@@ -297,53 +265,66 @@ namespace Jetproger.Tools.Convert.Converts
         }
     }
 
-    public class XmlConverter
+    public class SimpleXml : Converter
     {
         private static readonly string ByteOrderMarkUtf8 = Encoding.UTF8.GetString(Encoding.UTF8.GetPreamble());
+        private static readonly IConverter Sql = new SqlConverter();
+        protected override object CharsAsValue(string chars, Type typeTo) { return BytesAsValue(!string.IsNullOrWhiteSpace(chars) ? Encoder.GetBytes(chars) : new byte[0], typeTo); }
+        protected override string ValueAsChars(object value) { return Encoder.GetString(ValueAsBytes(value)).Remove(0, ByteOrderMarkUtf8.Length); }
+        
+        public SimpleXml(Encoding encoder = null) { Encoder = encoder ?? base.Encoder; }
+        protected override Encoding Encoder { get; }
 
-        public virtual string SerializeToString(object o)
+        protected override byte[] ValueAsBytes(object value)
         {
-            return Encoding.UTF8.GetString(SerializeToBytes(o)).Remove(0, ByteOrderMarkUtf8.Length);
-        }
-
-        public virtual byte[] SerializeToBytes(object o)
-        {
-            if (o == null) return null;
-            var ds = o as DataSet;
-            if (ds != null) return SerializeDataSet(ds);
-            var dt = o as DataTable;
-            if (dt != null) return SerializeDataTable(dt);
+            if (value == null)
+            {
+                return null;
+            }
+            if (value is DataSet || value is DataTable)
+            {
+                Sql.Is(value);
+                return (byte[])Sql.As(typeof(byte[]));
+            }
+            if (value is XmlDocument doc)
+            {
+                return Encoder.GetBytes(doc.InnerXml);
+            }
             using (var ms = new MemoryStream())
             {
                 var ns = new XmlSerializerNamespaces(new[] { XmlQualifiedName.Empty });
-                var xs = new XmlSerializer(o.GetType());
+                var xs = new XmlSerializer(value.GetType());
                 var xtw = new NoDeclarationXmlTextWriter(ms, Encoding.UTF8);
                 xtw.Formatting = Formatting.None;
                 xtw.Namespaces = true;
                 var xws = new XmlWriterSettings();
                 xws.OmitXmlDeclaration = true;
                 var xw = XmlWriter.Create(xtw, xws);
-                xs.Serialize(xw, o, ns);
+                xs.Serialize(xw, value, ns);
                 return ms.ToArray();
             }
         }
 
-        public virtual object Deserialize(string xml, Type type)
+        protected override object BytesAsValue(byte[] bytes, Type typeTo)
         {
-            if (string.IsNullOrWhiteSpace(xml)) return null;
-            if (type == typeof(DataSet)) return DeserializeDataSet(xml);
-            if (type == typeof(DataTable)) return DeserializeDataTable(xml);
-            return !string.IsNullOrWhiteSpace(xml) ? Deserialize(Encoding.UTF8.GetBytes(xml), type) : Deserialize(new byte[0], type);
-        }
-
-        public virtual object Deserialize(byte[] bytes, Type type)
-        {
-            if (bytes == null || bytes.Length == 0) return null;
-            if (type == typeof(DataSet)) return DeserializeDataSet(bytes);
-            if (type == typeof(DataTable)) return DeserializeDataTable(bytes);
+            if (bytes == null || bytes.Length == 0)
+            {
+                return f.sys.defaultof(typeTo);
+            }
+            if (typeTo == typeof(DataSet) || typeTo == typeof(DataTable))
+            {
+                Sql.Is(bytes);
+                return Sql.As(typeTo);
+            }
+            if (typeTo == typeof(XmlDocument))
+            {
+                var doc = new XmlDocument();
+                doc.LoadXml(Encoder.GetString(bytes));
+                return doc;
+            }
             using (var ms = new MemoryStream(bytes))
             {
-                var xs = new XmlSerializer(type);
+                var xs = new XmlSerializer(typeTo);
                 var xtr = new NoDeclarationXmlTextReader(ms, Encoding.UTF8);
                 xtr.Namespaces = false;
                 var xrs = new XmlReaderSettings();
@@ -352,73 +333,6 @@ namespace Jetproger.Tools.Convert.Converts
                 xrs.IgnoreWhitespace = true;
                 var xr = XmlReader.Create(xtr, xrs);
                 return xs.Deserialize(xr);
-            }
-        }
-
-        private byte[] SerializeDataTable(DataTable dt)
-        {
-            if (dt == null) return null;
-            var ds = new DataSet { EnforceConstraints = false };
-            ds.Tables.Add(dt);
-            return SerializeDataSet(ds);
-        }
-
-        private byte[] SerializeDataSet(DataSet ds)
-        {
-            if (ds == null) return null;
-            using (var ms = new MemoryStream())
-            {
-                var xtw = new NoDeclarationXmlTextWriter(ms, Encoding.UTF8);
-                xtw.Formatting = Formatting.None;
-                xtw.Namespaces = true;
-                var xws = new XmlWriterSettings();
-                xws.OmitXmlDeclaration = true;
-                var xw = XmlWriter.Create(xtw, xws);
-                ds.WriteXml(xw, XmlWriteMode.WriteSchema);
-                return ms.ToArray();
-            }
-        }
-
-        private DataTable DeserializeDataTable(byte[] bytes)
-        {
-            if (bytes == null || bytes.Length == 0) return null;
-            var ds = DeserializeDataSet(bytes);
-            return ds.Tables.Count > 0 ? ds.Tables[0] : null;
-        }
-
-        private DataSet DeserializeDataSet(byte[] bytes)
-        {
-            if (bytes == null || bytes.Length == 0) return null;
-            using (var ms = new MemoryStream(bytes))
-            {
-                var xtr = new NoDeclarationXmlTextReader(ms, Encoding.UTF8);
-                xtr.Namespaces = false;
-                var xrs = new XmlReaderSettings();
-                xrs.IgnoreComments = true;
-                xrs.IgnoreProcessingInstructions = true;
-                xrs.IgnoreWhitespace = true;
-                var xr = XmlReader.Create(xtr, xrs);
-                var ds = new DataSet { EnforceConstraints = false };
-                ds.ReadXml(xr, XmlReadMode.ReadSchema);
-                return ds;
-            }
-        }
-
-        private DataTable DeserializeDataTable(string xml)
-        {
-            if (string.IsNullOrWhiteSpace(xml)) return null;
-            var ds = DeserializeDataSet(xml);
-            return ds.Tables.Count > 0 ? ds.Tables[0] : null;
-        }
-
-        private DataSet DeserializeDataSet(string xml)
-        {
-            if (string.IsNullOrWhiteSpace(xml)) return null;
-            using (var sr = new StringReader(xml))
-            {
-                var ds = new DataSet { EnforceConstraints = false };
-                ds.ReadXml(sr);
-                return ds;
             }
         }
 
@@ -437,9 +351,5 @@ namespace Jetproger.Tools.Convert.Converts
             public NoDeclarationXmlTextReader(Stream r, Encoding encoding) : base(new StreamReader(r, encoding)) { }
             public NoDeclarationXmlTextReader(TextReader r) : base(r) { }
         }
-    }
-    public class XmlConverterInvalidResultTypeException : Exception
-    {
-        public XmlConverterInvalidResultTypeException() : base(@"The return type must be System.String or System.Byte[]") { }
     }
 }

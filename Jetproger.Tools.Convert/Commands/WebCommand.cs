@@ -76,7 +76,7 @@ namespace Jetproger.Tools.Convert.Commands
         {
             var state = new WebStreams();
             state.Request = CreateRequest();
-            state.StreamReader = Value.As<MemoryStream>(f.web.WebEncoding);
+            state.StreamReader = Value.As<NewtonsoftJson>(f.web.WebEncoding).As<MemoryStream>();
             if (state.StreamReader.Length == 0)
             {
                 BeginGetResponse(state);
@@ -127,7 +127,7 @@ namespace Jetproger.Tools.Convert.Commands
         {
             var read = state.StreamReader.EndRead(ar);
             if (read > 0) state.StreamWriter.BeginWrite(state.Buffer, 0, read, __EndWriteMemory, state);
-            else CommandThreads.Run(() => Completing(state));
+            else f.sys.threadof(() => Completing(state));
         }
 
         private void EndWriteMemory(IAsyncResult ar, WebStreams state)
@@ -142,14 +142,14 @@ namespace Jetproger.Tools.Convert.Commands
             try
             {
                 var ms = state.StreamWriter as MemoryStream;
-                var result = ms != null ? ms.As<TResult>(f.web.WebEncoding) : default(TResult);
+                var result = ms != null ? ms.As<NewtonsoftJson>(f.web.WebEncoding).As<TResult>() : default(TResult);
                 state.Dispose();
                 Result = result;
             }
             catch (Exception e)
             {
                 state.Dispose();
-                Error = ExceptioAsCommandException(e);
+                Error = e;
             }
         }
 
@@ -168,7 +168,7 @@ namespace Jetproger.Tools.Convert.Commands
                 request.PreAuthenticate = true;
                 request.Credentials = new NetworkCredential(NetworkCredentialUser, NetworkCredentialPassword);
             }
-            request.Proxy = f.web.GetProxy(Url);
+            request.Proxy = f.web.ProxyOf(Url);
             return request;
         }
 
@@ -179,7 +179,18 @@ namespace Jetproger.Tools.Convert.Commands
 
         public void AddHeader(HttpRequestHeader header, string value)
         {
+            var i = HeaderIndexOf(header);
+            if (i > -1 && i < _httpRequestHeaders.Count) _httpRequestHeaders.RemoveAt(i);
             _httpRequestHeaders.Add(new HttpRequestHeaderValue(header, value));
+        }
+
+        private int HeaderIndexOf(HttpRequestHeader header)
+        {
+            for (int i = 0; i < _httpRequestHeaders.Count; i++)
+            {
+                if (_httpRequestHeaders[i].Header == header) return i;
+            }
+            return -1;
         }
 
         public void AddUrl(string partUrl)
@@ -191,7 +202,8 @@ namespace Jetproger.Tools.Convert.Commands
         {
             foreach (var item in _httpRequestHeaders)
             {
-                switch (item.Header) {
+                switch (item.Header)
+                {
                     case HttpRequestHeader.ContentLength: request.ContentLength = item.Value.As<long>(); break;
                     case HttpRequestHeader.Connection: request.ConnectionGroupName = item.Value; break;
                     case HttpRequestHeader.ContentType: request.ContentType = item.Value; break;
@@ -201,7 +213,7 @@ namespace Jetproger.Tools.Convert.Commands
             }
         }
 
-        #region Exceptions
+        #region exceptions
 
         private void __BeginGetRequestStream()
         {
@@ -213,7 +225,7 @@ namespace Jetproger.Tools.Convert.Commands
             catch (Exception e)
             {
                 if (state != null) state.Dispose();
-                Error = ExceptioAsCommandException(e);
+                Error = e;
             }
         }
 
@@ -228,7 +240,7 @@ namespace Jetproger.Tools.Convert.Commands
             catch (Exception e)
             {
                 if (state != null) state.Dispose();
-                Error = ExceptioAsCommandException(e);
+                Error = e;
             }
         }
 
@@ -243,7 +255,7 @@ namespace Jetproger.Tools.Convert.Commands
             catch (Exception e)
             {
                 if (state != null) state.Dispose();
-                Error = ExceptioAsCommandException(e);
+                Error = e;
             }
         }
 
@@ -258,7 +270,7 @@ namespace Jetproger.Tools.Convert.Commands
             catch (Exception e)
             {
                 if (state != null) state.Dispose();
-                Error = ExceptioAsCommandException(e);
+                Error = e;
             }
         }
 
@@ -273,7 +285,7 @@ namespace Jetproger.Tools.Convert.Commands
             catch (Exception e)
             {
                 if (state != null) state.Dispose();
-                Error = ExceptioAsCommandException(e);
+                Error = e;
             }
         }
 
@@ -288,7 +300,7 @@ namespace Jetproger.Tools.Convert.Commands
             catch (Exception e)
             {
                 if (state != null) state.Dispose();
-                Error = ExceptioAsCommandException(e);
+                Error = e;
             }
         }
 
@@ -303,18 +315,11 @@ namespace Jetproger.Tools.Convert.Commands
             catch (Exception e)
             {
                 if (state != null) state.Dispose();
-                Error = ExceptioAsCommandException(e);
+                Error = e;
             }
         }
 
-        #endregion 
-
-        private CommandException ExceptioAsCommandException(Exception e)
-        {
-            var ce = new CommandException(e);
-            Status = ce.Status;
-            return ce;
-        }
+        #endregion
 
         private class HttpRequestHeaderValue
         {

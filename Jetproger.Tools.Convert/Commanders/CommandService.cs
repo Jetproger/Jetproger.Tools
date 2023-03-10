@@ -17,7 +17,7 @@ namespace Jetproger.Tools.Convert.Commanders
 
         public CommandService()
         {
-            ServiceName = k<AppServiceName>.key;
+            ServiceName = k<AppServiceName>.As<string>();
         }
 
         public void Start()
@@ -36,14 +36,14 @@ namespace Jetproger.Tools.Convert.Commanders
             {
                 if (_server != null) return;
                 //GTINNlogTracer.Run();
-                f.err.Guard<AppPortNotSpecifiedException>(string.IsNullOrWhiteSpace(k<AppPort>.key));
+                f.err<AppPortNotSpecifiedException>(string.IsNullOrWhiteSpace(k<AppPort>.As<string>()));
                 var hostName = GetHostName();
                 var config = new HttpSelfHostConfiguration(hostName)
                 {
                     MaxReceivedMessageSize = int.MaxValue,
                     MaxBufferSize = int.MaxValue
                 };
-                var hostNameComparisonMode = (HostNameComparisonMode)k<AppHostNameComparisonMode>.key.As<int>();
+                var hostNameComparisonMode = (HostNameComparisonMode)k<AppHostNameComparisonMode>.As<int>();
                 config.HostNameComparisonMode = hostNameComparisonMode;
                 config.Routes.MapHttpRoute(
                     name: "cmd",
@@ -52,14 +52,14 @@ namespace Jetproger.Tools.Convert.Commanders
                 );
                 _server = new HttpSelfHostServer(config);
                 var task = _server.OpenAsync();
-                f.log.To("Service start");
-                f.log.To($"Service listening: {hostName}");
+                f.log("Service start");
+                f.log($"Service listening: {hostName}");
                 Task.WaitAll(task);
             }
             catch (Exception e)
             {
-                f.log.To("Error start service");
-                f.log.To(e);
+                f.log("Error start service");
+                f.log(e);
             }
         }
 
@@ -71,8 +71,8 @@ namespace Jetproger.Tools.Convert.Commanders
         private static string GetHostName()
         {
             var cert = f.cry.App;
-            string host = k<AppHost>.key;
-            return cert != null ? $"https://{host}:{k<AppPort>.key.As<int>()}" : $"http://{host}:{k<AppPort>.key.As<int>()}";
+            string host = k<AppHost>.As<string>();
+            return cert != null ? $"https://{host}:{k<AppPort>.As<int>()}" : $"http://{host}:{k<AppPort>.As<int>()}";
         }
     }
 }

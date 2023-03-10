@@ -19,7 +19,7 @@ namespace Jetproger.Tools.Process.Bases
         private static readonly JsonSerializer JsonSerializer = new JsonSerializer { Formatting = Formatting.None, ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.Objects };
         private static readonly CultureInfo FormatProvider = new CultureInfo("en-us") { NumberFormat = { NumberGroupSeparator = string.Empty, NumberDecimalSeparator = "." }, DateTimeFormat = { DateSeparator = "-", TimeSeparator = ":" } };
 
-        private static Dictionary<string, string> ConfigKeys => f.one.Get(ConfigKeysHolder, GetConfigurationKeys);
+        private static Dictionary<string, string> ConfigKeys => f.one.of(ConfigKeysHolder, GetConfigurationKeys);
         private static readonly Dictionary<string, string>[] ConfigKeysHolder = { null };
 
         public static string ConfigAsString(string key, string defaultValue)
@@ -64,7 +64,7 @@ namespace Jetproger.Tools.Process.Bases
             if (e is CommunicationObjectAbortedException) return default(T);
             if (e is CommunicationException) return default(T);
             System.Diagnostics.Trace.WriteLine(e.As<string>());
-            return f.sys.IsTypeOf(typeof(T), typeof(Exception)) ? (T)(object)e : default(T);
+            return f.sys.isof(typeof(T), typeof(Exception)) ? (T)(object)e : default(T);
         }
 
         public static void GarbageCollect()

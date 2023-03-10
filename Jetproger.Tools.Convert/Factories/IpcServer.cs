@@ -18,7 +18,7 @@ namespace Jetproger.Tools.Convert.Factories
             return null;
         }
 
-        public object OfToOne(Type type, FuncWrapper creator)
+        public object OfToOne(Type type, SimpleCreator creator)
         {
             return OneExtensions.GetSet(type, creator);
         }
@@ -33,7 +33,7 @@ namespace Jetproger.Tools.Convert.Factories
             OneExtensions.Set(type, value);
         }
 
-        public object OfToPool(Type type, FuncWrapper creator)
+        public object OfToPool(Type type, SimpleCreator creator)
         {
             return PoolExtensions.GetSet(type, creator);
         }
@@ -48,7 +48,7 @@ namespace Jetproger.Tools.Convert.Factories
             PoolExtensions.Set(type, value);
         }
 
-        public object OfToStore(Type keyType, Type valueType, object key, FuncArgWrapper creator)
+        public object OfToStore(Type keyType, Type valueType, object key, ParameterizedCreator creator)
         {
             return StoreExtensions.GetSet(keyType, valueType, key, creator);
         }

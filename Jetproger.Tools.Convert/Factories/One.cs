@@ -10,58 +10,53 @@ namespace Jetproger.Tools.Convert.Factories
     {
         private static readonly T[] Holder = { null };
 
-        public static T GetSet(FuncWrapper creator)
+        public static void Set(T value)
         {
-            var value = Get();
-            if (value != null) return value;
-            value = (T)creator.Execute();
-            Set(value);
-            return value;
+            f.one.to(Holder, value);
         }
 
         public static T Get()
         {
-            return OneExtensions.Get(null, Holder);
+            return f.one.of(Holder);
         }
 
-        public static void Set(T value)
+        public static T GetSet(SimpleCreator creator)
         {
-            OneExtensions.Set(null, Holder, value);
+            var value = Get();
+            if (value != null) return value;
+            Set((T)creator.Create());
+            return Get();
         }
     }
 
     public static class OneExtensions
     {
+        private static MethodInfo _M(Type type, string name) { return type.GetMethods(BindingFlags.Static | BindingFlags.Public).FirstOrDefault(x => x.Name == name); }
+        private static Type _T(Type type) { return GenericTypes.GetOrAdd(type, x => typeof(OneExtensions<>).MakeGenericType(x)); }
+        private static readonly ConcurrentDictionary<Type, MethodInfo> GetSetMethods = new ConcurrentDictionary<Type, MethodInfo>();
         private static readonly ConcurrentDictionary<Type, MethodInfo> GetMethods = new ConcurrentDictionary<Type, MethodInfo>();
-
         private static readonly ConcurrentDictionary<Type, MethodInfo> SetMethods = new ConcurrentDictionary<Type, MethodInfo>();
+        private static readonly ConcurrentDictionary<Type, Type> GenericTypes = new ConcurrentDictionary<Type, Type>();
 
-        public static object GetSet(Type type, FuncWrapper creator)
+        public static void Set(Type type, object value)
         {
-            return GetMethods.GetOrAdd(GenericOf(type), x => FindMethod(x, "GetSet"))?.Invoke(null, new[] { creator as object });
+            SetMethods.GetOrAdd(_T(type), x => _M(x, "Set"))?.Invoke(null, new object[] { value });
         }
 
         public static object Get(Type type)
         {
-            return GetMethods.GetOrAdd(GenericOf(type), x => FindMethod(x, "Get"))?.Invoke(null, new object[0]);
+            return GetMethods.GetOrAdd(_T(type), x => _M(x, "Get"))?.Invoke(null, new object[0]);
         }
 
-        public static void Set(Type type, object value)
+        public static object GetSet(Type type, SimpleCreator creator)
         {
-            SetMethods.GetOrAdd(GenericOf(type), x => FindMethod(x, "Set"))?.Invoke(null, new[] { value });
+            return GetSetMethods.GetOrAdd(_T(type), x => _M(x, "GetSet"))?.Invoke(null, new object[] { creator });
         }
+    }
 
-        private static MethodInfo FindMethod(Type type, string name)
-        { 
-            return type.GetMethods(BindingFlags.Static | BindingFlags.Public).FirstOrDefault(x => x.Name == name);
-        }
-
-        private static Type GenericOf(Type type)
-        {
-            return typeof(OneExtensions<>).MakeGenericType(type);
-        }
-
-        public static T Get<T>(this f.IOneExpander e, T[] holder, Func<T> factory) where T : class
+    public static class OneMethods
+    { 
+        public static T of<T>(this f.IOneExpander e, T[] holder, Func<T> factory) where T : class
         {
             if (holder[0] == null)
             {
@@ -73,7 +68,7 @@ namespace Jetproger.Tools.Convert.Factories
             return holder[0];
         }
 
-        public static T Get<T>(this f.IOneExpander e, T?[] holder, Func<T> factory) where T : struct
+        public static T of<T>(this f.IOneExpander e, T?[] holder, Func<T> factory) where T : struct
         {
             if (holder[0] == null)
             {
@@ -85,7 +80,7 @@ namespace Jetproger.Tools.Convert.Factories
             return (T) holder[0];
         }
 
-        public static T Get<T>(this f.IOneExpander e, T[] holder) where T : class
+        public static T of<T>(this f.IOneExpander e, T[] holder) where T : class
         {
             lock (holder)
             {
@@ -93,7 +88,7 @@ namespace Jetproger.Tools.Convert.Factories
             }
         }
 
-        public static T Get<T>(this f.IOneExpander e, T?[] holder) where T : struct
+        public static T of<T>(this f.IOneExpander e, T?[] holder) where T : struct
         {
             lock (holder)
             {
@@ -101,7 +96,7 @@ namespace Jetproger.Tools.Convert.Factories
             }
         }
 
-        public static void Set<T>(this f.IOneExpander e, T[] holder, T value) where T : class
+        public static void to<T>(this f.IOneExpander e, T[] holder, T value) where T : class
         {
             lock (holder)
             {
@@ -109,32 +104,12 @@ namespace Jetproger.Tools.Convert.Factories
             }
         }
 
-        public static void Set<T>(this f.IOneExpander e, T?[] holder, T value) where T : struct
+        public static void to<T>(this f.IOneExpander e, T?[] holder, T value) where T : struct
         {
             lock (holder)
             {
                 holder[0] = value;
             }
-        }
-    }
-
-    [Serializable]
-    public class FuncWrapper
-    {
-        private Func<object> _func;
-
-        public FuncWrapper()
-        {
-        }
-
-        public FuncWrapper(Func<object> func)
-        {
-            _func = func;
-        }
-
-        public object Execute()
-        {
-            return _func();
         }
     }
 }

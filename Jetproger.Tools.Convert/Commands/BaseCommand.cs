@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
-using Jetproger.Tools.AppConfig;
 using Jetproger.Tools.Convert.Bases;
 using Jetproger.Tools.Convert.Commanders;
 using Jetproger.Tools.Convert.Converts;
@@ -11,15 +9,16 @@ using Jetproger.Tools.Convert.Factories;
 
 namespace Jetproger.Tools.Convert.Commands
 {
-    public abstract class AsyncCommand<TResult, TValue, TCommand> : Command<TResult, TValue> where TCommand : Command<TResult, TValue>
+    public sealed class AsyncCommand<TResult, TValue> : Command<TResult, TValue>
     {
+        private readonly Command<TResult, TValue> _command;
         private readonly ICommand _icommand;
-        private readonly TCommand _command;
 
-        protected AsyncCommand()
+        public AsyncCommand(Command<TResult, TValue> command)
         {
-            _command = (TCommand)Activator.CreateInstance(typeof(TCommand), this);
-            _icommand = _command;
+            if (command is AsyncCommand<TResult, TValue>) throw new ArgumentException("Argument [command] cannot be a type [AsyncCommand]", "command");
+            _command = command;
+            _icommand = command;
             _icommand.EndExecute += OnEndExecute;
         }
 
@@ -32,7 +31,7 @@ namespace Jetproger.Tools.Convert.Commands
         protected override void Execute()
         {
             _command.Value = Value;
-            CommandThreads.Run(_icommand.Execute);
+            f.sys.threadof(_icommand.Execute);
         }
     }
 
@@ -50,35 +49,45 @@ namespace Jetproger.Tools.Convert.Commands
 
     public class Command<TResult, TValue> : TraceListener, ICommand
     {
+        event Action ICommand.EndExecute { add { _endExecute += value; } remove { if (_endExecute != null) _endExecute -= value; } }
+        protected void Set<T>(T[] holder, T value) { lock (holder) { holder[0] = value; } }
+        protected T Get<T>(T[] holder) { lock (holder) { return holder[0]; } }
+        protected virtual void Execute() { Result = Value.As<TResult>(); }
         public Command(TValue value) : this() { Value = value; }
         public Command() { InterfaceCommand = this; }
         protected readonly ICommand InterfaceCommand;
-        event Action ICommand.EndExecute { add { _endExecute += value; } remove { if (_endExecute != null) _endExecute -= value; } }
         private Action _endExecute;
 
-        object ICommand.Value { get { return Value; } set { Value = value.As<TValue>(); } }
-        public TValue Value { get { return GetValue(); } set { SetValue(value); } }
+        ICommand ICommand.Precommand { get => Precommand; set => Precommand = value; }
+        public ICommand Precommand { get => GetPrecommand(); private set => SetPrecommand(value); }
+        protected virtual void SetPrecommand(ICommand precommand) { Set(_precommand, precommand); }
+        protected virtual ICommand GetPrecommand() { return Get(_precommand); }
+        private readonly ICommand[] _precommand = { null };
+
+        object ICommand.Value { get => Value;  set => Value = value.As<TValue>(); }
+        public TValue Value { get => GetValue(); set => SetValue(value); }
         protected virtual void SetValue(TValue value) { Set(_value, value); }
         protected virtual TValue GetValue() { return Get(_value); }
         private readonly TValue[] _value = { default(TValue) };
 
-        object ICommand.Result { get { return Result; } }
-        public TResult Result { get { return GetResult(); } protected set { SetResult(value); } }
+        object ICommand.Result => Result;
+        public TResult Result { get => GetResult(); protected set => SetResult(value); }
         protected virtual TResult GetResult() { return Get(_result); }
         private readonly TResult[] _result = { default(TResult) };
 
-        Exception ICommand.Error { get { return Error; } }
-        public Exception Error { get { return GetError(); } protected set { SetError(value); } }
+        Exception ICommand.Error => Error;
+        public Exception Error { get => GetError(); protected set => SetError(value); }
         protected virtual Exception GetError() { return Get(_error); }
+        public virtual void ErrorExecute(Exception e) { Error = e; }
         private readonly Exception[] _error = { null };
 
-        ECommandState ICommand.State { get { return State; } }
-        public ECommandState State { get { return GetState(); } protected set { SetState(value); } }
+        ECommandState ICommand.State => State;
+        public ECommandState State { get => GetState(); protected set => SetState(value); }
         protected virtual ECommandState GetState() { return Get(_state); }
         private readonly ECommandState[] _state = { ECommandState.None };
 
-        private List<CommandMessage> Messages { get { return f.one.Get(_ticketsHolder, () => new List<CommandMessage>()); } }
-        private void WriteLine(CommandMessage ticket) { lock (Messages) { Messages.Add(ticket); } }
+        private List<CommandMessage> Messages { get { return f.one.of(_ticketsHolder, () => new List<CommandMessage>()); } }
+        private void WriteLine(CommandMessage message) { lock (Messages) { Messages.Add(message); } }
         public override void WriteLine(string message) { WriteLine((object)message); }
         public override void Write(string message) { WriteLine((object)message); }
         public override void Write(object message) { WriteLine(message); }
@@ -88,12 +97,20 @@ namespace Jetproger.Tools.Convert.Commands
         public void AwaitExecute(TValue value) { Value = value; AwaitExecute(); }
         public void StartExecute() { InterfaceCommand.Execute(); }
 
+        public T PreByCommandType<T>() where T : class, ICommand { return f.cmd.precommandof<T>(this); }
+        public ICommand PreByResultType<T>() { return f.cmd.preresultof<T>(this); }
+        public ICommand PreByValueType<T>() { return f.cmd.prevalueof<T>(this); }
+        public ICommand PreByIndex(int i) { return f.cmd.preindexof(this, i); }
+        public ICommand PreFirst() { return f.cmd.prefirstof(this); }
+        public ICommand PreLast() { return f.cmd.prelastof(this); }
+
         public override void WriteLine(object message)
         {
-            if (message == null) return;
-            if (message is CommandMessage) WriteLine((CommandMessage)message);
+            if (message == null) { }
             else
-            if (message is Exception) WriteLine(new CommandMessage((Exception)message));
+            if (message is CommandMessage commandMessage) WriteLine(commandMessage);
+            else
+            if (message is Exception exception) WriteLine(new CommandMessage(exception));
             else
             if (true) WriteLine(new CommandMessage(message.ToString()));
         }
@@ -130,11 +147,6 @@ namespace Jetproger.Tools.Convert.Commands
             }
         }
 
-        protected virtual void Execute()
-        {
-            Result = Value.As<TResult>();
-        }
-
         public void Reset()
         {
             Set(_error, null);
@@ -146,7 +158,10 @@ namespace Jetproger.Tools.Convert.Commands
         {
             if (Error != null) return;
             Set(_error, error);
-            if (error != null) State = ECommandState.Completed;
+            if (error == null) return;
+            WriteLine(error);
+            f.log(error);
+            State = ECommandState.Completed;
         }
 
         protected virtual void SetResult(TResult result)
@@ -161,34 +176,14 @@ namespace Jetproger.Tools.Convert.Commands
             if (State == ECommandState.Completed) return;
             Set(_state, state);
             if (state != ECommandState.Completed) return;
-            var exception = Error;
-            if (exception != null)
-            {
-                WriteLine(exception);
-                var commandException = exception as CommandException;
-                if (commandException == null)
-                {
-                    commandException = new CommandException(exception);
-                    f.log.To(commandException.Message);
-                    Set(_error, commandException);
-                }
-            }
             if (_endExecute != null) _endExecute();
-        }
-
-        protected T Get<T>(T[] holder)
-        {
-            lock (holder) { return holder[0]; }
-        }
-
-        protected void Set<T>(T[] holder, T value)
-        {
-            lock (holder) { holder[0] = value; }
         }
     }
 
     public interface ICommand
     {
+        ICommand Precommand { get; set; }
+        void ErrorExecute(Exception e);
         CommandMessage[] LogExecute();
         event Action EndExecute;
         ECommandState State { get; }

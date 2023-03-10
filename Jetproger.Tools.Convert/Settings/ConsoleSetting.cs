@@ -1,39 +1,27 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Jetproger.Tools.Convert.Bases;
-using Jetproger.Tools.Convert.Converts;
 using Jetproger.Tools.Convert.Settings;
 
 namespace Jetproger.Tools.Convert.Settings
 {
     public abstract class ConsoleSetting : Setting
     {
-        protected ConsoleSetting(string defaultValue, params string[] keys)
-        {
-            var list = new List<string>();
-            list.Add(GetType().Name.ToLower());
-            list.AddRange(keys);
-            for (int i = 0; i < list.Count; i++)
-            {
-                list[i] = (list[i] ?? string.Empty).ToLower();
-            }
-            IsDeclared = ConsoleSettings.Is(list, defaultValue);
-            Value = ConsoleSettings.Get(list, defaultValue);
-        }
-    }
-
-    public static class ConsoleSettings
-    {
         private static readonly SettingCache Cache = new SettingCache();
 
-        public static void Initialize(string[] args)
+        protected ConsoleSetting(string defaultValue, params string[] keys)
+        {
+            var list = new List<string> { GetType().Name };
+            list.AddRange(keys);
+            IsDeclared = GetDeclared(list, defaultValue);
+            Value = GetValue(list, defaultValue);
+        }
+
+        public static void Parse(string[] args)
         {
             foreach (var arg in args)
             {
-                if (!ParseArgument(arg, out var key, out var value)) continue;
-                key = key.ToLower();
-                Cache.Set(key, value);
+                if (ParseArgument(arg, out var key, out var value)) Cache.SetValue(key, value);
             }
         }
 
@@ -49,10 +37,7 @@ namespace Jetproger.Tools.Convert.Settings
                 key = arg;
                 return true;
             }
-            if (colonIndex == 0)
-            {
-                return false;
-            }
+            if (colonIndex == 0) return false;
             key = arg.Substring(0, colonIndex);
             colonIndex++;
             if (colonIndex < arg.Length)
@@ -62,20 +47,16 @@ namespace Jetproger.Tools.Convert.Settings
             return true;
         }
 
-        public static bool Is(IEnumerable<string> keys, string defaultValue)
+        private static bool GetDeclared(IEnumerable<string> keys, string defaultValue)
         {
-            foreach (var key in keys)
-            {
-                if (Cache.Is(key, defaultValue)) return true;
-            }
-            return false;
+            return keys.Any(key => Cache.IsDeclared(key, defaultValue));
         }
 
-        public static string Get(IEnumerable<string> keys, string defaultValue)
+        private static string GetValue(IEnumerable<string> keys, string defaultValue)
         {
             foreach (var key in keys)
             {
-                if (Cache.Is(key, defaultValue)) return Cache.Get(key, defaultValue);
+                if (Cache.IsDeclared(key, defaultValue)) return Cache.GetValue(key, defaultValue);
             }
             return defaultValue;
         }
@@ -84,7 +65,6 @@ namespace Jetproger.Tools.Convert.Settings
 
 namespace Jetproger.Tools.AppConsole
 {
-    public class Uninstall : ConsoleSetting { public Uninstall() : base(string.Empty, "u") { } }
-
+    public class Uninstall : ConsoleSetting { public Uninstall() : base(string.Empty, "u") { } } 
     public class Install : ConsoleSetting { public Install() : base(string.Empty, "i") { } }
 }

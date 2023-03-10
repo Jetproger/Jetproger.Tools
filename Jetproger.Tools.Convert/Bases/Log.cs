@@ -5,65 +5,31 @@ using Jetproger.Tools.Convert.Commands;
 
 namespace Jetproger.Tools.Convert.Bases
 {
-    public static class LogExtensions
+    public static partial class f // for configure use BaseCommand inheritors
     {
-        public static void To(this f.ILogExpander exp, object message)
+        public static void log(Exception exception)
         {
-            if (message == null) return;
-            var s = message.ToString();
-            if (string.IsNullOrWhiteSpace(s)) return;
-            var holder = (message as LogHolder) ?? new LogHolder(message, new StackTrace());
-            Trace.WriteLine(holder);
+            if (exception != null) Trace.WriteLine(new LogHolder(new StackTrace(), exception));
         }
 
-        public static CommandMessage[] Of(this f.ILogExpander exp, ICommand command)
+        public static void log(string message)
         {
-            return command != null ? command.LogExecute() : new CommandMessage[0];
-        }
-
-        public static void RegisterTracer(this f.ILogExpander exp, TraceListener tracer)
-        {
-            if (tracer == null) return;
-            var i = IndexOfListeners(tracer);
-            if (i >= 0) return;
-            lock (Trace.Listeners) { Trace.Listeners.Add(tracer); }
-        }
-
-        public static void UnregisterTracer(this f.ILogExpander exp, TraceListener tracer)
-        {
-            var i = IndexOfListeners(tracer);
-            if (i < 0) return;
-            lock (Trace.Listeners) { Trace.Listeners.RemoveAt(i); }
-        }
-
-        private static int IndexOfListeners(TraceListener tracer)
-        {
-            lock (Trace.Listeners)
-            {
-                for (int i = 0; i < Trace.Listeners.Count; i++)
-                {
-                    if (ReferenceEquals(tracer, Trace.Listeners[i])) return i;
-                }
-                return -1;
-            }
+            if (!string.IsNullOrWhiteSpace(message)) Trace.WriteLine(new LogHolder(new StackTrace(), message));
         }
     }
 
     [Serializable]
     public class LogHolder
     {
+        public override string ToString() { return Message; }
         public readonly StackTrace Stack;
-        public readonly object Message;
-
-        public LogHolder(object message, StackTrace stack)
+        public readonly string Message;
+        public readonly bool IsError;
+        public LogHolder(StackTrace stack, object message)
         {
-            Message = message;
             Stack = stack;
-        }
-
-        public override string ToString()
-        {
-            return Message != null ? Message.ToString() : base.ToString();
+            IsError = message is Exception;
+            Message = IsError ? (new CommandMessage(message as Exception)).Info : message.ToString();
         }
     }
 }

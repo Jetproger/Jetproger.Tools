@@ -1,4 +1,5 @@
 using System;
+using Jetproger.Tools.Convert.Commanders;
 using Jetproger.Tools.Convert.Converts;
 using Jetproger.Tools.Convert.Factories;
 using Jetproger.Tools.Convert.Settings;
@@ -7,7 +8,7 @@ namespace Jetproger.Tools.Convert.Bases
 {
     public static partial class f
     {
-        public static AppDomain own => f.one.Get(OwnHolder, () => AppDomain.CurrentDomain.IsDefaultAppDomain() ? AppDomain.CurrentDomain : null);
+        public static AppDomain own => f.one.of(OwnHolder, () => AppDomain.CurrentDomain.IsDefaultAppDomain() ? AppDomain.CurrentDomain : null);
         private static readonly AppDomain[] OwnHolder = { null };
 
         public static IAppExpander app => null;
@@ -19,14 +20,11 @@ namespace Jetproger.Tools.Convert.Bases
         public static IBinExpander bin => null;
         public interface IBinExpander { }
 
-        public static ICmdExpander cmd => null;
-        public interface ICmdExpander { }
+        public static CmdExpander cmd => f.one.of(CmdExpanderHolder, () => new CmdExpander());
+        private static readonly CmdExpander[] CmdExpanderHolder = { null };
 
-        public static CryExpander cry => f.one.Get(CryExpanderHolder, () => new CryExpander());
+        public static CryExpander cry => f.one.of(CryExpanderHolder, () => new CryExpander());
         private static readonly CryExpander[] CryExpanderHolder = { null };
-
-        public static IErrExpander err => null;
-        public interface IErrExpander { }
 
         public static IExtExpander ext => null;
         public interface IExtExpander { }
@@ -36,9 +34,6 @@ namespace Jetproger.Tools.Convert.Bases
 
         public static IGuiExpander gui => null;
         public interface IGuiExpander { }
-
-        public static ILogExpander log => null;
-        public interface ILogExpander { }
 
         public static IMemExpander mem => null;
         public interface IMemExpander { }
@@ -55,10 +50,10 @@ namespace Jetproger.Tools.Convert.Bases
         public static ISysExpander sys => null;
         public interface ISysExpander { }
 
-        public static WebExpander web => f.one.Get(WebExpanderHolder, () => new WebExpander());
+        public static WebExpander web => f.one.of(WebExpanderHolder, () => new WebExpander());
         private static readonly WebExpander[] WebExpanderHolder = { null };
 
-        public static WinExpander win => f.one.Get(WinExpanderHolder, () => new WinExpander());
+        public static WinExpander win => f.one.of(WinExpanderHolder, () => new WinExpander());
         private static readonly WinExpander[] WinExpanderHolder = { null };
 
         public static IXmlExpander xml => null;
@@ -67,7 +62,7 @@ namespace Jetproger.Tools.Convert.Bases
 
     public static class t<T> where T : class
     {
-        private static readonly IpcClient _IpcClient = new IpcClient();
+        private static readonly IpcClient _IpcClient = new IpcClient(); 
         private static readonly Type _Type = typeof(T);
 
         public static T _(params object[] args)
@@ -141,15 +136,7 @@ namespace Jetproger.Tools.Convert.Bases
 
     public static class k<T> where T : Setting
     {
-        private static readonly Type _Type = typeof(T);
-
-        public static bool set
-        {
-            get { return t<T>.key(_Type).IsDeclared; }
-        }
-        public static string key
-        {
-            get { return t<T>.key(_Type).Value; }
-        }
+        public static bool Is => t<T>.one().IsDeclared;
+        public static TValue As<TValue>() { return t<T>.one().Value.As<TValue>(); }
     }
 }

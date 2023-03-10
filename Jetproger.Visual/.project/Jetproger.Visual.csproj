@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0E365FF3-8139-4F71-B5E1-E8A5212F94B7}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>Jetproger.Tools.Cache</RootNamespace>
-    <AssemblyName>Jetproger.Tools.Cache</AssemblyName>
+    <ProjectGuid>{A210FC06-1EA3-4206-B466-B730D19C738C}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Jetproger.Visual</RootNamespace>
+    <AssemblyName>Jetproger.Visual</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -16,7 +16,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\.Jetproger.Tools.Cache\</OutputPath>
+    <OutputPath>..\..\.Jetproger.Tools.Inject\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -24,7 +24,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\.Jetproger.Tools.Cache\</OutputPath>
+    <OutputPath>..\..\.Jetproger.Tools.Injection\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -35,42 +35,77 @@
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>..\..\.solution\jetproger.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Practices.ServiceLocation">
+      <HintPath>..\..\.Microsoft.Practices\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity">
+      <HintPath>..\..\.Microsoft.Practices\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Configuration">
+      <HintPath>..\..\.Microsoft.Practices\Microsoft.Practices.Unity.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Interception">
+      <HintPath>..\..\.Microsoft.Practices\Microsoft.Practices.Unity.Interception.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Interception.Configuration">
+      <HintPath>..\..\.Microsoft.Practices\Microsoft.Practices.Unity.Interception.Configuration.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
     <Reference Include="System.configuration" />
-    <Reference Include="System.Data" />
+    <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Runtime.Remoting" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.ServiceProcess" />
-    <Reference Include="System.Web" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Runtime.Remoting" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\Cache.cs">
-      <Link>Bases\Cache.cs</Link>
+    <Compile Include="..\Bases\UnityAspect.cs">
+      <Link>Bases\UnityAspect.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\CacheCore.cs">
-      <Link>Bases\CacheCore.cs</Link>
+    <Compile Include="..\Bases\UnityMap.cs">
+      <Link>Bases\UnityMap.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\CacheRemote.cs">
-      <Link>Bases\CacheRemote.cs</Link>
+    <Compile Include="..\Bases\UnityLifetime.cs">
+      <Link>Bases\UnityLifetime.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\Dotnet.cs">
-      <Link>Bases\Dotnet.cs</Link>
+    <Compile Include="..\Bases\Unity.cs">
+      <Link>Bases\Unity.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\Property.cs">
-      <Link>Bases\Property.cs</Link>
+    <Compile Include="..\Bases\UnitySection.cs">
+      <Link>Bases\UnitySection.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\IUnity.cs">
+      <Link>Bases\IUnity.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\UnityRemote.cs">
+      <Link>Bases\UnityRemote.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\UnityCore.cs">
+      <Link>Bases\UnityCore.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\UnityConfig.cs">
+      <Link>Bases\UnityConfig.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -84,26 +119,20 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\.setting\Jetproger.Tools.Cache.nuspec">
-      <Link>.project\Jetproger.Tools.Cache.nuspec</Link>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\.setting\packages.config">
-      <Link>.project\packages.config</Link>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Jetproger.Tools.Convert\.project\Jetproger.Tools.Convert.csproj">
       <Project>{600aa7dc-ea39-4609-ab2a-3546bb5f8b72}</Project>
       <Name>Jetproger.Tools.Convert</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\.setting\Jetproger.Tools.Inject.nuspec">
+      <Link>.project\Jetproger.Tools.Inject.nuspec</Link>
+    </None>
+  </ItemGroup>
   <Target Name="RemoveDirectories" BeforeTargets="ResolveReferences">
     <Exec Command="for /d %%p in (&quot;$(ProjectDir)&quot;\*) do if /I &quot;%%p&quot; neq &quot;$(ProjectDir)\obj&quot; (rd /Q /S &quot;%%p&quot;)" />
   </Target>
   <Target Name="RemoveObj" AfterTargets="Rebuild">
-    <!--<Exec Command="call $(SolutionDir)post-build.bat $(SolutionDir) $(ProjectDir) $(TargetDir) $(ProjectName)" />-->
     <Exec Command="rd /Q /S &quot;$(ProjectDir)\obj&quot;" />
   </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

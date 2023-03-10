@@ -43,7 +43,7 @@ namespace Jetproger.Tools.Convert.Commanders
             _geType = f.sys.genericof(_type) ?? _type;
             _geType = geType != null && geType.IsAssignableFrom(_geType) ? geType : _geType;
             _map = CommandEntity.GetMap(_geType);
-            if (f.sys.IsSimple(_type))
+            if (f.sys.issimple(_type))
             {
                 _source.Add(_entity);
                 _fields = null;
@@ -183,7 +183,7 @@ namespace Jetproger.Tools.Convert.Commanders
 
         private static PropertyInfo[] GetFields(Type type)
         {
-            return f.sys.IsSimple(type) ? null : type.GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(p => f.sys.IsSimple(p.PropertyType)).ToArray();
+            return f.sys.issimple(type) ? null : type.GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(p => f.sys.issimple(p.PropertyType)).ToArray();
         }
 
         public static DataTable ToDataTable(object entity, Type geType = null)
@@ -267,20 +267,7 @@ namespace Jetproger.Tools.Convert.Commanders
         }
     }
 
-    public static class EntityWriter
-    {
-        public static T To<T>(IDataReader reader)
-        {
-            return (new EntityWriter<T>(reader)).Write();
-        }
-
-        public static T To<T>(DataSet ds)
-        {
-            return (new EntityWriter<T>(ds.CreateDataReader())).Write();
-        }
-    }
-
-    public class EntityWriter<T>
+    public class EntityWriter
     {
         private readonly Dictionary<string, EntityHolder> _holders = new Dictionary<string, EntityHolder>();
         private readonly IDataReader _reader;
@@ -288,37 +275,37 @@ namespace Jetproger.Tools.Convert.Commanders
         private readonly Type[] _map;
         private readonly Type _type;
 
-        public EntityWriter(IDataReader reader)
+        public EntityWriter(IDataReader reader, Type typeTo)
         {
             _reader = reader;
-            _type = typeof(T);
+            _type = typeTo;
             _geType = f.sys.genericof(_type) ?? _type;
             _map = CommandEntity.GetMap(_geType);
         }
 
-        public T Write()
+        public object Write()
         {
             var list = ReadData().ToList();
             if (list.Count == 0)
             {
-                if (_type.IsArray) return (T)(object)Array.CreateInstance(_geType, 0);
-                if (typeof(IList).IsAssignableFrom(_type)) return (T)Activator.CreateInstance(_type);
-                return (T)f.sys.defaultof(_type);
+                if (_type.IsArray) return Array.CreateInstance(_geType, 0);
+                if (typeof(IList).IsAssignableFrom(_type)) return Activator.CreateInstance(_type);
+                return f.sys.defaultof(_type);
             }
             if (_type.IsArray)
             {
                 var array = Array.CreateInstance(_geType, list.Count);
                 for (int i = 0; i < array.Length; i++) array.SetValue(list[i], i);
-                return (T)(object)array;
+                return array;
             }
             if (typeof(IList).IsAssignableFrom(_type))
             {
                 var resultList = Activator.CreateInstance(_type) as IList;
-                if (resultList == null) return (T)list[0];
+                if (resultList == null) return list[0];
                 foreach (var item in list) resultList.Add(item);
-                return (T)resultList;
+                return resultList;
             }
-            return (T)list[0];
+            return list[0];
         }
 
         private IEnumerable<object> ReadData()
@@ -364,7 +351,7 @@ namespace Jetproger.Tools.Convert.Commanders
         private object CreateInstance(Type type, string[] fields)
         {
             if (type == null) return null;
-            if (f.sys.IsSimple(type)) return !_reader.IsDBNull(0) ? _reader.GetValue(0) : f.sys.defaultof(type);
+            if (f.sys.issimple(type)) return !_reader.IsDBNull(0) ? _reader.GetValue(0) : f.sys.defaultof(type);
             var obj = Activator.CreateInstance(type);
             var schema = CommandEntity.GetSchema(type);
             for (int i = 0; i < fields.Length; i++)
@@ -404,7 +391,9 @@ namespace Jetproger.Tools.Convert.Commanders
         private class EntityHolder
         {
             private List<EntityHolder> _masters;
+            
             private List<EntityHolder> _details;
+            
             private ICommandEntity _entity;
 
             public void NewEntity(ICommandEntity entity)
@@ -538,13 +527,9 @@ namespace Jetproger.Tools.Convert.Commanders
     public interface ICommandEntity
     {
         string GetKey();
-        
         IEnumerable<string> GetKeys();
-        
         void SetEntity(ICommandEntity entity);
-        
         void AddEntity(ICommandEntity entity);
-        
         IEnumerable<ICommandEntity> GetAll(Type type);
     }
 }

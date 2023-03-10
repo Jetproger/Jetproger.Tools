@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using Newtonsoft.Json;
 using System.Web.Script.Serialization;
 using Jetproger.Tools.AppConfig;
 using Jetproger.Tools.Convert.Bases;
@@ -13,78 +15,29 @@ namespace Jetproger.Tools.Convert.Converts
 {
     public class WebExpander
     {
-        public int RequestTimeout { get { return f.one.Get(_requestTimeoutHolder, () => k<HttpConnectionTimeoutSeconds>.key.As<int>() * 1000); } }
+        public int RequestTimeout { get { return f.one.of(_requestTimeoutHolder, () => k<HttpConnectionTimeoutSeconds>.As<int>() * 1000); } }
         private readonly int?[] _requestTimeoutHolder = { null };
 
-        public Encoding WebEncoding { get { return f.one.Get(_webEncodingHolder, () => Encoding.GetEncoding("utf-8")); } }
+        public Encoding WebEncoding { get { return f.one.of(_webEncodingHolder, () => Encoding.GetEncoding("utf-8")); } }
         private readonly Encoding[] _webEncodingHolder = { null };
 
-        public string AppAddress { get { return f.one.Get(_appAddressHolder, GetAppAddress); } }
+        public string AppAddress => f.one.of(_appAddressHolder, GetAppAddress);
         private readonly string[] _appAddressHolder = { null };
 
-        public string AppHost { get { return f.one.Get(_appHostHolder, GetAppHost); } }
+        public string AppHost => f.one.of(_appHostHolder, GetAppHost);
         private readonly string[] _appHostHolder = { null };
 
-        public string AppUrl { get { return f.one.Get(_appUrlHolder, GetAppUrl); } }
+        public string AppUrl => f.one.of(_appUrlHolder, GetAppUrl);
         private readonly string[] _appUrlHolder = { null };
 
-        private string GetAppAddress()
-        {
-            return string.Format("{0}/jetproger/v1/cmd", AppUrl);
-        }
+        private static string[] ProxyExcludes => f.one.of(ProxyExcludesHolder, GetProxyExcludes);
+        private static readonly string[][] ProxyExcludesHolder = { null };
 
-        private string GetAppHost()
-        {
-            return string.Format("{0}/jetproger/v1/cmd", AppUrl);
-        }
-
-        private string GetAppUrl()
-        {
-            f.err.Guard(string.IsNullOrWhiteSpace(k<AppHost>.key), new AppConfigAppHostException());
-            var url = k<AppHost>.key.Replace("https://", string.Empty).Replace("http://", string.Empty);
-            if (string.IsNullOrWhiteSpace(k<AppCert>.key)) return string.Format("http://{0}", url);
-            return f.cry.App != null ? string.Format("https://{0}", url) : string.Format("http://{0}", url);
-        }
-    }
-
-    public static class WebExtensions
-    {
-        private static List<string> ProxyExcludesList { get { return f.one.Get(ProxyExcludesListHolder, GetProxyExcludesList); } }
-        
-        private static readonly List<string>[] ProxyExcludesListHolder = { null }; 
-        
-        private static readonly WebConverter Converter = t<WebConverter>.one();
-
-        static WebExtensions()
+        static WebExpander()
         {
             ServicePointManager.Expect100Continue = true;
             ServicePointManager.ServerCertificateValidationCallback = (a, b, c, d) => true;
             if (!TrySetSecurityProtocol()) TrySetSecurityProtocolXp();
-        }
-
-        public static string of(this WebExpander e, object value, WebConverter converter = null)
-        {
-            return (converter ?? Converter).Serialize(value);
-        }
-
-        public static string of<TConverter>(this WebExpander e, object value) where TConverter : WebConverter
-        {
-            return (f.sys.valueof<TConverter>()).Serialize(value);
-        }
-
-        public static object to(this WebExpander e, string s, Type type, WebConverter converter = null)
-        {
-            return (converter ?? Converter).Deserialize(s, type);
-        }
-
-        public static T to<T>(this WebExpander exp, string json, WebConverter converter = null)
-        {
-            return (T)(converter ?? Converter).Deserialize(json, typeof(T));
-        }
-
-        public static TResult to<TResult, TConverter>(this WebExpander exp, string json) where TConverter : WebConverter
-        {
-            return (TResult)(f.sys.valueof<TConverter>()).Deserialize(json, typeof(TResult));
         }
 
         private static bool TrySetSecurityProtocol()
@@ -113,60 +66,84 @@ namespace Jetproger.Tools.Convert.Converts
             }
         }
 
-        public static WebProxy GetProxy(this WebExpander exp, string url)
+        public void TimeoutCallback(object state, bool timedOut)
         {
-            if (!k<ProxyUse>.key.As<bool>()) return new WebProxy();
-            if (!UseProxyFor(exp, url)) return new WebProxy();
-            var proxy = !string.IsNullOrWhiteSpace(k<ProxyServer>.key) ? new WebProxy(k<ProxyServer>.key, k<ProxyPort>.key.As<int>()) : WebProxy.GetDefaultProxy();
-            proxy.Credentials = !string.IsNullOrWhiteSpace(k<ProxyUser>.key) ? new NetworkCredential(k<ProxyUser>.key, k<ProxyPassword>.key) : CredentialCache.DefaultCredentials;
+            if (timedOut && state is HttpWebRequest request) request.Abort();
+        }
+
+        public WebProxy ProxyOf(string url)
+        {
+            if (!k<ProxyUse>.As<bool>() || !ProxyFor(url)) return new WebProxy();
+            var proxy = !string.IsNullOrWhiteSpace(k<ProxyServer>.As<string>()) ? new WebProxy(k<ProxyServer>.As<string>(), k<ProxyPort>.As<int>()) : WebProxy.GetDefaultProxy();
+            proxy.Credentials = !string.IsNullOrWhiteSpace(k<ProxyUser>.As<string>()) ? new NetworkCredential(k<ProxyUser>.As<string>(), k<ProxyPassword>.As<string>()) : CredentialCache.DefaultCredentials;
             return proxy;
         }
 
-        public static void TimeoutCallback(this WebExpander e, object state, bool timedOut)
+        public bool ProxyFor(string url)
         {
-            if (!timedOut) return;
-            var request = state as HttpWebRequest;
-            if (request != null) request.Abort();
+            if (!k<ProxyUse>.As<bool>()) return false;
+            url = UrlWithoutProtocol(url);
+            return ProxyExcludes.All(x => !url.StartsWith(x));
         }
 
-        public static bool UseProxyFor(this WebExpander exp, string url)
+        private string GetAppAddress()
         {
-            if (!k<ProxyUse>.key.As<bool>()) return false;
-            url = url.Replace("https://", string.Empty).Replace("http://", string.Empty);
-            foreach (var exclude in ProxyExcludesList)
-            {
-                if (url.StartsWith(exclude)) return false;
-            }
-            return true;
+            return $"{AppUrl}/jetproger/v1/cmd";
         }
 
-        private static List<string> GetProxyExcludesList()
+        private string GetAppHost()
         {
-            var excludes = (k<ProxyExcludes>.key ?? string.Empty).Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-            var excludesList = new List<string>();
-            foreach (var exclude in excludes)
+            return $"{AppUrl}/jetproger/v1/";
+        }
+
+        private string GetAppUrl()
+        {
+            f.err<AppConfigAppHostException>(string.IsNullOrWhiteSpace(k<AppHost>.As<string>()));
+            var url = UrlWithoutProtocol(k<AppHost>.As<string>());
+            if (string.IsNullOrWhiteSpace(k<AppCert>.As<string>())) return $"http://{url}";
+            return f.cry.App != null ? $"https://{url}" : $"http://{url}";
+        }
+
+        private static string[] GetProxyExcludes()
+        {
+            var excludes = (k<ProxyExcludes>.As<string>() ?? string.Empty).Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+            for (int i = 0; i < excludes.Length; i++)
             {
-                excludesList.Add(exclude.Replace("https://", string.Empty).Replace("http://", string.Empty));
+                excludes[i] = excludes[i].Replace("https://", string.Empty).Replace("http://", string.Empty);
             }
-            return excludesList;
+            return excludes;
+        }
+
+        private static string UrlWithoutProtocol(string url)
+        {
+            return (url ?? string.Empty).Replace("https://", string.Empty).Replace("http://", string.Empty);
         }
     }
 
-    public class WebConverter
-    { 
-        private static JavaScriptSerializer Serializer { get { return t<JavaScriptSerializer>.one(CreateJsonSerializer); } } 
+    public class NewtonsoftJson : Converter
+    {
+        private static readonly JsonSerializerSettings Settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
+        protected override byte[] ValueAsBytes(object value) { return Encoder.GetBytes(ValueAsChars(value)); }
+        protected override string ValueAsChars(object value) { return JsonConvert.SerializeObject(value, Formatting.None, Settings); }
+        protected override object BytesAsValue(byte[] bytes, Type typeTo) { return CharsAsValue(Encoder.GetString(bytes), typeTo); }
+        protected override object CharsAsValue(string chars, Type typeTo) { return JsonConvert.DeserializeObject(chars, typeTo); }
+        public NewtonsoftJson(Encoding encoder = null) { Encoder = encoder ?? base.Encoder; }
+        protected override Encoding Encoder { get; }
+    }
+
+    public class SimpleJson : Converter
+    {
+        private static JavaScriptSerializer JsonSerializer { get { return t<JavaScriptSerializer>.one(CreateJsonSerializer); } } 
+        private static JavaScriptSerializer JsonDeserializer { get { return t<JavaScriptSerializer>.one(); } }
         
-        private static JavaScriptSerializer Deserializer { get { return t<JavaScriptSerializer>.one(); } }
+        protected override byte[] ValueAsBytes(object value) { return Encoder.GetBytes(ValueAsChars(value)); }
+        protected override string ValueAsChars(object value) { return JsonSerializer.Serialize(value); }
+        
+        protected override object BytesAsValue(byte[] bytes, Type typeTo) { return CharsAsValue(Encoder.GetString(bytes), typeTo); }
+        protected override object CharsAsValue(string chars, Type typeTo) { return JsonDeserializer.Deserialize(chars, typeTo); }
 
-        public virtual string Serialize(object o)
-        {
-            return Serializer.Serialize(o);
-        }
-
-        public virtual object Deserialize(string json, Type type)
-        {
-            return Deserializer.Deserialize(json, type);
-        }
+        public SimpleJson(Encoding encoder = null) { Encoder = encoder ?? base.Encoder; }
+        protected override Encoding Encoder { get; }
 
         private static JavaScriptSerializer CreateJsonSerializer()
         {
@@ -201,8 +178,6 @@ namespace Jetproger.Tools.Convert.Converts
         }
     }
 }
-
-
 namespace Jetproger.Tools.AppConfig
 {
     public class HttpConnectionTimeoutSeconds : ConfigSetting { public HttpConnectionTimeoutSeconds() : base("300") { } }

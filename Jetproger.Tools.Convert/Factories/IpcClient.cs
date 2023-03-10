@@ -14,16 +14,16 @@ namespace Jetproger.Tools.Convert.Factories
     public class IpcClient
     {
         private readonly ConcurrentDictionary<Type, bool> _localTypes = new ConcurrentDictionary<Type, bool>();
-        private IpcServer ContainerServer => f.one.Get(_containerServerHolder, GetProxy);
+        private IpcServer ContainerServer => f.one.of(_containerServerHolder, GetProxy);
         private readonly IpcServer[] _containerServerHolder = { null };
-        private IpcServer LocalServer => f.one.Get(_localServerHolder, () => new IpcServer());
+        private IpcServer LocalServer => f.one.of(_localServerHolder, () => new IpcServer());
         private readonly IpcServer[] _localServerHolder = { null };
-        private bool IsLocal => f.one.Get(_isLocalHolder, () => UseLocalCalls());
+        private bool IsLocal => f.one.of(_isLocalHolder, () => UseLocalCalls());
         private readonly bool?[] _isLocalHolder = { null };
 
         public object OfToOne(Type type, Func<object> func)
         {
-            var creator = new FuncWrapper(func);
+            var creator = new SimpleCreator(func);
             bool isLocal;
             if (IsLocal || (_localTypes.TryGetValue(type, out isLocal) && isLocal)) return TryOfToOneLocal(type, creator);
             object value;
@@ -56,7 +56,7 @@ namespace Jetproger.Tools.Convert.Factories
 
         public object OfToPool(Type type, Func<object> func)
         {
-            var creator = new FuncWrapper(func);
+            var creator = new SimpleCreator(func);
             bool isLocal;
             if (IsLocal || (_localTypes.TryGetValue(type, out isLocal) && isLocal)) return TryOfToPoolLocal(type, creator);
             object value;
@@ -89,7 +89,7 @@ namespace Jetproger.Tools.Convert.Factories
 
         public object OfToStore(Type keyType, Type valueType, object key, Func<object, object> func)
         {
-            var creator = new FuncArgWrapper(func);
+            var creator = new ParameterizedCreator(func);
             var type = typeof(StoreExtensions<,>).MakeGenericType(keyType, valueType);
             bool isLocal;
             if (IsLocal || (_localTypes.TryGetValue(type, out isLocal) && isLocal)) return TryOfToStoreLocal(keyType, valueType, key, creator);
@@ -125,7 +125,7 @@ namespace Jetproger.Tools.Convert.Factories
 
         #region Combain calls
 
-        private bool TryOfToOneCombain(Type type, FuncWrapper creator, out object value)
+        private bool TryOfToOneCombain(Type type, SimpleCreator creator, out object value)
         {
             if (TryOfToOneContainer(type, creator, out value)) return false;
             value = TryOfToOneLocal(type, creator);
@@ -146,7 +146,7 @@ namespace Jetproger.Tools.Convert.Factories
             return true;
         }
 
-        private bool TryOfToPoolCombain(Type type, FuncWrapper creator, out object value)
+        private bool TryOfToPoolCombain(Type type, SimpleCreator creator, out object value)
         {
             if (TryOfToPoolContainer(type, creator, out value)) return false;
             value = TryOfToPoolLocal(type, creator);
@@ -167,7 +167,7 @@ namespace Jetproger.Tools.Convert.Factories
             return true;
         }
 
-        private bool TryOfToStoreCombain(Type keyType, Type valueType, object key, FuncArgWrapper creator, out object value)
+        private bool TryOfToStoreCombain(Type keyType, Type valueType, object key, ParameterizedCreator creator, out object value)
         {
             if (TryOfToStoreContainer(keyType, valueType, key, creator, out value)) return false;
             value = TryOfToStoreLocal(keyType, valueType, key, creator);
@@ -192,7 +192,7 @@ namespace Jetproger.Tools.Convert.Factories
 
         #region Container calls 
 
-        private bool TryOfToOneContainer(Type type, FuncWrapper creator, out object value)
+        private bool TryOfToOneContainer(Type type, SimpleCreator creator, out object value)
         {
             try
             {
@@ -233,7 +233,7 @@ namespace Jetproger.Tools.Convert.Factories
             }
         }
 
-        private bool TryOfToPoolContainer(Type type, FuncWrapper creator, out object value)
+        private bool TryOfToPoolContainer(Type type, SimpleCreator creator, out object value)
         {
             try
             {
@@ -274,7 +274,7 @@ namespace Jetproger.Tools.Convert.Factories
             }
         }
 
-        private bool TryOfToStoreContainer(Type keyType, Type valueType, object key, FuncArgWrapper creator, out object value)
+        private bool TryOfToStoreContainer(Type keyType, Type valueType, object key, ParameterizedCreator creator, out object value)
         {
             try
             {
@@ -319,7 +319,7 @@ namespace Jetproger.Tools.Convert.Factories
 
         #region Local calls 
 
-        private object TryOfToOneLocal(Type type, FuncWrapper creator)
+        private object TryOfToOneLocal(Type type, SimpleCreator creator)
         {
             return LocalServer.OfToOne(type, creator);
         }
@@ -334,7 +334,7 @@ namespace Jetproger.Tools.Convert.Factories
             LocalServer.ToOne(type, value);
         }
 
-        private object TryOfToPoolLocal(Type type, FuncWrapper creator)
+        private object TryOfToPoolLocal(Type type, SimpleCreator creator)
         {
             return LocalServer.OfToPool(type, creator);
         }
@@ -349,7 +349,7 @@ namespace Jetproger.Tools.Convert.Factories
             LocalServer.ToPool(type, value);
         }
 
-        private object TryOfToStoreLocal(Type keyType, Type valueType, object key, FuncArgWrapper creator)
+        private object TryOfToStoreLocal(Type keyType, Type valueType, object key, ParameterizedCreator creator)
         {
             return LocalServer.OfToStore(keyType, valueType, key, creator);
         }

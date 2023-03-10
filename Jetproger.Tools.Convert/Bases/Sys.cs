@@ -1,11 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Resources;
+using System.Threading;
 using System.Web;
 using Jetproger.Tools.Convert.Commands;
 using Jetproger.Tools.Convert.Converts;
@@ -14,13 +16,50 @@ namespace Jetproger.Tools.Convert.Bases
 {
     public static class SysExtensions
     {
+        private static readonly string SYS_ICON = @"AAABAAEAEBAAAAAAGABoAwAAFgAAACgAAAAQAAAAIAAAAAEAGAAAAAAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACyYzmARyl9RSh7RCd6RCd3QiZyQCVvPiRsPCNpOyJmOSFjNyBhNh9gNR8AAAAAAAC4ZjvYoIPYoIPQjmvHeE+4ZjueVzKGSit4QiZ3QiZ4QiZ3QiZbMh1hNh8AAAAAAAC/aj3oybjiuaTbqY7TlXTJfVW+aj2eVzKDSSp4QiZsPCOMTi17RCdjNyAAAAAAAADEcUXht6Hw29DiuaTZo4fQj2zHeE62ZTqSUS9jNyDCbD67aDwAAABmOSEAAAAAAADHeE/Mg13iuaTw29DiuaTYoIPOiWTDb0KSUS/Zo4fSknEAAADOiGNpOyIAAAAAAADLgVrz4djKf1fiuaPw2s/ht6HUl3egWTPhtqDjvKcAAADiuaPQjmtsPCMAAAAAAADOimb+/fzz4djFc0jiuaPlwK2HSyvbqY59RSh9RSjdrZTnxrXTlXRvPiQAAAAAAADRkW/+/fz+/fzw29DFc0jFc0ju1snz49rw29Dt1Mfrz8HpyrrWnH1yQCUAAAAAAADUmHj+/fz+/fz+/fz9+vj68/D47+rnxLKyYzmtYDfhtqDrz8HZo4Z3QiYAAAAAAADXn4H+/fz+/fz+/fz+/fz9+vj68/DDb0LbqY/FdEmtYDft1Mfcq5F6RCcAAAAAAADZo4b+/fz+/fz+/fz+/fz+/fz9+vjEcUXu1srbqY+yYznw29Dfspp7RCcAAAAAAADZo4b+/fz+/fz+/fz+/fz+/fz+/fzw29DEcUXDb0LnxLLz49rhtqB9RSgAAAAAAADZo4b+/fz+/fz+/fz+/fz+/fz+/fz+/fz9+vj68/D47+r16OHz49qARykAAAAAAADZo4bZo4bZo4bZo4bXn4HUmHjRkW/OimbLgVrHeE/EcUW/aj24ZjuyYzkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD//wAAgAEAAIABAACAAQAAgAEAAIABAACAAQAAgAEAAIABAACAAQAAgAEAAIABAACAAQAAgAEAAIABAAD//wAA";
+        private static readonly string SYS_IMAGE = @"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIDSURBVDhPpZLrS5NhGMb3j4SWh0oRQVExD4gonkDpg4hGYKxG6WBogkMZKgPNCEVJFBGdGETEvgwyO9DJE5syZw3PIlPEE9pgBCLZ5XvdMB8Ew8gXbl54nuf63dd90OGSnwCahxbPRNPAPMw9Xpg6ZmF46kZZ0xSKzJPIrhpDWsVnpBhGkKx3nAX8Pv7z1zg8OoY/cITdn4fwbf/C0kYAN3Ma/w3gWfZL5kzTKBxjWyK2DftwI9tyMYCZKXbNHaD91bLYJrDXsYbrWfUKwJrPE9M2M1OcVzOOpHI7Jr376Hi9ogHqFIANO0/MmmmbmSmm9a8ze+I4MrNWAdjtoJgWcx+PSzg166yZZ8xM8XvXDix9c4jIqFYAjoriBV9AhEPv1mH/sonogha0afbZMMZz+yreTGyhpusHwtNNCsA5U1zS4BLxzJIfg299qO32Ir7UJtZfftyATqeT+8o2D8JSjQrAJblrncYL7ZJ2+bfaFnC/1S1NjL3diRat7qrO7wLRP3HjWsojBeComDEo5mNjuweFGvjWg2EBhCbpkW78htSHHwRyNdmgAFzPEee2iFkzayy2OLXzT4gr6UdUnlXrullsxxQ+kx0g8BTA3aZlButjSTyjODq/WcQcW/B/Je4OQhLvKQDnzN1mp0nnkvAhR8VuMzNrpm1mpjgkoVwB/v8DTgDQASA1MVpwzwAAAABJRU5ErkJggg==";
+
+        public static void threadof(this f.ISysExpander exp, Action working)
+        { 
+            t<ReusableThread>.few().Execute(working);
+        }
+
+        public static Thread threadof(this f.ISysExpander exp, Action working, long periodMilliseconds)
+        {
+            var timespan = TimeSpan.FromMilliseconds(periodMilliseconds);
+            var thread = new Thread(() =>
+            {
+                for (var i = long.MinValue; i < long.MaxValue; i++)
+                {
+                    try { working(); }
+                    catch (Exception e) { f.log(e); }
+                    finally { Thread.Sleep(timespan); }
+                }
+            });
+            thread.IsBackground = true;
+            thread.Start();
+            return thread;
+        }
+
         public static ICommand commandof(this f.ISysExpander exp, string commandTypeName)
         {
-            var commandType = classof(exp, commandTypeName);
-            f.err.GuardTypeNotFound(commandType == null, commandTypeName);
+            var commandType = classof(exp, commandTypeName); 
+            f.err<TypeNotFoundException>(commandType == null, commandTypeName);
             var command = valueof(exp, commandType) as ICommand;
-            f.err.GuardTypeNotSubtype(command == null, commandTypeName, typeof(ICommand).FullName);
+            f.err<TypeNotSubtypeException>(command == null, commandTypeName, typeof(ICommand).FullName);
             return command;
+        }
+
+        public static T[] arrayof<T>(this f.ISysExpander exp, params T[] elements)
+        {
+            return elements;
+        }
+
+        public static List<T> listof<T>(this f.ISysExpander exp, params T[] elements)
+        {
+            var list = new List<T>();
+            list.AddRange(elements);
+            return list;
         }
 
         public static int indexof(this f.ISysExpander exp, IEnumerable items, object item)
@@ -71,7 +110,7 @@ namespace Jetproger.Tools.Convert.Bases
             nameof(e, metaName, out assemblyName, out typeName, out value);
             if (string.IsNullOrWhiteSpace(value)) return valueof(e, assemblyName, typeName, args);
             var type = classof(e, assemblyName, typeName);
-            return IsSimple(e, type) ? value.As(type) : valueof(e, assemblyName, typeName, args);
+            return issimple(e, type) ? value.As(type) : valueof(e, assemblyName, typeName, args);
         }
 
         public static T valueof<T>(this f.ISysExpander e, string assemblyName, string typeName, object[] args = null)
@@ -163,7 +202,7 @@ namespace Jetproger.Tools.Convert.Bases
             {
                 var httpContext = HttpContext.Current;
                 if (httpContext != null) name = Path.Combine("bin", name);
-                name = Path.Combine(f.fss.AppDir(), name);
+                name = Path.Combine(f.fss.appdir(), name);
             }
             return TryLoadAssemblyWithExtension(name);
         }
@@ -232,8 +271,8 @@ namespace Jetproger.Tools.Convert.Bases
         public static void nameof(this f.ISysExpander e, string metaName, out string assemblyName, out string typeName, out string value)
         {
             var names = (metaName ?? "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-            assemblyName = names.Length > 0 ? names[0] : string.Empty;
-            typeName = names.Length > 1 ? names[1] : string.Empty;
+            assemblyName = names.Length > 1 ? names[0] : string.Empty;
+            typeName = names.Length > 1 ? names[1] : metaName;
             value = names.Length > 2 ? names[2] : string.Empty;
         }
 
@@ -241,7 +280,7 @@ namespace Jetproger.Tools.Convert.Bases
         {
             if (value == null) return string.Empty;
             var type = value.GetType();
-            var stringValue = IsSimple(e, type) ? $", {value.As<string>()}" : string.Empty;
+            var stringValue = issimple(e, type) ? $", {value.As<string>()}" : string.Empty;
             return $"{printof(e, type)}{stringValue}";
         }
 
@@ -262,10 +301,7 @@ namespace Jetproger.Tools.Convert.Bases
 
         public static string printof(this f.ISysExpander e, LambdaExpression memberSelector)
         {
-            if (memberSelector == null)
-            {
-                return null;
-            }
+            if (memberSelector == null) return null;
             var currentExpression = memberSelector.Body;
             while (true)
             {
@@ -290,7 +326,10 @@ namespace Jetproger.Tools.Convert.Bases
 
         public static object defaultof(this f.ISysExpander e, Type type)
         {
-            return type.IsValueType ? Activator.CreateInstance(type) : null;
+            return
+            type == typeof(Icon) ? SYS_ICON.As<Icon>() : (
+            type == typeof(Image) ? SYS_IMAGE.As<Image>() : (
+            type.IsValueType ? Activator.CreateInstance(type) : null));
         }
 
         public static Type genericof(this f.ISysExpander e, Type type)
@@ -300,24 +339,25 @@ namespace Jetproger.Tools.Convert.Bases
             return type.HasElementType ? type.GetElementType() : null;
         }
 
-        public static bool IsList(this f.ISysExpander e, Type type)
+        public static bool islist(this f.ISysExpander e, Type type)
         {
             if (type == null) return false;
             var genericType = genericof(e, type);
             return genericType != null && type.GetGenericTypeDefinition() == typeof(List<>) && genericType.IsClass && !typeof(IEnumerable).IsAssignableFrom(genericType);
         }
 
-        public static bool IsTypeOf(this f.ISysExpander e, Type type, Type sample)
+        public static bool isof(this f.ISysExpander e, Type type, Type sample)
         {
             return type == sample || type.IsSubclassOf(sample) || type.GetInterfaces().Any(x => x == sample);
         }
 
-        public static bool IsSimple(this f.ISysExpander e, Type type)
+        public static bool issimple(this f.ISysExpander e, Type type)
         {
             return type != null && (type.IsEnum || SimpleTypes.Contains(type));
         }
 
-        private static readonly HashSet<Type> SimpleTypes = new HashSet<Type> {
+        private static readonly HashSet<Type> SimpleTypes = new HashSet<Type>
+        {
             typeof(string), typeof(char), typeof(char?),
             typeof(bool), typeof(bool?),
             typeof(byte), typeof(byte?), typeof(sbyte), typeof(sbyte?),
@@ -331,5 +371,30 @@ namespace Jetproger.Tools.Convert.Bases
             typeof(DateTime), typeof(DateTime?),
             typeof(byte[]), typeof(char[])
         };
+    }
+
+    
+    [Serializable]
+    public class ReusableThread
+    {
+        private readonly ManualResetEvent _mre = new ManualResetEvent(false);
+        private Action _working;
+        private Thread _thread;
+
+        public void Execute(Action working)
+        {
+            _thread = _thread ?? f.sys.threadof(Working, 0);
+            _working = working;
+            _mre.Set();
+        }
+
+        private void Working()
+        {
+            _mre.WaitOne();
+            _mre.Reset();
+            try { if (_working != null) _working(); }
+            catch (Exception e) { f.log(e); }
+            finally { t<ReusableThread>.few(this); }
+        }
     }
 }

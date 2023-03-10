@@ -372,4 +372,7 @@
   <data name="AppPortNotSpecifiedName" xml:space="preserve">
     <value>В конфиге не указан порт для прослушивания (нода &lt;AppPort&gt;)</value>
   </data>
+  <data name="ContainerNotFoundName" xml:space="preserve">
+    <value>Не найден контейнер команды по идентификатору "{0}"</value>
+  </data>
 </root>
