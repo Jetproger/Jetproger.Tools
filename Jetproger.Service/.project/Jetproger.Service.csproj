@@ -16,7 +16,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\.Jetproger.Tools.Trace\</OutputPath>
+    <OutputPath>..\..\.Jetproger.Service\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -24,7 +24,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\.Jetproger.Tools.Trace\</OutputPath>
+    <OutputPath>..\..\.Jetproger.Service\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -39,12 +39,8 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NLog">
-      <HintPath>..\..\.NLog\NLog.dll</HintPath>
-    </Reference>
-    <Reference Include="NLog.Extended">
-      <HintPath>..\..\.NLog\NLog.Extended.dll</HintPath>
-    </Reference>
+    <Reference Include="NLog"><HintPath>..\..\.NLog\NLog.dll</HintPath></Reference>
+    <Reference Include="NLog.Extended"><HintPath>..\..\.NLog\NLog.Extended.dll</HintPath></Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -54,85 +50,17 @@
     <Reference Include="System.Runtime.Remoting" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\Trace.cs">
-      <Link>Bases\Trace.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\AppUserLayoutRenderer.cs">
-      <Link>Bases\AppUserLayoutRenderer.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\ComputerLayoutRenderer.cs">
-      <Link>Bases\ComputerLayoutRenderer.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\WinUserLayoutRenderer.cs">
-      <Link>Bases\WinUserLayoutRenderer.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\NlogConfig.cs">
-      <Link>Bases\NlogConfig.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\NlogConfigRule.cs">
-      <Link>Bases\NlogConfigRule.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\NlogConfigTarget.cs">
-      <Link>Bases\NlogConfigTarget.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\NlogConfigTargets.cs">
-      <Link>Bases\NlogConfigTargets.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\NlogConfigExtension.cs">
-      <Link>Bases\NlogConfigExtension.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\TraceRemote.cs">
-      <Link>Bases\TraceRemote.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\NlogTraceListener.cs">
-      <Link>Bases\NlogTraceListener.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\TraceCore.cs">
-      <Link>Bases\TraceCore.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\..\.solution\AssemblyInfo.cs">
-      <Link>.project\AssemblyInfo.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\.solution\jetproger.pfx">
-      <Link>.project\jetproger.pfx</Link>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Jetproger.Tools.Convert\.project\Jetproger.Tools.Convert.csproj">
       <Project>{600aa7dc-ea39-4609-ab2a-3546bb5f8b72}</Project>
       <Name>Jetproger.Tools.Convert</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\.setting\Jetproger.Tools.Trace.nuspec">
-      <Link>.project\Jetproger.Tools.Trace.nuspec</Link>
-    </None>
+    <Compile Include="..\Bases\AppStart.cs"><Link>Bases\AppStart.cs</Link></Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\.solution\AssemblyInfo.cs"><Link>.project\AssemblyInfo.cs</Link></Compile>
+    <None Include="..\..\.solution\jetproger.pfx"><Link>.project\jetproger.pfx</Link></None>
   </ItemGroup>
   <Target Name="RemoveDirectories" BeforeTargets="ResolveReferences">
     <Exec Command="for /d %%p in (&quot;$(ProjectDir)&quot;\*) do if /I &quot;%%p&quot; neq &quot;$(ProjectDir)\obj&quot; (rd /Q /S &quot;%%p&quot;)" />

@@ -8,7 +8,6 @@ namespace Jetproger.Tools.Convert.Commanders
     public class WebStreams : CommandStreams
     {
         public HttpWebResponse Response { get; set; }
-
         public HttpWebRequest Request { get; set; }
 
         public override void Dispose()
@@ -21,7 +20,9 @@ namespace Jetproger.Tools.Convert.Commanders
         {
             try
             {
-                if (Response != null) ((IDisposable)Response).Dispose();
+                if (Response == null) return;
+                ((IDisposable)Response).Dispose();
+                Response = null;
             }
             catch (Exception e)
             {
@@ -53,11 +54,13 @@ namespace Jetproger.Tools.Convert.Commanders
             DisposeReader();
         }
 
-        private void DisposeWriter()
+        public void DisposeWriter()
         {
             try
             {
-                if (StreamWriter != null) StreamWriter.Dispose();
+                if (StreamWriter == null) return;
+                StreamWriter.Dispose();
+                StreamWriter = null;
             }
             catch (Exception e)
             {
@@ -65,11 +68,13 @@ namespace Jetproger.Tools.Convert.Commanders
             }
         }
 
-        private void DisposeReader()
+        public void DisposeReader()
         {
             try
             {
-                if (StreamReader != null) StreamReader.Dispose();
+                if (StreamReader == null) return;
+                StreamReader.Dispose();
+                StreamReader = null;
             }
             catch (Exception e)
             {

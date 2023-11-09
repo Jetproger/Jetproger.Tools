@@ -102,7 +102,7 @@ namespace Jetproger.Tools.Convert.Converts
 
         protected override object BytesAsValue(byte[] bytes, Type typeTo)
         {
-            if (bytes == null || bytes.Length == 0) return f.sys.defaultof(typeTo);
+            if (bytes == null || bytes.Length == 0) return f.sys.defof(typeTo);
             if (typeTo == typeof(byte[])) return bytes;
             if (typeTo == typeof(string)) return System.Convert.ToBase64String(bytes, Base64FormattingOptions.None);
             if (typeTo == typeof(char[])) return DeserializeChars(bytes);

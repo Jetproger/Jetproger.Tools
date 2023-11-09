@@ -19,16 +19,21 @@ namespace Jetproger.Tools.Convert.Commands
         protected FileCommandReader(string fileName) : base(fileName, Encoding.UTF8) { }
     }
 
-    public abstract class FileCommand<T> : Command<T>
+    public abstract class FileCommand<T> : DelayCommand<T, T>, ICommand
     {
-        public string FileName { get; private set; }
         private readonly Encoding _encoding;
         private readonly bool _isWriter;
+        private CommandStreams _state;
+
+        public string FileName { get; private set; }
+
+        protected virtual void BeforeExecute() { } 
+        protected virtual void AfterExecute() { }
 
         protected FileCommand(string fileName, Encoding encoding, T content)
         {
             FileName = f.fss.pathnameextof(fileName);
-            _encoding = encoding;
+            _encoding = encoding ?? Encoding.UTF8;
             _isWriter = true;
             Value = content;
         }
@@ -40,15 +45,26 @@ namespace Jetproger.Tools.Convert.Commands
             _isWriter = false;
         }
 
-        protected override void Execute()
+        public void Execute()
         {
-            __BeginRead();
+            try
+            {
+                BeforeExecute();
+                if (State != ECommandState.None) return;
+                State = ECommandState.Running;
+                __BeginRead();
+            }
+            catch (Exception e)
+            {
+                Error = e;
+            }
         }
 
         private CommandStreams BeginRead()
         {
             var state = GetStreams();
-            if (state.StreamReader is MemoryStream ms && ms.Length == 0) f.sys.threadof(() => Completing(state));
+            var ms = state.StreamReader as MemoryStream;
+            if (ms != null && ms.Length == 0) Completing(state);
             else state.StreamReader.BeginRead(state.Buffer, 0, state.Buffer.Length, __EndRead, state);
             return state;
         }
@@ -57,7 +73,7 @@ namespace Jetproger.Tools.Convert.Commands
         {
             var read = state.StreamReader.EndRead(ar);
             if (read > 0) state.StreamWriter.BeginWrite(state.Buffer, 0, read, __EndWrite, state);
-            else f.sys.threadof(() => Completing(state));
+            else Delay(state);
         }
 
         private void EndWrite(IAsyncResult ar, CommandStreams state)
@@ -67,17 +83,31 @@ namespace Jetproger.Tools.Convert.Commands
             state.StreamReader.BeginRead(state.Buffer, 0, state.Buffer.Length, __EndRead, state);
         }
 
+        private void Delay(CommandStreams state)
+        {
+            _state = state;
+            if (((IDelay)this).CancelDelay) Completing(state); else SetState(ECommandState.Completed);
+        }
+
+        public override void Complete()
+        {
+            Completing(_state);
+            base.Complete();
+        }
+
         private void Completing(CommandStreams state)
         {
             try
             {
-                var result = state.StreamWriter is MemoryStream ms ? ms.As<SimpleJson>(_encoding).As<T>() : default(T);
+                var ms = state.StreamWriter as MemoryStream;
+                var result = ms != null ? ms.As<T>(_encoding) : default(T);
                 state.Dispose();
                 Result = result;
+                AfterExecute();
             }
             catch (Exception e)
             {
-                state.Dispose();
+                if (state != null) state.Dispose();
                 Error = e;
             }
         }
@@ -91,7 +121,7 @@ namespace Jetproger.Tools.Convert.Commands
 
         private Stream CreateReader()
         {
-            return _isWriter ? (Stream)Value.As<SimpleJson>(_encoding).As<MemoryStream>() : new FileStream(FileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+            return _isWriter ? (Stream)Value.As<MemoryStream>(_encoding) : new FileStream(FileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
         }
 
         private Stream CreateWriter(Stream reader)

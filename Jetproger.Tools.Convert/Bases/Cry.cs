@@ -12,16 +12,16 @@ namespace Jetproger.Tools.Convert.Bases
 {
     public class CryExpander
     {
-        public X509Certificate2 App { get { return CryptoExtensions.AppCertificate; } }
-        public X509Certificate2 Out { get { return CryptoExtensions.OutCertificate; } } 
+        public X509Certificate2 app { get { return CryptoExtensions.AppCertificate; } }
+        public X509Certificate2 ext { get { return CryptoExtensions.OutCertificate; } } 
     }
 
     public static class CryptoExtensions
     {
-        public static X509Certificate2 AppCertificate { get { return f.one.of(AppCertificateHolder, () => FindCertificateByThumbprint(null, k<AppCert>.As<string>())); } }
+        public static X509Certificate2 AppCertificate { get { return f.one.of(AppCertificateHolder, () => FindCertificateByThumbprint(null, k<AppCert>.key())); } }
         private static readonly X509Certificate2[] AppCertificateHolder = { null };
 
-        public static X509Certificate2 OutCertificate { get { return f.one.of(OutCertificateHolder, () => FindCertificateByThumbprint(null, k<OutCert>.As<string>())); } }
+        public static X509Certificate2 OutCertificate { get { return f.one.of(OutCertificateHolder, () => FindCertificateByThumbprint(null, k<OutCert>.key())); } }
         private static readonly X509Certificate2[] OutCertificateHolder = { null };
 
         public static bool ExistsKeyContainer(this CryExpander exp)
@@ -38,10 +38,10 @@ namespace Jetproger.Tools.Convert.Bases
 
         private static X509Certificate2 FindSignerCertificate()
         {
-            var cert = FindCertificateByThumbprint(null, k<OutCert>.As<string>());
-            if (cert == null) throw new CertificateStoreException(k<OutCert>.As<string>(), "OuterCert");
+            var cert = FindCertificateByThumbprint(null, k<OutCert>.key());
+            if (cert == null) throw new CertificateStoreException(k<OutCert>.key(), "OuterCert");
             cert = FindSignerCertInKeyContainer(null, cert);
-            if (cert == null) throw new CertificateKeyException(k<OutCert>.As<string>(), "OuterCert");
+            if (cert == null) throw new CertificateKeyException(k<OutCert>.key(), "OuterCert");
             return cert;
         }
 
@@ -49,8 +49,8 @@ namespace Jetproger.Tools.Convert.Bases
         {
             var store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
             store.Open(OpenFlags.OpenExistingOnly | OpenFlags.ReadOnly);
-            if (!k<OutCert>.Is) return null;
-            var configThumbprint = (k<OutCert>.As<string>() ?? string.Empty).ToUpper();
+            if (!k<OutCert>.has) return null;
+            var configThumbprint = (k<OutCert>.key() ?? string.Empty).ToUpper();
             if (string.IsNullOrWhiteSpace(configThumbprint)) return null;
             try
             {
@@ -152,7 +152,7 @@ namespace Jetproger.Tools.Convert.Bases
         [DllImport("Advapi32.dll", EntryPoint = "CryptReleaseContext", CharSet = CharSet.Unicode, SetLastError = true)]
         public static extern bool CryptReleaseContext(IntPtr hProv, Int32 dwFlags);
 
-        private static readonly uint CRYPT_PROV_TYPE = k<CryptProviderType>.As<uint>();
+        private static readonly uint CRYPT_PROV_TYPE = k<CryptProviderType>.key<uint>();
         public const uint CRYPT_NEWKEYSET = 0x8;
         public const uint CRYPT_DELETEKEYSET = 0x10;
         public const uint CRYPT_MACHINE_KEYSET = 0x20;

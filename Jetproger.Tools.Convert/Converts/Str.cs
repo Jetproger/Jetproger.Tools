@@ -115,7 +115,7 @@ namespace Jetproger.Tools.Convert.Converts
 
         protected override object CharsAsValue(string s, Type typeTo)
         {
-            if (string.IsNullOrWhiteSpace(s)) return f.sys.defaultof(typeTo);
+            if (string.IsNullOrWhiteSpace(s)) return f.sys.defof(typeTo);
             if (typeTo.IsEnum) return ToEnum(s, typeTo);
             if (typeTo == typeof(string)) return s;
             if (typeTo == typeof(byte[])) return CharsAsBytes(s);

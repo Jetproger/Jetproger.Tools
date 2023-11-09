@@ -11,7 +11,7 @@ namespace Jetproger.Tools.Convert.Commanders
         public static ErrorCommandGroup operator +(ErrorCommandGroup group, ErrorHandlerCommand command) { return (ErrorCommandGroup)group.Add(command); }
     }
 
-    public abstract class ErrorHandlerCommand : Command<ICommand, ICommand>
+    public abstract class ErrorHandlerCommand : EmptyCommand<ICommand, ICommand>
     {
     }
 

@@ -17,7 +17,7 @@ namespace Jetproger.Tools.Convert.Factories
 
         public static T Get()
         {
-            return Pool.TryTake(out var value) ? value : f.sys.defaultof<T>();
+            return Pool.TryTake(out var value) ? value : f.sys.defof<T>();
         }
 
         public static T GetSet(SimpleCreator creator)

@@ -193,11 +193,10 @@ namespace Jetproger.Tools.Convert.Converts
 
     public class KizXml : Converter
     {
-        private static readonly IConverter Sql = new SqlConverter();
         protected override object CharsAsValue(string chars, Type typeTo) { return BytesAsValue(!string.IsNullOrWhiteSpace(chars) ? Encoder.GetBytes(chars) : new byte[0], typeTo); }
         protected override string ValueAsChars(object value) { return Encoder.GetString(ValueAsBytes(value)); }
-        
         public KizXml(Encoding encoder = null) { Encoder = encoder ?? base.Encoder; }
+        private static readonly IConverter Sql = new SqlConverter();
         protected override Encoding Encoder { get; }
 
         protected override byte[] ValueAsBytes(object value)
@@ -221,15 +220,19 @@ namespace Jetproger.Tools.Convert.Converts
                 ns.Add("xs", "http://www.w3.org/2001/XMLSchema");
                 ns.Add("xsi", "http://www.w3.org/2001/XMLSchema-instance");
                 var xs = new XmlSerializer(value.GetType());
-                var xtw = new XmlTextWriter(ms, Encoding.UTF8);
-                xtw.Formatting = Formatting.Indented;
-                xtw.Namespaces = true;
-                var xws = new XmlWriterSettings();
-                xws.NewLineHandling = NewLineHandling.Replace;
-                xws.NewLineChars = "\n";
-                var xw = XmlWriter.Create(xtw, xws);
-                xs.Serialize(xw, value, ns);
-                return ms.ToArray();
+                using (var xtw = new XmlTextWriter(ms, Encoding.UTF8))
+                {
+                    xtw.Formatting = Formatting.Indented;
+                    xtw.Namespaces = true;
+                    var xws = new XmlWriterSettings();
+                    xws.NewLineHandling = NewLineHandling.Replace;
+                    xws.NewLineChars = "\n";
+                    using (var xw = XmlWriter.Create(xtw, xws))
+                    {
+                        xs.Serialize(xw, value, ns);
+                        return ms.ToArray();
+                    }
+                }
             }
         }
 
@@ -237,7 +240,7 @@ namespace Jetproger.Tools.Convert.Converts
         {
             if (bytes == null || bytes.Length == 0)
             {
-                return f.sys.defaultof(typeTo);
+                return f.sys.defof(typeTo);
             }
             if (typeTo == typeof(DataSet) || typeTo == typeof(DataTable))
             {
@@ -253,26 +256,29 @@ namespace Jetproger.Tools.Convert.Converts
             using (var ms = new MemoryStream(bytes))
             {
                 var xs = new XmlSerializer(typeTo);
-                var xtr = new XmlTextReader(new StreamReader(ms, Encoding.UTF8));
-                xtr.Namespaces = false;
-                var xrs = new XmlReaderSettings();
-                xrs.IgnoreComments = true;
-                xrs.IgnoreProcessingInstructions = true;
-                xrs.IgnoreWhitespace = true;
-                var xr = XmlReader.Create(xtr, xrs);
-                return xs.Deserialize(xr);
+                using (var xtr = new XmlTextReader(new StreamReader(ms, Encoding.UTF8)))
+                {
+                    xtr.Namespaces = false;
+                    var xrs = new XmlReaderSettings();
+                    xrs.IgnoreComments = true;
+                    xrs.IgnoreProcessingInstructions = true;
+                    xrs.IgnoreWhitespace = true;
+                    using (var xr = XmlReader.Create(xtr, xrs))
+                    {
+                        return xs.Deserialize(xr);
+                    }
+                }
             }
         }
     }
 
     public class SimpleXml : Converter
     {
-        private static readonly string ByteOrderMarkUtf8 = Encoding.UTF8.GetString(Encoding.UTF8.GetPreamble());
-        private static readonly IConverter Sql = new SqlConverter();
         protected override object CharsAsValue(string chars, Type typeTo) { return BytesAsValue(!string.IsNullOrWhiteSpace(chars) ? Encoder.GetBytes(chars) : new byte[0], typeTo); }
         protected override string ValueAsChars(object value) { return Encoder.GetString(ValueAsBytes(value)).Remove(0, ByteOrderMarkUtf8.Length); }
-        
+        private static readonly string ByteOrderMarkUtf8 = Encoding.UTF8.GetString(Encoding.UTF8.GetPreamble());
         public SimpleXml(Encoding encoder = null) { Encoder = encoder ?? base.Encoder; }
+        private static readonly IConverter Sql = new SqlConverter();
         protected override Encoding Encoder { get; }
 
         protected override byte[] ValueAsBytes(object value)
@@ -294,14 +300,18 @@ namespace Jetproger.Tools.Convert.Converts
             {
                 var ns = new XmlSerializerNamespaces(new[] { XmlQualifiedName.Empty });
                 var xs = new XmlSerializer(value.GetType());
-                var xtw = new NoDeclarationXmlTextWriter(ms, Encoding.UTF8);
-                xtw.Formatting = Formatting.None;
-                xtw.Namespaces = true;
-                var xws = new XmlWriterSettings();
-                xws.OmitXmlDeclaration = true;
-                var xw = XmlWriter.Create(xtw, xws);
-                xs.Serialize(xw, value, ns);
-                return ms.ToArray();
+                using (var xtw = new NoDeclarationXmlTextWriter(ms, Encoding.UTF8))
+                {
+                    xtw.Formatting = Formatting.None;
+                    xtw.Namespaces = true;
+                    var xws = new XmlWriterSettings();
+                    xws.OmitXmlDeclaration = true;
+                    using (var xw = XmlWriter.Create(xtw, xws))
+                    {
+                        xs.Serialize(xw, value, ns);
+                        return ms.ToArray();
+                    }
+                }
             }
         }
 
@@ -309,7 +319,7 @@ namespace Jetproger.Tools.Convert.Converts
         {
             if (bytes == null || bytes.Length == 0)
             {
-                return f.sys.defaultof(typeTo);
+                return f.sys.defof(typeTo);
             }
             if (typeTo == typeof(DataSet) || typeTo == typeof(DataTable))
             {
@@ -325,14 +335,18 @@ namespace Jetproger.Tools.Convert.Converts
             using (var ms = new MemoryStream(bytes))
             {
                 var xs = new XmlSerializer(typeTo);
-                var xtr = new NoDeclarationXmlTextReader(ms, Encoding.UTF8);
-                xtr.Namespaces = false;
-                var xrs = new XmlReaderSettings();
-                xrs.IgnoreComments = true;
-                xrs.IgnoreProcessingInstructions = true;
-                xrs.IgnoreWhitespace = true;
-                var xr = XmlReader.Create(xtr, xrs);
-                return xs.Deserialize(xr);
+                using (var xtr = new NoDeclarationXmlTextReader(ms, Encoding.UTF8))
+                {
+                    xtr.Namespaces = false;
+                    var xrs = new XmlReaderSettings();
+                    xrs.IgnoreComments = true;
+                    xrs.IgnoreProcessingInstructions = true;
+                    xrs.IgnoreWhitespace = true;
+                    using (var xr = XmlReader.Create(xtr, xrs))
+                    {
+                        return xs.Deserialize(xr);
+                    }
+                }
             }
         }
 
@@ -341,6 +355,7 @@ namespace Jetproger.Tools.Convert.Converts
             public NoDeclarationXmlTextWriter(string filename, Encoding encoding) : base(filename, encoding) { }
             public NoDeclarationXmlTextWriter(Stream w, Encoding encoding) : base(w, encoding) { }
             public NoDeclarationXmlTextWriter(TextWriter w) : base(w) { }
+
             public override void WriteStartDocument(bool standalone) { }
             public override void WriteStartDocument() { }
         }

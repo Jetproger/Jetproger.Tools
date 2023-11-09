@@ -7,10 +7,12 @@ using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using Jetproger.Tools.Convert.Bases;
+using Jetproger.Tools.Convert.Caches;
 using Jetproger.Tools.Convert.Commanders;
 using Jetproger.Tools.Convert.Commands;
 
@@ -18,17 +20,14 @@ namespace Jetproger.Tools.Convert.Converts
 {
     public static class Cast
     {
-        public static T As<T>(this object valueFr, params object[] argsTo) { return (T)As(valueFr, typeof(T), argsTo); }
-        
-        private static readonly IConverter Bin = new BinaryConverter();
-        
-        private static readonly IConverter Str = new StringConverter();
-        
+        public static T As<T>(this object valueFr, params object[] argsTo) { return (T)As(valueFr, typeof(T), argsTo); } 
+        private static readonly IConverter Bin = new BinaryConverter(); 
+        private static readonly IConverter Str = new StringConverter(); 
         private static readonly IConverter Sql = new SqlConverter();
 
         public static object As(this object valueFr, Type typeTo, params object[] argsTo)
         {
-            if (valueFr == null || valueFr == DBNull.Value) return f.sys.defaultof(typeTo);
+            if (valueFr == null || valueFr == DBNull.Value) return f.sys.defof(typeTo);
             var typeFr = valueFr.GetType();
             if (f.sys.isof(typeFr, typeTo)) return valueFr;
             var nullTypeTo = Nullable.GetUnderlyingType(typeTo);
@@ -62,7 +61,7 @@ namespace Jetproger.Tools.Convert.Converts
                 valueTo = Bin.As(typeTo, argsTo);
                 return true;
             }
-            valueTo = f.sys.defaultof(typeTo);
+            valueTo = f.sys.defof(typeTo);
             return false;
         }
 
@@ -78,7 +77,7 @@ namespace Jetproger.Tools.Convert.Converts
                 valueTo = Str.As(typeTo);
                 return true;
             }
-            valueTo = f.sys.defaultof(typeTo);
+            valueTo = f.sys.defof(typeTo);
             return false;
         }
 
@@ -103,7 +102,7 @@ namespace Jetproger.Tools.Convert.Converts
                 valueTo = !typeTo.IsInterface && typeTo != typeof(object) ? f.sys.valueof(typeTo, argsTo) : f.sys.valueof(type, argsTo);
                 return true;
             }
-            valueTo = f.sys.defaultof(typeTo);
+            valueTo = f.sys.defof(typeTo);
             return false;
         }
 
@@ -118,7 +117,7 @@ namespace Jetproger.Tools.Convert.Converts
                 var elementType = typeFr.GetElementType();
                 if (elementType != null && f.sys.isof(typeTo, elementType))
                 {
-                    valueTo = valueFr is IList list && list.Count > 0 ? list[0] : f.sys.defaultof(typeTo);
+                    valueTo = valueFr is IList list && list.Count > 0 ? list[0] : f.sys.defof(typeTo);
                     return true;
                 }
             }
@@ -133,7 +132,7 @@ namespace Jetproger.Tools.Convert.Converts
                     return true;
                 }
             }
-            valueTo = f.sys.defaultof(typeTo);
+            valueTo = f.sys.defof(typeTo);
             return false;
         }
 
@@ -149,7 +148,7 @@ namespace Jetproger.Tools.Convert.Converts
                 var genericType = genericTypes.Length == 1 ? genericTypes[0] : null;
                 if (genericType != null && f.sys.isof(typeTo, genericType))
                 {
-                    valueTo = valueFr is IList list && list.Count > 0 ? list[0] : f.sys.defaultof(typeTo);
+                    valueTo = valueFr is IList list && list.Count > 0 ? list[0] : f.sys.defof(typeTo);
                     return true;
                 }
             }
@@ -165,7 +164,7 @@ namespace Jetproger.Tools.Convert.Converts
                     return true;
                 }
             }
-            valueTo = f.sys.defaultof(typeTo);
+            valueTo = f.sys.defof(typeTo);
             return false;
         }
 
@@ -186,7 +185,7 @@ namespace Jetproger.Tools.Convert.Converts
                 ((IConverter)valueTo).Is(valueFr);
                 return true;
             }
-            valueTo = f.sys.defaultof(typeTo);
+            valueTo = f.sys.defof(typeTo);
             return false;
         }
 
@@ -226,7 +225,7 @@ namespace Jetproger.Tools.Convert.Converts
                 valueTo = new EntityReader(valueFr);
                 return true;
             }
-            valueTo = f.sys.defaultof(typeTo);
+            valueTo = f.sys.defof(typeTo);
             return false;
         }
 
@@ -240,30 +239,66 @@ namespace Jetproger.Tools.Convert.Converts
             {
                 if (typeTo == typeof(Exception))
                 {
-                    valueTo = null;
-                    var cmdMsg = response.Report.FirstOrDefault(x => x.Category == ECommandMessage.Error.ToString());
-                    if (cmdMsg != null)
-                    {
-                        var e = new Exception(cmdMsg.Message);
-                        if (!string.IsNullOrWhiteSpace(cmdMsg.Status)) e.Data.Add("CommandMessageStatus", cmdMsg.Status);
-                        valueTo = e;
-                    }
+                    valueTo = CommandReportAsException(response.Report.As<SimpleXml>().As<CommandReport>());
                     return true;
                 }
-                valueTo = string.IsNullOrWhiteSpace(response.Result) ? f.sys.defaultof(typeTo) : response.Result.As<SimpleXml>().As(typeTo);
+                valueTo = string.IsNullOrWhiteSpace(response.Result) ? f.sys.defof(typeTo) : response.Result.As<SimpleXml>().As(typeTo);
                 return true;
+            }
+            if (valueFr is IParameterizedCommand command)
+            {
+                if (typeTo == typeof(CommandRecord))
+                {
+                    var record = new CommandRecord
+                    {
+                        Lifetime = null,
+                        Name = f.sys.printof(valueFr),
+                        P_ = command.P_ == null || !f.sys.issimple(command.P_.GetType()) ? string.Empty : command.P_.As<string>(),
+                        P0 = command.P0 == null || !f.sys.issimple(command.P0.GetType()) ? string.Empty : command.P0.As<string>(),
+                        P1 = command.P1 == null || !f.sys.issimple(command.P1.GetType()) ? string.Empty : command.P1.As<string>(),
+                        P2 = command.P2 == null || !f.sys.issimple(command.P2.GetType()) ? string.Empty : command.P2.As<string>(),
+                        P3 = command.P3 == null || !f.sys.issimple(command.P3.GetType()) ? string.Empty : command.P3.As<string>(),
+                        P4 = command.P4 == null || !f.sys.issimple(command.P4.GetType()) ? string.Empty : command.P4.As<string>(),
+                        P5 = command.P5 == null || !f.sys.issimple(command.P5.GetType()) ? string.Empty : command.P5.As<string>(),
+                        P6 = command.P6 == null || !f.sys.issimple(command.P6.GetType()) ? string.Empty : command.P6.As<string>(),
+                        P7 = command.P7 == null || !f.sys.issimple(command.P7.GetType()) ? string.Empty : command.P7.As<string>(),
+                        P8 = command.P8 == null || !f.sys.issimple(command.P8.GetType()) ? string.Empty : command.P8.As<string>(),
+                        P9 = command.P9 == null || !f.sys.issimple(command.P9.GetType()) ? string.Empty : command.P9.As<string>(),
+                    };
+                    record.Lifetime = !string.IsNullOrWhiteSpace(record.Lifetime) ? record.Lifetime : f.sys.printof<DefaultCacheLifetime>();
+                    valueTo = record;
+                    return true;
+                }
+            }
+            if (typeTo == typeof(CommandReport))
+            {
+                if (typeFr == typeof(CommandMessage))
+                {
+                    valueTo = new CommandReport { Messages = new[] { (CommandMessage)valueFr } };
+                    return true;
+                }
+                if (typeFr == typeof(CommandMessage[]))
+                {
+                    valueTo = new CommandReport { Messages = (CommandMessage[])valueFr };
+                    return true;
+                }
+                if (f.sys.isof(typeFr, typeof(Exception)))
+                {
+                    valueTo = new CommandReport { Messages = new[] { ExceptionAsCommandMessage((Exception)valueFr) } };
+                    return true;
+                }
             }
             if (f.sys.isof(typeTo, typeof(ICommand)))
             {
                 if (valueFr is CommandRequest request)
                 {
-                    valueTo = f.sys.commandof(request.Command);
-                    var property = typeTo.GetProperty("Value", BindingFlags.Instance | BindingFlags.Public);
-                    if (property != null) property.SetValue(valueTo, request.Value.As<SimpleXml>().As(property.PropertyType));
+                    var cmd = f.sys.cmdof(request.Command);
+                    cmd.Value = request;
+                    valueTo = cmd;
                     return true;
                 }
             }
-            valueTo = f.sys.defaultof(typeTo);
+            valueTo = f.sys.defof(typeTo);
             return false;
         }
 
@@ -273,21 +308,26 @@ namespace Jetproger.Tools.Convert.Converts
 
         private static bool TryException(Type typeFr, Type typeTo, object valueFr, out object valueTo, params object[] argsTo)
         {
-            if (valueFr is Exception arg)
+            if (valueFr is Exception exception)
             {
                 if (typeTo == typeof(string))
                 {
-                    valueTo = (new CommandMessage(arg)).Message;
+                    valueTo = ExceptionAsCommandMessage(exception).Message;
                     return true;
                 }
                 if (typeTo == typeof(CommandMessage))
                 {
-                    valueTo = (new CommandMessage(arg));
+                    valueTo = ExceptionAsCommandMessage(exception);
                     return true;
                 }
                 if (typeTo == typeof(CommandMessage[]))
                 {
-                    valueTo = (new [] { new CommandMessage(arg) });
+                    valueTo = new [] { ExceptionAsCommandMessage(exception) };
+                    return true;
+                }
+                if (typeTo == typeof(CommandReport))
+                {
+                    valueTo = new CommandReport { Messages = new[] { ExceptionAsCommandMessage(exception) } };
                     return true;
                 }
             }
@@ -300,26 +340,86 @@ namespace Jetproger.Tools.Convert.Converts
                 }
                 if (valueFr is CommandMessage msg)
                 {
-                    var e = new Exception(msg.Message);
-                    if (!string.IsNullOrWhiteSpace(msg.Status)) e.Data.Add("CommandMessageStatus", msg.Status);
-                    valueTo = e;
+                    valueTo = CommandMessageAsException(msg);
                     return true;
                 }
                 if (valueFr is CommandMessage[] messages)
                 {
-                    valueTo = null;
-                    var cmdMsg = messages.FirstOrDefault(x => x.Category == ECommandMessage.Error.ToString());
-                    if (cmdMsg != null)
-                    {
-                        var e = new Exception(cmdMsg.Message);
-                        if (!string.IsNullOrWhiteSpace(cmdMsg.Status)) e.Data.Add("CommandMessageStatus", cmdMsg.Status);
-                        valueTo = e;
-                    }
+                    valueTo = CommandMessagesAsException(messages);
+                    return true;
+                }
+                if (valueFr is CommandReport report)
+                {
+                    valueTo = CommandReportAsException(report);
                     return true;
                 }
             }
-            valueTo = f.sys.defaultof(typeTo);
+            valueTo = f.sys.defof(typeTo);
             return false;
+        }
+
+        private static Exception CommandReportAsException(CommandReport report)
+        {
+            return CommandMessagesAsException(report.Messages);
+        }
+
+        private static Exception CommandMessagesAsException(CommandMessage[] messages)
+        {
+            foreach (CommandMessage msg in (messages ?? new CommandMessage[0]))
+            {
+                var e = CommandMessageAsException(msg);
+                if (e != null) return e;
+            }
+            return null;
+        }
+
+        private static Exception CommandMessageAsException(CommandMessage msg)
+        {
+            var e = msg.Category == ECommandMessage.Error.ToString() ? new Exception(msg.Message) : null;
+            if (e != null && !string.IsNullOrWhiteSpace(msg.Status)) e.Data.Add("CommandMessageStatus", msg.Status);
+            return e;
+        }
+
+        private static CommandMessage ExceptionAsCommandMessage(Exception exception)
+        {
+            var msg = new CommandMessage { Category = ECommandMessage.Error.ToString(), Message = exception.Message };
+            exception = FirstException(exception);
+            msg.Info = WebExceptionAsString(exception as WebException, msg) ?? ExceptionAsString(exception);
+            msg.Status = exception.Data.Contains("CommandMessageStatus") && exception.Data["CommandMessageStatus"] != null ? exception.Data["CommandMessageStatus"].ToString() : msg.Status;
+            return msg;
+        }
+
+        private static Exception FirstException(object obj)
+        {
+            var ae = obj as AggregateException;
+            if (ae == null) return obj as Exception;
+            return ae.InnerExceptions.Count > 0 ? ae.InnerExceptions[0].InnerException ?? ae.InnerExceptions[0] : null;
+        }
+
+        private static string WebExceptionAsString(WebException we, CommandMessage msg)
+        {
+            if (we == null) return null;
+            if (we.Response == null) return we.ToString();
+            msg.Status = we.Response is HttpWebResponse httpWebResponse ? ((int)httpWebResponse.StatusCode).ToString() : msg.Status;
+            var responseStream = we.Response.GetResponseStream();
+            if (responseStream == null) return we.ToString();
+            using (var sr = new StreamReader(responseStream))
+            {
+                var s = sr.ReadToEnd();
+                return !string.IsNullOrWhiteSpace(s) ? s : we.ToString();
+            }
+        }
+
+        private static string ExceptionAsString(Exception e)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine(e.ToString());
+            while (e != null)
+            {
+                sb.AppendLine(e.Message);
+                e = e.InnerException;
+            }
+            return sb.ToString();
         }
 
         #endregion
@@ -346,7 +446,7 @@ namespace Jetproger.Tools.Convert.Converts
                 valueTo = stream;
                 return true;
             }
-            valueTo = f.sys.defaultof(typeTo);
+            valueTo = f.sys.defof(typeTo);
             return false;
         }
 
@@ -360,7 +460,7 @@ namespace Jetproger.Tools.Convert.Converts
             {
                 if (!f.sys.issimple(valueFr.GetType()))
                 {
-                    valueTo = arg ? Activator.CreateInstance(typeTo, argsTo) : f.sys.defaultof(typeTo);
+                    valueTo = arg ? Activator.CreateInstance(typeTo, argsTo) : f.sys.defof(typeTo);
                     return true;
                 }
                 if (typeTo == typeof(string))
@@ -413,7 +513,7 @@ namespace Jetproger.Tools.Convert.Converts
                     return true;
                 }
             }
-            valueTo = f.sys.defaultof(typeTo);
+            valueTo = f.sys.defof(typeTo);
             return false;
         }
 
@@ -439,7 +539,7 @@ namespace Jetproger.Tools.Convert.Converts
                     return true;
                 }
             }
-            valueTo = f.sys.defaultof(typeTo);
+            valueTo = f.sys.defof(typeTo);
             return false;
         }
 
@@ -475,7 +575,7 @@ namespace Jetproger.Tools.Convert.Converts
                     return true;
                 }
             }
-            valueTo = f.sys.defaultof(typeTo);
+            valueTo = f.sys.defof(typeTo);
             return false;
         }
 
@@ -521,7 +621,7 @@ namespace Jetproger.Tools.Convert.Converts
                     return true;
                 }
             }
-            valueTo = f.sys.defaultof(typeTo);
+            valueTo = f.sys.defof(typeTo);
             return false;
         }
 
@@ -553,7 +653,7 @@ namespace Jetproger.Tools.Convert.Converts
                     return true;
                 }
             }
-            valueTo = f.sys.defaultof(typeTo);
+            valueTo = f.sys.defof(typeTo);
             return false;
         }
 
@@ -621,7 +721,7 @@ namespace Jetproger.Tools.Convert.Converts
                 valueTo = castNumericMethod.Invoke(null, new[] { valueFr });
                 return true;
             }
-            valueTo = f.sys.defaultof(typeTo);
+            valueTo = f.sys.defof(typeTo);
             return false;
         }
 
@@ -764,27 +864,27 @@ namespace Jetproger.Tools.Convert.Converts
         private bool TryString(Type typeTo, out object valueTo, params object[] argsTo)
         {
             var result = typeTo == typeof(string);
-            valueTo = result ? Chars : f.sys.defaultof(typeTo);
+            valueTo = result ? Chars : f.sys.defof(typeTo);
             return result;
         }
 
         private bool TryStringBuilder(Type typeTo, out object valueTo, params object[] argsTo)
         {
             var result = typeTo == typeof(StringBuilder);
-            valueTo = result ? new StringBuilder(Chars) : f.sys.defaultof(typeTo);
+            valueTo = result ? new StringBuilder(Chars) : f.sys.defof(typeTo);
             return result;
         }
 
         private bool TryCharArray(Type typeTo, out object valueTo, params object[] argsTo)
         {
             var result = typeTo == typeof(char[]);
-            valueTo = result ? Chars.ToCharArray() : f.sys.defaultof(typeTo);
+            valueTo = result ? Chars.ToCharArray() : f.sys.defof(typeTo);
             return result;
         }
 
         private bool TryCharList(Type typeTo, out object valueTo, params object[] argsTo)
         {
-            valueTo = f.sys.defaultof(typeTo);
+            valueTo = f.sys.defof(typeTo);
             var genericTypes = typeTo.GetGenericArguments();
             var genericType = genericTypes.Length == 1 && genericTypes[0] == typeof(char) ? genericTypes[0] : null;
             if (genericType == null) return false;
@@ -799,13 +899,13 @@ namespace Jetproger.Tools.Convert.Converts
         private bool TryBytes(Type typeTo, out object valueTo, params object[] argsTo)
         {
             var result = typeTo == typeof(byte[]);
-            valueTo = result ? Bytes : f.sys.defaultof(typeTo);
+            valueTo = result ? Bytes : f.sys.defof(typeTo);
             return result;
         }
 
         private bool TryByteList(Type typeTo, out object valueTo, params object[] argsTo)
         {
-            valueTo = f.sys.defaultof(typeTo);
+            valueTo = f.sys.defof(typeTo);
             var genericTypes = typeTo.GetGenericArguments();
             var genericType = genericTypes.Length == 1 && genericTypes[0] == typeof(byte) ? genericTypes[0] : null;
             if (genericType == null) return false;
@@ -820,7 +920,7 @@ namespace Jetproger.Tools.Convert.Converts
         private bool TryStream(Type typeTo, out object valueTo, params object[] argsTo)
         {
             var result = typeof(Stream).IsAssignableFrom(typeTo);
-            valueTo = result ? BytesToStream(Bytes, typeTo, argsTo) : f.sys.defaultof(typeTo);
+            valueTo = result ? BytesToStream(Bytes, typeTo, argsTo) : f.sys.defof(typeTo);
             return result;
         }
 
@@ -859,7 +959,7 @@ namespace Jetproger.Tools.Convert.Converts
 
     public interface IConverter
     {
-        void Is(object valueFr);
+        void Is(object valueFr); 
         object As(Type typeTo, params object[] argsTo);
     }
 }

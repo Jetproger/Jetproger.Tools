@@ -9,6 +9,7 @@ namespace Jetproger.Tools.Convert.Bases
     public static partial class f
     {
         public static AppDomain own => f.one.of(OwnHolder, () => AppDomain.CurrentDomain.IsDefaultAppDomain() ? AppDomain.CurrentDomain : null);
+        public static void owner(AppDomain domain) { f.one.to(OwnHolder, domain); }
         private static readonly AppDomain[] OwnHolder = { null };
 
         public static IAppExpander app => null;
@@ -63,6 +64,7 @@ namespace Jetproger.Tools.Convert.Bases
     public static class t<T> where T : class
     {
         private static readonly IpcClient _IpcClient = new IpcClient(); 
+        
         private static readonly Type _Type = typeof(T);
 
         public static T _(params object[] args)
@@ -136,7 +138,8 @@ namespace Jetproger.Tools.Convert.Bases
 
     public static class k<T> where T : Setting
     {
-        public static bool Is => t<T>.one().IsDeclared;
-        public static TValue As<TValue>() { return t<T>.one().Value.As<TValue>(); }
+        public static bool has => t<T>.one().IsDeclared;
+        public static string key() { return t<T>.one().Value; }
+        public static TValue key<TValue>() { return t<T>.one().Value.As<TValue>(); }
     }
 }

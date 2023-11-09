@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -15,19 +17,19 @@ namespace Jetproger.Tools.Convert.Converts
 {
     public class WebExpander
     {
-        public int RequestTimeout { get { return f.one.of(_requestTimeoutHolder, () => k<HttpConnectionTimeoutSeconds>.As<int>() * 1000); } }
+        public int RequestTimeout { get { return f.one.of(_requestTimeoutHolder, () => k<HttpConnectionTimeoutSeconds>.key<int>() * 1000); } }
         private readonly int?[] _requestTimeoutHolder = { null };
 
         public Encoding WebEncoding { get { return f.one.of(_webEncodingHolder, () => Encoding.GetEncoding("utf-8")); } }
         private readonly Encoding[] _webEncodingHolder = { null };
 
-        public string AppAddress => f.one.of(_appAddressHolder, GetAppAddress);
+        public string appaddr => f.one.of(_appAddressHolder, GetAppAddress);
         private readonly string[] _appAddressHolder = { null };
 
-        public string AppHost => f.one.of(_appHostHolder, GetAppHost);
+        public string apphost => f.one.of(_appHostHolder, GetAppHost);
         private readonly string[] _appHostHolder = { null };
 
-        public string AppUrl => f.one.of(_appUrlHolder, GetAppUrl);
+        public string appurl => f.one.of(_appUrlHolder, GetAppUrl);
         private readonly string[] _appUrlHolder = { null };
 
         private static string[] ProxyExcludes => f.one.of(ProxyExcludesHolder, GetProxyExcludes);
@@ -71,42 +73,42 @@ namespace Jetproger.Tools.Convert.Converts
             if (timedOut && state is HttpWebRequest request) request.Abort();
         }
 
-        public WebProxy ProxyOf(string url)
+        public WebProxy proxyof(string url)
         {
-            if (!k<ProxyUse>.As<bool>() || !ProxyFor(url)) return new WebProxy();
-            var proxy = !string.IsNullOrWhiteSpace(k<ProxyServer>.As<string>()) ? new WebProxy(k<ProxyServer>.As<string>(), k<ProxyPort>.As<int>()) : WebProxy.GetDefaultProxy();
-            proxy.Credentials = !string.IsNullOrWhiteSpace(k<ProxyUser>.As<string>()) ? new NetworkCredential(k<ProxyUser>.As<string>(), k<ProxyPassword>.As<string>()) : CredentialCache.DefaultCredentials;
+            if (!k<ProxyUse>.key<bool>() || !proxyfor(url)) return new WebProxy();
+            var proxy = !string.IsNullOrWhiteSpace(k<ProxyServer>.key()) ? new WebProxy(k<ProxyServer>.key(), k<ProxyPort>.key<int>()) : WebProxy.GetDefaultProxy();
+            proxy.Credentials = !string.IsNullOrWhiteSpace(k<ProxyUser>.key()) ? new NetworkCredential(k<ProxyUser>.key(), k<ProxyPassword>.key()) : CredentialCache.DefaultCredentials;
             return proxy;
         }
 
-        public bool ProxyFor(string url)
+        public bool proxyfor(string url)
         {
-            if (!k<ProxyUse>.As<bool>()) return false;
+            if (!k<ProxyUse>.key<bool>()) return false;
             url = UrlWithoutProtocol(url);
             return ProxyExcludes.All(x => !url.StartsWith(x));
         }
 
         private string GetAppAddress()
         {
-            return $"{AppUrl}/jetproger/v1/cmd";
+            return $"{appurl}/jetproger/v1/cmd";
         }
 
         private string GetAppHost()
         {
-            return $"{AppUrl}/jetproger/v1/";
+            return $"{appurl}/jetproger/v1/";
         }
 
         private string GetAppUrl()
         {
-            f.err<AppConfigAppHostException>(string.IsNullOrWhiteSpace(k<AppHost>.As<string>()));
-            var url = UrlWithoutProtocol(k<AppHost>.As<string>());
-            if (string.IsNullOrWhiteSpace(k<AppCert>.As<string>())) return $"http://{url}";
-            return f.cry.App != null ? $"https://{url}" : $"http://{url}";
+            f.err<AppConfigAppHostException>(string.IsNullOrWhiteSpace(k<AppHost>.key()));
+            var url = UrlWithoutProtocol(k<AppHost>.key());
+            if (string.IsNullOrWhiteSpace(k<AppCert>.key())) return $"http://{url}";
+            return f.cry.app != null ? $"https://{url}" : $"http://{url}";
         }
 
         private static string[] GetProxyExcludes()
         {
-            var excludes = (k<ProxyExcludes>.As<string>() ?? string.Empty).Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+            var excludes = (k<ProxyExcludes>.key() ?? string.Empty).Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
             for (int i = 0; i < excludes.Length; i++)
             {
                 excludes[i] = excludes[i].Replace("https://", string.Empty).Replace("http://", string.Empty);
@@ -124,11 +126,33 @@ namespace Jetproger.Tools.Convert.Converts
     {
         private static readonly JsonSerializerSettings Settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
         protected override byte[] ValueAsBytes(object value) { return Encoder.GetBytes(ValueAsChars(value)); }
-        protected override string ValueAsChars(object value) { return JsonConvert.SerializeObject(value, Formatting.None, Settings); }
         protected override object BytesAsValue(byte[] bytes, Type typeTo) { return CharsAsValue(Encoder.GetString(bytes), typeTo); }
-        protected override object CharsAsValue(string chars, Type typeTo) { return JsonConvert.DeserializeObject(chars, typeTo); }
         public NewtonsoftJson(Encoding encoder = null) { Encoder = encoder ?? base.Encoder; }
         protected override Encoding Encoder { get; }
+
+        protected override string ValueAsChars(object value)
+        {
+            using (var sw = new StringWriter(new StringBuilder(4096), (IFormatProvider)CultureInfo.InvariantCulture))
+            {
+                using (var jw = new JsonTextWriter(sw))
+                {
+                    jw.Formatting = Formatting.None;
+                    JsonSerializer.Create(Settings).Serialize(jw, value);
+                    return sw.ToString();
+                }
+            }
+        }
+
+        protected override object CharsAsValue(string chars, Type typeTo)
+        {
+            using (var sr = new StringReader(chars))
+            {
+                using (var jr = new JsonTextReader(sr))
+                {
+                    return JsonSerializer.Create(Settings).Deserialize(jr, typeTo);
+                }
+            }
+        }
     }
 
     public class SimpleJson : Converter
@@ -178,6 +202,7 @@ namespace Jetproger.Tools.Convert.Converts
         }
     }
 }
+
 namespace Jetproger.Tools.AppConfig
 {
     public class HttpConnectionTimeoutSeconds : ConfigSetting { public HttpConnectionTimeoutSeconds() : base("300") { } }

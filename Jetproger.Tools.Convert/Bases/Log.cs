@@ -1,35 +1,25 @@
 using System;
 using System.Diagnostics;
 using Jetproger.Tools.Convert.Commanders;
-using Jetproger.Tools.Convert.Commands;
+using Jetproger.Tools.Convert.Traces;
 
 namespace Jetproger.Tools.Convert.Bases
 {
-    public static partial class f // for configure use BaseCommand inheritors
+    public static partial class f
     {
-        public static void log(Exception exception)
+        public static void log(Exception e)
         {
-            if (exception != null) Trace.WriteLine(new LogHolder(new StackTrace(), exception));
+            if (e != null) TraceExtensions.Log(new StackTrace(), e);
         }
 
-        public static void log(string message)
+        public static void log(CommandMessage m)
         {
-            if (!string.IsNullOrWhiteSpace(message)) Trace.WriteLine(new LogHolder(new StackTrace(), message));
+            if (m != null) TraceExtensions.Log(new StackTrace(), m);
         }
-    }
 
-    [Serializable]
-    public class LogHolder
-    {
-        public override string ToString() { return Message; }
-        public readonly StackTrace Stack;
-        public readonly string Message;
-        public readonly bool IsError;
-        public LogHolder(StackTrace stack, object message)
+        public static void log(string s)
         {
-            Stack = stack;
-            IsError = message is Exception;
-            Message = IsError ? (new CommandMessage(message as Exception)).Info : message.ToString();
+            if (!string.IsNullOrWhiteSpace(s)) TraceExtensions.Log(new StackTrace(), s);
         }
     }
 }

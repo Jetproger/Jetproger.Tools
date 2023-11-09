@@ -9,7 +9,7 @@ namespace Jetproger.Tools.Convert.Settings
 
         public void SetValue(string key, object value)
         {
-            _cache.AddOrUpdate(normof(key), x => new _Setting(value.As<string>(), true), (x, y) => new _Setting(value.As<string>(), true));
+            _cache.AddOrUpdate(normof(key), x => new _Setting { Value = value.As<string>(), IsDeclared = true }, (x, y) => new _Setting { Value = value.As<string>(), IsDeclared = true });
         }
 
         public bool IsDeclared(string key, string defaultValue)
@@ -24,7 +24,7 @@ namespace Jetproger.Tools.Convert.Settings
 
         private _Setting GetSetting(string key, string defaultValue)
         {
-            return _cache.GetOrAdd(normof(key), x => new _Setting(defaultValue, false));
+            return _cache.GetOrAdd(normof(key), x => new _Setting { Value = defaultValue, IsDeclared = false });
         }
 
         private static string normof(string key)
@@ -36,13 +36,8 @@ namespace Jetproger.Tools.Convert.Settings
 
         private class _Setting
         {
-            public readonly bool IsDeclared;
-            public readonly string Value;
-            public _Setting(string value, bool isDeclared)
-            {
-                IsDeclared = isDeclared;
-                Value = value;
-            }
+            public bool IsDeclared;
+            public string Value;
         }
 
         #endregion

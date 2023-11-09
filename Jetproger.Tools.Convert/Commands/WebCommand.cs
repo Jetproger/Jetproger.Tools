@@ -50,15 +50,18 @@ namespace Jetproger.Tools.Convert.Commands
 
     #endregion
 
-    public abstract class WebCommand<TResult, TValue> : Command<TResult, TValue>
+    public abstract class WebCommand<TResult, TValue> : DelayCommand<TResult, TValue>, ICommand
     {
         private readonly List<HttpRequestHeaderValue> _httpRequestHeaders = new List<HttpRequestHeaderValue>();
         public string NetworkCredentialPassword { get; set; }
         public string NetworkCredentialUser { get; set; }
         public X509Certificate2 Certificate { get; set; }
         public string Method { get; private set; }
+        protected virtual void BeforeExecute() { }
+        protected virtual void AfterExecute() { }
         public string Url { get; private set; }
         public int Status { get; private set; }
+        private WebStreams _state;
 
         protected WebCommand(string url, string method, TValue content)
         {
@@ -67,9 +70,19 @@ namespace Jetproger.Tools.Convert.Commands
             Url = url;
         }
 
-        protected override void Execute()
+        public void Execute()
         {
-            __BeginGetRequestStream();
+            try
+            {
+                BeforeExecute();
+                if (State != ECommandState.None) return;
+                State = ECommandState.Running;
+                __BeginGetRequestStream();
+            }
+            catch (Exception e)
+            {
+                Error = e;
+            }
         }
 
         private WebStreams BeginGetRequestStream()
@@ -127,7 +140,7 @@ namespace Jetproger.Tools.Convert.Commands
         {
             var read = state.StreamReader.EndRead(ar);
             if (read > 0) state.StreamWriter.BeginWrite(state.Buffer, 0, read, __EndWriteMemory, state);
-            else f.sys.threadof(() => Completing(state));
+            else Delay(state);
         }
 
         private void EndWriteMemory(IAsyncResult ar, WebStreams state)
@@ -137,18 +150,31 @@ namespace Jetproger.Tools.Convert.Commands
             state.StreamReader.BeginRead(state.Buffer, 0, state.Buffer.Length, __EndReadResponse, state);
         }
 
+        private void Delay(WebStreams state)
+        {
+            _state = state;
+            if (((IDelay)this).CancelDelay) Completing(state); else SetState(ECommandState.Completed);
+        }
+
+        public override void Complete()
+        {
+            Completing(_state);
+            base.Complete();
+        }
+
         private void Completing(WebStreams state)
         {
             try
             {
-                var ms = state.StreamWriter as MemoryStream;
+                var ms = state != null ? state.StreamWriter as MemoryStream : null;
                 var result = ms != null ? ms.As<NewtonsoftJson>(f.web.WebEncoding).As<TResult>() : default(TResult);
-                state.Dispose();
+                if (state != null) state.Dispose();
                 Result = result;
+                AfterExecute();
             }
             catch (Exception e)
             {
-                state.Dispose();
+                if (state != null) state.Dispose();
                 Error = e;
             }
         }
@@ -161,14 +187,14 @@ namespace Jetproger.Tools.Convert.Commands
             request.Credentials = CredentialCache.DefaultCredentials;
             request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
             request.AllowWriteStreamBuffering = false;
-            if (IsSecurityProtocol()) request.ClientCertificates.Add(Certificate ?? f.cry.Out);
+            if (IsSecurityProtocol()) request.ClientCertificates.Add(Certificate ?? f.cry.ext);
             AddHeaders(request);
             if (NetworkCredentialUser != null && NetworkCredentialPassword != null)
             {
                 request.PreAuthenticate = true;
                 request.Credentials = new NetworkCredential(NetworkCredentialUser, NetworkCredentialPassword);
             }
-            request.Proxy = f.web.ProxyOf(Url);
+            request.Proxy = f.web.proxyof(Url);
             return request;
         }
 
@@ -181,7 +207,7 @@ namespace Jetproger.Tools.Convert.Commands
         {
             var i = HeaderIndexOf(header);
             if (i > -1 && i < _httpRequestHeaders.Count) _httpRequestHeaders.RemoveAt(i);
-            _httpRequestHeaders.Add(new HttpRequestHeaderValue(header, value));
+            _httpRequestHeaders.Add(new HttpRequestHeaderValue { Header = header, Value = value });
         }
 
         private int HeaderIndexOf(HttpRequestHeader header)
@@ -321,15 +347,14 @@ namespace Jetproger.Tools.Convert.Commands
 
         #endregion
 
+        #region inner types
+
         private class HttpRequestHeaderValue
         {
-            public readonly HttpRequestHeader Header;
-            public readonly string Value;
-            public HttpRequestHeaderValue(HttpRequestHeader header, string value)
-            {
-                Header = header;
-                Value = value;
-            }
+            public HttpRequestHeader Header;
+            public string Value;
         }
+
+        #endregion
     }
 }

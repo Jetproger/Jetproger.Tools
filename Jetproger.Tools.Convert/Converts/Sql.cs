@@ -73,7 +73,7 @@ namespace Jetproger.Tools.Convert.Converts
             {
                 if (SqlDateTime.MinValue.Value >= date || date >= SqlDateTime.MaxValue.Value) return DBNull.Value;
             }
-            if (value.Equals(f.sys.defaultof(value.GetType())))
+            if (value.Equals(f.sys.defof(value.GetType())))
             {
                 return DBNull.Value;
             }
@@ -126,7 +126,7 @@ namespace Jetproger.Tools.Convert.Converts
 
         protected override object CharsAsValue(string chars, Type typeTo)
         {
-            if (string.IsNullOrWhiteSpace(chars)) return f.sys.defaultof(typeTo);
+            if (string.IsNullOrWhiteSpace(chars)) return f.sys.defof(typeTo);
             var utf16 = Encoding.GetEncoding("utf-16");
             var bytes = utf16.GetBytes(chars);
             if (Encoder.EncodingName != utf16.EncodingName) bytes = Encoding.Convert(utf16, Encoder, bytes);

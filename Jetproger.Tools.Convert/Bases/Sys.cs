@@ -16,8 +16,103 @@ namespace Jetproger.Tools.Convert.Bases
 {
     public static class SysExtensions
     {
-        private static readonly string SYS_ICON = @"AAABAAEAEBAAAAAAGABoAwAAFgAAACgAAAAQAAAAIAAAAAEAGAAAAAAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACyYzmARyl9RSh7RCd6RCd3QiZyQCVvPiRsPCNpOyJmOSFjNyBhNh9gNR8AAAAAAAC4ZjvYoIPYoIPQjmvHeE+4ZjueVzKGSit4QiZ3QiZ4QiZ3QiZbMh1hNh8AAAAAAAC/aj3oybjiuaTbqY7TlXTJfVW+aj2eVzKDSSp4QiZsPCOMTi17RCdjNyAAAAAAAADEcUXht6Hw29DiuaTZo4fQj2zHeE62ZTqSUS9jNyDCbD67aDwAAABmOSEAAAAAAADHeE/Mg13iuaTw29DiuaTYoIPOiWTDb0KSUS/Zo4fSknEAAADOiGNpOyIAAAAAAADLgVrz4djKf1fiuaPw2s/ht6HUl3egWTPhtqDjvKcAAADiuaPQjmtsPCMAAAAAAADOimb+/fzz4djFc0jiuaPlwK2HSyvbqY59RSh9RSjdrZTnxrXTlXRvPiQAAAAAAADRkW/+/fz+/fzw29DFc0jFc0ju1snz49rw29Dt1Mfrz8HpyrrWnH1yQCUAAAAAAADUmHj+/fz+/fz+/fz9+vj68/D47+rnxLKyYzmtYDfhtqDrz8HZo4Z3QiYAAAAAAADXn4H+/fz+/fz+/fz+/fz9+vj68/DDb0LbqY/FdEmtYDft1Mfcq5F6RCcAAAAAAADZo4b+/fz+/fz+/fz+/fz+/fz9+vjEcUXu1srbqY+yYznw29Dfspp7RCcAAAAAAADZo4b+/fz+/fz+/fz+/fz+/fz+/fzw29DEcUXDb0LnxLLz49rhtqB9RSgAAAAAAADZo4b+/fz+/fz+/fz+/fz+/fz+/fz+/fz9+vj68/D47+r16OHz49qARykAAAAAAADZo4bZo4bZo4bZo4bXn4HUmHjRkW/OimbLgVrHeE/EcUW/aj24ZjuyYzkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD//wAAgAEAAIABAACAAQAAgAEAAIABAACAAQAAgAEAAIABAACAAQAAgAEAAIABAACAAQAAgAEAAIABAAD//wAA";
-        private static readonly string SYS_IMAGE = @"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIDSURBVDhPpZLrS5NhGMb3j4SWh0oRQVExD4gonkDpg4hGYKxG6WBogkMZKgPNCEVJFBGdGETEvgwyO9DJE5syZw3PIlPEE9pgBCLZ5XvdMB8Ew8gXbl54nuf63dd90OGSnwCahxbPRNPAPMw9Xpg6ZmF46kZZ0xSKzJPIrhpDWsVnpBhGkKx3nAX8Pv7z1zg8OoY/cITdn4fwbf/C0kYAN3Ma/w3gWfZL5kzTKBxjWyK2DftwI9tyMYCZKXbNHaD91bLYJrDXsYbrWfUKwJrPE9M2M1OcVzOOpHI7Jr376Hi9ogHqFIANO0/MmmmbmSmm9a8ze+I4MrNWAdjtoJgWcx+PSzg166yZZ8xM8XvXDix9c4jIqFYAjoriBV9AhEPv1mH/sonogha0afbZMMZz+yreTGyhpusHwtNNCsA5U1zS4BLxzJIfg299qO32Ir7UJtZfftyATqeT+8o2D8JSjQrAJblrncYL7ZJ2+bfaFnC/1S1NjL3diRat7qrO7wLRP3HjWsojBeComDEo5mNjuweFGvjWg2EBhCbpkW78htSHHwRyNdmgAFzPEee2iFkzayy2OLXzT4gr6UdUnlXrullsxxQ+kx0g8BTA3aZlButjSTyjODq/WcQcW/B/Je4OQhLvKQDnzN1mp0nnkvAhR8VuMzNrpm1mpjgkoVwB/v8DTgDQASA1MVpwzwAAAABJRU5ErkJggg==";
+        #region attributes
+
+        public class AttributeHolder<T> where T : Attribute
+        {
+            public T Attribute;
+            public Type Type;
+        }
+
+        public static TAttribute attrof<TAttribute>(this f.ISysExpander exp, Type type) where TAttribute : Attribute
+        {
+            foreach (var customAttribute in type.GetCustomAttributes(false))
+            {
+                if (customAttribute is TAttribute attribute) return attribute;
+            }
+            return null;
+        }
+
+        public static IEnumerable<AttributeHolder<TAttribute>> attrall<TAttribute>(this f.ISysExpander exp) where TAttribute : Attribute
+        {
+            foreach (Type type in typeall(exp))
+            {
+                foreach (var customAttribute in type.GetCustomAttributes(false))
+                {
+                    if (customAttribute is TAttribute attribute) yield return new AttributeHolder<TAttribute> { Attribute = attribute, Type = type };
+                }
+            }
+        }
+
+        public static IEnumerable<AttributeHolder<Attribute>> attrall(this f.ISysExpander exp, Type attributeType)
+        {
+            foreach (Type type in typeall(exp))
+            {
+                foreach (var customAttribute in type.GetCustomAttributes(false))
+                {
+                    var customAttributeType = customAttribute.GetType();
+                    if (f.sys.isof(customAttributeType, attributeType)) yield return new AttributeHolder<Attribute> { Attribute = customAttribute.As<Attribute>(), Type = type };
+                }
+            }
+        }
+
+        public static IEnumerable<Type> typeall<T>(this f.ISysExpander exp)
+        {
+            return typeall(exp, typeof(T));
+        }
+
+        public static IEnumerable<Type> typeall(this f.ISysExpander exp, Type sample)
+        {
+            foreach (Type type in typeall(exp))
+            {
+                if (f.sys.isof(type, sample)) yield return type;
+            }
+        }
+
+        public static IEnumerable<Type> typeall(this f.ISysExpander exp)
+        {
+            foreach (Assembly assembly in assmyall(exp))
+            {
+                foreach (Type type in typeall(exp, assembly))
+                {
+                    yield return type;
+                }
+            }
+        }
+
+        public static IEnumerable<Type> typeall(this f.ISysExpander exp, Assembly assembly)
+        {
+            try
+            {
+                return assembly.GetTypes();
+            }
+            catch
+            {
+                return Type.EmptyTypes;
+            }
+        }
+
+        public static IEnumerable<Assembly> assmyall(this f.ISysExpander exp)
+        {
+            foreach (var dll in dllall(exp))
+            {
+                var name = f.fss.nameextof(dll);
+                var assembly = LoadAssembly(name);
+                if (assembly != null) yield return assembly;
+            }
+        }
+
+        public static IEnumerable<string> dllall(this f.ISysExpander exp)
+        {
+            foreach (var fileName in Directory.EnumerateFiles(f.fss.appdir(), "*.dll", SearchOption.TopDirectoryOnly))
+            {
+                yield return fileName;
+            }
+        }
+
+        #endregion
+
+        #region threads
 
         public static void threadof(this f.ISysExpander exp, Action working)
         { 
@@ -26,7 +121,7 @@ namespace Jetproger.Tools.Convert.Bases
 
         public static Thread threadof(this f.ISysExpander exp, Action working, long periodMilliseconds)
         {
-            var timespan = TimeSpan.FromMilliseconds(periodMilliseconds);
+            var timespan = TimeSpan.FromMilliseconds(periodMilliseconds < 111 ? 111 : periodMilliseconds);
             var thread = new Thread(() =>
             {
                 for (var i = long.MinValue; i < long.MaxValue; i++)
@@ -41,51 +136,9 @@ namespace Jetproger.Tools.Convert.Bases
             return thread;
         }
 
-        public static ICommand commandof(this f.ISysExpander exp, string commandTypeName)
-        {
-            var commandType = classof(exp, commandTypeName); 
-            f.err<TypeNotFoundException>(commandType == null, commandTypeName);
-            var command = valueof(exp, commandType) as ICommand;
-            f.err<TypeNotSubtypeException>(command == null, commandTypeName, typeof(ICommand).FullName);
-            return command;
-        }
+        #endregion
 
-        public static T[] arrayof<T>(this f.ISysExpander exp, params T[] elements)
-        {
-            return elements;
-        }
-
-        public static List<T> listof<T>(this f.ISysExpander exp, params T[] elements)
-        {
-            var list = new List<T>();
-            list.AddRange(elements);
-            return list;
-        }
-
-        public static int indexof(this f.ISysExpander exp, IEnumerable items, object item)
-        {
-            var i = 0;
-            foreach (object obj in items)
-            {
-                if (ReferenceEquals(obj, item)) return i;
-                i++;
-            }
-            return -1;
-        }
-
-        public static ResourceManager resourceof(this f.ISysExpander e, string resourceName, string assemblyName)
-        {
-            try
-            {
-                var assembly = moduleof(e, assemblyName);
-                var baseName = $"{assemblyName}.Bases.{resourceName}";
-                return new ResourceManager(baseName, assembly);
-            }
-            catch
-            {
-                return null;
-            }
-        }
+        #region create instance
 
         public static string valueof(this f.ISysExpander e, ResourceManager resourceManager, string resourceKey)
         {
@@ -135,6 +188,10 @@ namespace Jetproger.Tools.Convert.Bases
             if (args == null || args.Length == 0) return Activator.CreateInstance(type, true);
             return Activator.CreateInstance(type, args);
         }
+
+        #endregion
+
+        #region resolve type
 
         public static Type classof(this f.ISysExpander e, string name)
         {
@@ -231,6 +288,10 @@ namespace Jetproger.Tools.Convert.Bases
             }
         }
 
+        #endregion
+
+        #region resolve name
+
         public static void nameof(this f.ISysExpander e, object value, out string assemblyName, out string typeName, out string valueName)
         {
             assemblyName = null;
@@ -276,6 +337,10 @@ namespace Jetproger.Tools.Convert.Bases
             value = names.Length > 2 ? names[2] : string.Empty;
         }
 
+        #endregion
+
+        #region create name
+
         public static string printof(this f.ISysExpander e, object value)
         {
             if (value == null) return string.Empty;
@@ -319,18 +384,26 @@ namespace Jetproger.Tools.Convert.Bases
             }
         }
 
-        public static T defaultof<T>(this f.ISysExpander e)
+        #endregion
+
+        #region defaults
+
+        public static T defof<T>(this f.ISysExpander e)
         {
-            return (T)defaultof(e, typeof(T));
+            return (T)defof(e, typeof(T));
         }
 
-        public static object defaultof(this f.ISysExpander e, Type type)
+        public static object defof(this f.ISysExpander e, Type type)
         {
             return
-            type == typeof(Icon) ? SYS_ICON.As<Icon>() : (
-            type == typeof(Image) ? SYS_IMAGE.As<Image>() : (
+            type == typeof(Icon) ? f.cmd.SYS_ICON.As<Icon>() : (
+            type == typeof(Image) ? f.cmd.SYS_IMAGE.As<Image>() : (
             type.IsValueType ? Activator.CreateInstance(type) : null));
         }
+
+        #endregion
+
+        #region type info
 
         public static Type genericof(this f.ISysExpander e, Type type)
         {
@@ -371,13 +444,80 @@ namespace Jetproger.Tools.Convert.Bases
             typeof(DateTime), typeof(DateTime?),
             typeof(byte[]), typeof(char[])
         };
+
+        #endregion
+
+        public static bool isapp(this f.ISysExpander exp)
+        {
+            return !AppDomain.CurrentDomain.FriendlyName.StartsWith(f.cmd.SYS_CMDDOMAIN);
+        }
+
+        public static bool iscmd(this f.ISysExpander exp)
+        {
+            return AppDomain.CurrentDomain.FriendlyName.StartsWith(f.cmd.SYS_CMDDOMAIN);
+        }
+
+        public static ICommand cmdof(this f.ISysExpander exp, string commandTypeName)
+        {
+            var commandType = classof(exp, commandTypeName);
+            f.err<TypeNotFoundException>(commandType == null, commandTypeName);
+            var command = valueof(exp, commandType) as ICommand;
+            f.err<TypeNotSubtypeException>(command == null, commandTypeName, typeof(ICommand).FullName);
+            return command;
+        }
+
+        public static ResourceManager resxof(this f.ISysExpander e, string resourceName, string assemblyName)
+        {
+            try
+            {
+                var assembly = moduleof(e, assemblyName);
+                var baseName = $"{assemblyName}.Bases.{resourceName}";
+                return new ResourceManager(baseName, assembly);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public static T[] arrof<T>(this f.ISysExpander exp, params T[] elements)
+        {
+            return elements;
+        }
+
+        public static List<T> listof<T>(this f.ISysExpander exp, params T[] elements)
+        {
+            var list = new List<T>();
+            list.AddRange(elements);
+            return list;
+        }
+
+        public static int indexof(this f.ISysExpander exp, IEnumerable items, object item)
+        {
+            var i = 0;
+            foreach (var obj in items)
+            {
+                if (ReferenceEquals(obj, item)) return i;
+                i++;
+            }
+            return -1;
+        }
+
+        public static void memfree(this f.ISysExpander exp, long size)
+        {
+            long size2 = 2 * size;
+            if (size2 < 1048576) return; // 1 Mb
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect(2);
+        }
     }
 
-    
     [Serializable]
     public class ReusableThread
     {
         private readonly ManualResetEvent _mre = new ManualResetEvent(false);
+        
         private Action _working;
         private Thread _thread;
 
@@ -392,7 +532,7 @@ namespace Jetproger.Tools.Convert.Bases
         {
             _mre.WaitOne();
             _mre.Reset();
-            try { if (_working != null) _working(); }
+            try { _working(); }
             catch (Exception e) { f.log(e); }
             finally { t<ReusableThread>.few(this); }
         }

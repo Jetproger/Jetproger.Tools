@@ -1,44 +1,79 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using Jetproger.Tools.Convert.Commanders;
 
 namespace Jetproger.Tools.Convert.Commands
 {
-    public class TaskCommand : WorkCommand<object, object>
+    public class TaskCommand : BaseCommand, ICommand
     {
-
-        private readonly CommandGroup _onExecute = new CommandGroup();
-
+        private CommandGroup _onExecute = new CommandGroup();
+        protected virtual void BeforeExecute() { }
+        protected virtual void AfterExecute() { }
+        protected event Action BeforeExecuted;
+        protected event Action AfterExecuted;
         public int Enabled { get; set; }
+        private ICommand _command;
 
         public CommandGroup OnExecute
         {
             get { return _onExecute; }
-            set { }
+            set { _onExecute = _onExecute ?? value; }
         }
 
-        protected override void Execute()
+        public void Execute()
         {
-            SetCommand(Executing());
-            base.Execute();
-        }
-
-        private IEnumerable<ICommand> Executing()
-        {
-            var result = Value;
-            var command0 = (ICommand)null;
-            for (int i = 0; i < OnExecute.Count; i++)
+            try
             {
-                if (i < Enabled) continue;
-                var command = OnExecute[i];
-                if (command == null) continue;
-                if (command0 == null)
+                BeforeExecute();
+                if (BeforeExecuted != null) BeforeExecuted();
+                if (State != ECommandState.None) return;
+                State = ECommandState.Running;
+                _command = new _TaskCommand(this);
+                _command.Executed += OnExecuted;
+                _command.History = this;
+                _command.Value = Value;
+                _command.Execute();
+            }
+            catch (Exception e)
+            {
+                Error = e;
+            }
+        }
+
+        private void OnExecuted()
+        {
+            Error = _command.Error;
+            Result = _command.Result;
+            AfterExecute();
+            if (AfterExecuted != null) AfterExecuted();
+        }
+
+        private class _TaskCommand : EmptyCommand<object, object>
+        {
+            private readonly TaskCommand _command;
+
+            public _TaskCommand(TaskCommand command)
+            {
+                _command = command;
+            }
+
+            protected override System.Collections.Generic.IEnumerable<ICommand> Executings()
+            {
+                var result = Value;
+                var command0 = (ICommand)null;
+                for (int i = 0; i < _command.OnExecute.Count; i++)
                 {
-                    command0 = command;
-                    command0.Precommand = this;
+                    if (i < _command.Enabled) continue;
+                    var command = _command.OnExecute[i];
+                    if (command == null) continue;
+                    if (command0 == null)
+                    {
+                        command0 = command;
+                        command0.History = this;
+                    }
+                    command.Value = result;
+                    yield return command;
+                    result = command;
                 }
-                command.Value = result;
-                yield return command;
-                result = command.Result;
             }
         }
     }

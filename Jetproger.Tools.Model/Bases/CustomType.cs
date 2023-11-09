@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace Jetproger.Tools.Model.Bases
+﻿namespace Jetproger.Tools.Model.Bases
 {
-    [Serializable]
+    [System.Serializable]
     public enum CustomType
     {
         Guid = 0,

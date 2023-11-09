@@ -9,12 +9,12 @@ namespace Jetproger.Tools.Convert.Bases
     {
         public static Image DefaultImage(this f.IGuiExpander exp)
         {
-            return t<Image>.one(() => f.sys.defaultof<Image>());
+            return t<Image>.one(() => f.sys.defof<Image>());
         }
 
         public static Icon DefaultIcon(this f.IGuiExpander exp)
         {
-            return t<Icon>.one(() => f.sys.defaultof<Icon>());
+            return t<Icon>.one(() => f.sys.defof<Icon>());
         }
     }
 }

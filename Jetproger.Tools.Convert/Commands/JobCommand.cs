@@ -1,235 +1,200 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading; 
+using System.Threading;
+using Jetproger.Tools.Convert.Bases;
 using Jetproger.Tools.Convert.Commanders;
+using Jetproger.Tools.Convert.Settings;
 
 namespace Jetproger.Tools.Convert.Commands
 {
     public class JobCommand : TaskCommand
     {
-        protected bool IsRunningParallel { get { return Get(_isRunningParallelHolder); } set { Set(_isRunningParallelHolder, value); } }
-        private readonly bool[] _isRunningParallelHolder = { false };
-
-        protected bool IsRunningExecute { get { return Get(_isRunningExecuteHolder); } set { Set(_isRunningExecuteHolder, value); } }
-        private readonly bool[] _isRunningExecuteHolder = { false };
-
-        public CommandGroup OnParallel { get { return _onParallel; } set { } }
-        private readonly CommandGroup _onParallel = new CommandGroup();
-
-        public ErrorCommandGroup OnError { get { return _onError; } set {; } }
-        private readonly ErrorCommandGroup _onError = new ErrorCommandGroup();
-
-        private InfinityCursor _parallelInfinityCursor;
-        
-        private InfinityCursor _executeInfinityCursor;
+        private ErrorCommandGroup _onError;
+        private CommandGroup _onParallel;
+        private bool _isInitialize;
 
         public JobCommand()
         {
-            ((ICommand)this).EndExecute += OnEndExecute;
+            ((ICommand)this).Executed += OnEndExecute;
+            _onError = new ErrorCommandGroup();
+            _onParallel = new CommandGroup();
+            BeforeExecuted += OnBeforeExecuted;
         }
 
-        protected override void Execute()
+        public ErrorCommandGroup OnError
         {
-            if (IsRunningExecute)
+            get { return _onError; }
+            set { _onError = _onError ?? value; }
+        }
+
+        public CommandGroup OnParallel
+        {
+            get { return _onParallel; }
+            set { _onParallel = _onParallel ?? value; }
+        }
+
+        private void OnBeforeExecuted()
+        {
+            if (_isInitialize) return;
+            _isInitialize = true;
+            State = _processor != null ? State : ECommandState.None;
+            AddCommands(GetCommands());
+        }
+
+        private ICommand[] GetCommands()
+        {
+            var list = new List<ICommand>();
+            for (var i = 0; i < OnExecute.Count; i++)
             {
-                base.Execute();
-                return;
+                if (OnExecute[i] == null) continue;
+                list.Add(this);
+                break;
             }
-            RunParallel();
-            RunExecute();
-        }
-
-        #region parallel
-
-        private void RunParallel()
-        {
-            if (IsRunningParallel) return;
-            _parallelInfinityCursor = GetParallelInfinityCursor();
-            if (_parallelInfinityCursor == null) return;
-            IsRunningParallel = true;
-            (new Thread(TryParallel) { IsBackground = true }).Start();
-        }
-
-        private InfinityCursor GetParallelInfinityCursor()
-        {
-            var counter = 0;
-            var cursor = new InfinityCursor();
-            for (int i = 0; i < _onParallel.Count; i++)
+            for (var i = 0; i < OnParallel.Count; i++)
             {
-                var command = _onParallel[i];
+                var command = OnParallel[i];
                 if (command == null) continue;
-                command.Precommand = this;
-                cursor.Add(command);
-                counter++;
+                command.History = this;
+                list.Add(command);
             }
-            return counter > 0 ? cursor : null;
-        }
-
-        private void TryParallel()
-        {
-            try
-            {
-                WorkParallel();
-            }
-            finally
-            {
-                IsRunningParallel = false;
-            }
-        }
-
-        private void WorkParallel()
-        {
-            var timer = new Stopwatch();
-            while (true)
-            {
-                if (!IsRunningParallel) break;
-                timer.Start();
-                var obj = _parallelInfinityCursor.Next();
-                var cmd = obj as ICommand;
-                if (obj == null) break;
-                if (cmd != null)
-                {
-                    cmd.Value = Value;
-                    cmd.Execute();
-                }
-                else
-                {
-                    Thread.Sleep(333);
-                }
-                Timing(timer);
-            }
-        }
-
-        #endregion
-
-        #region execute
-
-        private void RunExecute()
-        {
-            if (IsRunningExecute) return;
-            _executeInfinityCursor = GetExecuteInfinityCursor();
-            if (_executeInfinityCursor == null) return;
-            IsRunningExecute = true;
-            TryExecute();
-        }
-
-        private InfinityCursor GetExecuteInfinityCursor()
-        {
-            var counter = 0;
-            for (int i = 0; i < OnExecute.Count; i++)
-            {
-                if (OnExecute[i] != null) counter++;
-            }
-            if (counter == 0) return null;
-            var cursor = new InfinityCursor();
-            State = ECommandState.None;
-            cursor.Add(this);
-            return cursor;
-        }
-
-        private void TryExecute()
-        {
-            try
-            {
-                WorkExecute();
-            }
-            catch (Exception e)
-            {
-                Error = e;
-            }
-            finally
-            {
-                IsRunningExecute = false;
-            }
-        }
-
-        private void WorkExecute()
-        {
-            var timer = new Stopwatch();
-            while (true)
-            {
-                if (!IsRunningExecute) break;
-                timer.Start();
-                var obj = _executeInfinityCursor.Next();
-                var cmd = obj as ICommand;
-                if (obj == null) break;
-                if (cmd != null)
-                {
-                    cmd.Value = Value;
-                    cmd.Execute();
-                }
-                else
-                {
-                    Thread.Sleep(333);
-                }
-                Timing(timer);
-            }
-        }
-
-        #endregion
-
-        private void Timing(Stopwatch timer)
-        {
-            timer.Stop();
-            if (timer.ElapsedMilliseconds > 9999)
-            {
-                timer.Reset();
-                Thread.Sleep(5555);
-            }
+            return list.ToArray();
         }
 
         private void OnEndExecute()
         {
-            if (Error != null) (new WorkCommand()).AwaitExecute(ExecutingError(this));
-        }
-
-        private IEnumerable<ICommand> ExecutingError(ICommand command)
-        {
+            if (Error == null) return;
             for (int i = 0; i < OnError.Count; i++)
             {
                 var handler = OnError[i] as ErrorHandlerCommand;
                 if (handler == null) continue;
-                handler.Value = command;
-                yield return handler;
+                handler.Value = this;
+                f.cmd.wait(handler);
             }
         }
 
-        #region inner types
+        #region processor
 
-        private class InfinityCursor
+        private static _Processor _processor;
+
+        private static void AddCommands(IEnumerable<ICommand> commands)
         {
-            private readonly List<ICommand> _commands = new List<ICommand>();
-            public void Add(ICommand command) { _commands.Add(command); }
-            private int _completed = 0;
-            private int _running = 0;
-            private int _curcor = -1;
-
-            public object Next()
+            var needStart = _processor == null;
+            _processor = _processor ?? new _Processor();
+            _processor.Add(commands);
+            if (f.sys.iscmd())
             {
-                if (_commands.Count == 0) return null;
-                while (true)
+                _processor.Processing();
+            }
+            else
+            {
+                if (needStart) (new Thread(_processor.Processing)).Start();
+            }
+        }
+
+        private class _Processor
+        {
+            private readonly System.Diagnostics.Stopwatch _stopwatch = new System.Diagnostics.Stopwatch();
+            public void Add(IEnumerable<ICommand> commands) { _commands.AddRange(commands); }
+            private readonly List<ICommand> _commands = new List<ICommand>();
+
+            public void Processing()
+            {
+                for (int i = 0, c = 0, r = 0; i > int.MinValue; i = i < int.MaxValue ? i + 1 : 0)
                 {
-                    _curcor++;
-                    if (_curcor >= _commands.Count)
+                    if (_commands.Count == 0)
                     {
-                        var completed = _completed;
-                        var running = _running;
-                        _completed = 0;
-                        _running = 0;
-                        _curcor = 0;
-                        if (running == _commands.Count) return this;
-                        if (completed == _commands.Count) return null;
+                        Thread.Sleep(100);
+                        if (f.sys.iscmd()) return; else continue;
                     }
-                    var command = _commands[_curcor];
-                    var state = command.Error != null ? ECommandState.Completed : command.State;
-                    if (state == ECommandState.None) return command;
-                    if (state == ECommandState.Completed) _completed++;
-                    if (state == ECommandState.Running) _running++;
+                    _stopwatch.Stop();
+                    if (_stopwatch.ElapsedMilliseconds > 500)
+                    {
+                        _stopwatch.Restart();
+                        Thread.Sleep(100);
+                    }
+                    _stopwatch.Start();
+                    if (c >= _commands.Count)
+                    {
+                        if (f.sys.iscmd()) return;
+                        if (_commands.Count == r) Thread.Sleep(100);
+                        c = 0;
+                        r = 0;
+                    }
+                    var command = _commands[c];
+                    if (command.State == ECommandState.Completed)
+                    {
+                        _commands.RemoveAt(c);
+                    }
+                    else
+                    {
+                        c = c + 1;
+                        r = command.State == ECommandState.Running ? r + 1 : r;
+                        if (command.State == ECommandState.None) try { command.Execute(); } catch (Exception e) { command.Error = e; }
+                    }
                 }
             }
         }
 
         #endregion
     }
+
+    public class InfinityJob : JobCommand
+    {
+        public InfinityJob(long periodMilliseconds, long minMilliseconds, long maxMilliseconds) { _watcher = CommandWatcher.CreateCommandWatcherMilliseconds(periodMilliseconds, minMilliseconds, maxMilliseconds); }
+        protected override ECommandState GetState() { return _watcher.Expired() ? base.GetState() : ECommandState.Running; }
+        private readonly CommandWatcher _watcher;
+
+        protected override void SetState(ECommandState state)
+        {
+            if (state == ECommandState.Completed)
+            {
+                if (Error != null || Result == null)
+                {
+                    _watcher.Start();
+                }
+                state = ECommandState.None;
+                Reset();
+                try
+                {
+                    OnExecute.Renew();
+                }
+                catch (Exception e)
+                {
+                    f.log(e);
+                }
+            }
+            base.SetState(state);
+        }
+    }
+
+    public class InterruptJob : JobCommand
+    {
+        protected override void SetState(ECommandState state)
+        {
+            if (state == ECommandState.Completed)
+            {
+                if (Error != null || Result == null)
+                {
+                    base.SetState(state);
+                    return;
+                }
+                state = ECommandState.None;
+                Reset();
+                try
+                {
+                    OnExecute.Renew();
+                }
+                catch (Exception e)
+                {
+                    f.log(e);
+                }
+            }
+            base.SetState(state);
+        }
+    }
+}
+
+namespace Jetproger.Tools.AppConfig
+{
+    public class JetprogerJobCommandPeriodSeconds : ConfigSetting { public JetprogerJobCommandPeriodSeconds() : base("1") { } }
 }

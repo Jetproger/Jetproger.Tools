@@ -1,0 +1,278 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{600AA7DC-EA39-4609-AB2A-3546BB5F8B72}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Jetproger.Tools.Convert</RootNamespace>
+    <AssemblyName>Jetproger.Tools.Convert</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\.Jetproger.Tools.Convert\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\.Jetproger.Tools.Convert\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\..\.solution\jetproger.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\.Newtonsoft.Json\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog">
+      <HintPath>..\..\.NLog\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog.Extended">
+      <HintPath>..\..\.NLog\NLog.Extended.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.Web.Http">
+      <HintPath>..\..\.Microsoft.Practices\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.SelfHost">
+      <HintPath>..\..\.Microsoft.Practices\System.Web.Http.SelfHost.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\Base.cs">
+      <Link>Bases\Base.cs</Link>
+    </Compile>
+    <Compile Include="..\Bases\Cry.cs">
+      <Link>Bases\Cry.cs</Link>
+    </Compile>
+    <Compile Include="..\Bases\Err.cs">
+      <Link>Bases\Err.cs</Link>
+    </Compile>
+    <Compile Include="..\Bases\Gui.cs">
+      <Link>Bases\Gui.cs</Link>
+    </Compile>
+    <Compile Include="..\Bases\Log.cs">
+      <Link>Bases\Log.cs</Link>
+    </Compile>
+    <Compile Include="..\Bases\Sys.cs">
+      <Link>Bases\Sys.cs</Link>
+    </Compile>
+    <Compile Include="..\Bases\Win.cs">
+      <Link>Bases\Win.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Caches\CacheAttribute.cs">
+      <Link>Caches\CacheAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\Caches\CacheContext.cs">
+      <Link>Caches\CacheContext.cs</Link>
+    </Compile>
+    <Compile Include="..\Caches\CacheExtensions.cs">
+      <Link>Caches\CacheExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Caches\CacheStore.cs">
+      <Link>Caches\CacheStore.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Converts\Cast.cs">
+      <Link>Converts\Cast.cs</Link>
+    </Compile>
+    <Compile Include="..\Converts\Bin.cs">
+      <Link>Converts\Bin.cs</Link>
+    </Compile>
+    <Compile Include="..\Converts\Fss.cs">
+      <Link>Converts\Fss.cs</Link>
+    </Compile>
+    <Compile Include="..\Converts\Sql.cs">
+      <Link>Converts\Sql.cs</Link>
+    </Compile>
+    <Compile Include="..\Converts\Str.cs">
+      <Link>Converts\Str.cs</Link>
+    </Compile>
+    <Compile Include="..\Converts\Web.cs">
+      <Link>Converts\Web.cs</Link>
+    </Compile>
+    <Compile Include="..\Converts\Xml.cs">
+      <Link>Converts\Xml.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Factories\One.cs">
+      <Link>Factories\One.cs</Link>
+    </Compile>
+    <Compile Include="..\Factories\Pool.cs">
+      <Link>Factories\Pool.cs</Link>
+    </Compile>
+    <Compile Include="..\Factories\Store.cs">
+      <Link>Factories\Store.cs</Link>
+    </Compile>
+    <Compile Include="..\Factories\Ipc.cs">
+      <Link>Factories\Ipc.cs</Link>
+    </Compile>
+    <Compile Include="..\Factories\Creator.cs">
+      <Link>Factories\Creator.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Commanders\CommandController.cs">
+      <Link>Commanders\CommandController.cs</Link>
+    </Compile>
+    <Compile Include="..\Commanders\CommandExtensions.cs">
+      <Link>Commanders\CommandExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Commanders\CommandGroup.cs">
+      <Link>Commanders\CommandGroup.cs</Link>
+    </Compile>
+    <Compile Include="..\Commanders\CommandEntity.cs">
+      <Link>Commanders\CommandEntity.cs</Link>
+    </Compile>
+    <Compile Include="..\Commanders\CommandRequest.cs">
+      <Link>Commanders\CommandRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\Commanders\CommandResponse.cs">
+      <Link>Commanders\CommandResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\Commanders\CommandMessage.cs">
+      <Link>Commanders\CommandMessage.cs</Link>
+    </Compile>
+    <Compile Include="..\Commanders\CommandRecord.cs">
+      <Link>Commanders\CommandRecord.cs</Link>
+    </Compile>
+    <Compile Include="..\Commanders\CommandService.cs">
+      <Link>Commanders\CommandService.cs</Link>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="..\Commanders\CommandStreams.cs">
+      <Link>Commanders\CommandStreams.cs</Link>
+    </Compile>
+    <Compile Include="..\Commanders\CommandWatcher.cs">
+      <Link>Commanders\CommandWatcher.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Commands\ShareCommand.cs">
+      <Link>Commands\ShareCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Commands\AsyncCommand.cs">
+      <Link>Commands\AsyncCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Commands\BaseCommand.cs">
+      <Link>Commands\BaseCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Commands\DelayCommand.cs">
+      <Link>Commands\DelayCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Commands\EmptyCommand.cs">
+      <Link>Commands\EmptyCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Commands\JobCommand.cs">
+      <Link>Commands\JobCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Commands\TaskCommand.cs">
+      <Link>Commands\TaskCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Commands\DomainCommand.cs">
+      <Link>Commands\DomainCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Commands\FileCommand.cs">
+      <Link>Commands\FileCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Commands\MssqlCommand.cs">
+      <Link>Commands\MssqlCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Commands\RemoteCommand.cs">
+      <Link>Commands\RemoteCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Commands\WebCommand.cs">
+      <Link>Commands\WebCommand.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Settings\SettingCache.cs">
+      <Link>Settings\SettingCache.cs</Link>
+    </Compile>
+    <Compile Include="..\Settings\BaseSetting.cs">
+      <Link>Settings\BaseSetting.cs</Link>
+    </Compile>
+    <Compile Include="..\Settings\ConfigSetting.cs">
+      <Link>Settings\ConfigSetting.cs</Link>
+    </Compile>
+    <Compile Include="..\Settings\ConsoleSetting.cs">
+      <Link>Settings\ConsoleSetting.cs</Link>
+    </Compile>
+    <Compile Include="..\Settings\ResourceSetting.cs">
+      <Link>Settings\ResourceSetting.cs</Link>
+    </Compile>
+    <Compile Include="..\Settings\ConfigEntry.cs">
+      <Link>Settings\ConfigEntry.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Traces\TraceAttribute.cs">
+      <Link>Traces\TraceAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\Traces\TraceContext.cs">
+      <Link>Traces\TraceContext.cs</Link>
+    </Compile>
+    <Compile Include="..\Traces\TraceExtensions.cs">
+      <Link>Traces\TraceExtensions.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\.solution\AssemblyInfo.cs">
+      <Link>.project\AssemblyInfo.cs</Link>
+    </Compile>
+    <None Include="..\..\.solution\jetproger.pfx">
+      <Link>.project\jetproger.pfx</Link>
+    </None>
+    <None Include="..\.setting\Jetproger.Tools.Convert.nuspec">
+      <Link>.project\Jetproger.Tools.Convert.nuspec</Link>
+    </None>
+  </ItemGroup>
+  <Target Name="RemoveDirectories" BeforeTargets="ResolveReferences">
+    <Exec Command="for /d %%p in (&quot;$(ProjectDir)&quot;\*) do if /I &quot;%%p&quot; neq &quot;$(ProjectDir)\obj&quot; (rd /Q /S &quot;%%p&quot;)" />
+  </Target>
+  <Target Name="RemoveObj" AfterTargets="Rebuild">
+    <Exec Command="call $(SolutionDir)post-build.bat $(SolutionDir) $(ProjectDir) $(TargetDir) $(ProjectName)" />
+    <Exec Command="rd /Q /S &quot;$(ProjectDir)\obj&quot;" />
+  </Target>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

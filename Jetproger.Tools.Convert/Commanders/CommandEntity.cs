@@ -290,7 +290,7 @@ namespace Jetproger.Tools.Convert.Commanders
             {
                 if (_type.IsArray) return Array.CreateInstance(_geType, 0);
                 if (typeof(IList).IsAssignableFrom(_type)) return Activator.CreateInstance(_type);
-                return f.sys.defaultof(_type);
+                return f.sys.defof(_type);
             }
             if (_type.IsArray)
             {
@@ -351,7 +351,7 @@ namespace Jetproger.Tools.Convert.Commanders
         private object CreateInstance(Type type, string[] fields)
         {
             if (type == null) return null;
-            if (f.sys.issimple(type)) return !_reader.IsDBNull(0) ? _reader.GetValue(0) : f.sys.defaultof(type);
+            if (f.sys.issimple(type)) return !_reader.IsDBNull(0) ? _reader.GetValue(0) : f.sys.defof(type);
             var obj = Activator.CreateInstance(type);
             var schema = CommandEntity.GetSchema(type);
             for (int i = 0; i < fields.Length; i++)
@@ -359,7 +359,7 @@ namespace Jetproger.Tools.Convert.Commanders
                 var field = fields[i];
                 var value = !_reader.IsDBNull(i) ? _reader.GetValue(i) : null;
                 var p = schema.ContainsKey(field) ? schema[field] : null;
-                if (p != null) p.SetValue(obj, value != null ? value.As(p.PropertyType) : f.sys.defaultof(p.PropertyType), null);
+                if (p != null) p.SetValue(obj, value != null ? value.As(p.PropertyType) : f.sys.defof(p.PropertyType), null);
             }
             return obj;
         }

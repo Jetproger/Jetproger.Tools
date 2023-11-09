@@ -9,7 +9,7 @@ namespace Jetproger.Tools.Convert.Settings
 {  
     public abstract class ResourceDescriptionSetting : Setting
     {
-        private static readonly ResourceManager Rm = t<ResourceManager>.one(() => f.sys.resourceof("ResourceDescriptions", k<ResourceAssembly>.As<string>()));
+        private static readonly ResourceManager Rm = t<ResourceManager>.one(() => f.sys.resxof("ResourceDescriptions", k<ResourceAssembly>.key()));
         public static void Parse() { Rm.IgnoreCase = true; }
 
         protected ResourceDescriptionSetting(string defaultValue)
@@ -36,7 +36,7 @@ namespace Jetproger.Tools.Convert.Settings
 
     public abstract class ResourceShortcutSetting : Setting
     {
-        private static readonly ResourceManager Rm = t<ResourceManager>.one(() => f.sys.resourceof("ResourceShortcuts", k<ResourceAssembly>.As<string>()));
+        private static readonly ResourceManager Rm = t<ResourceManager>.one(() => f.sys.resxof("ResourceShortcuts", k<ResourceAssembly>.key()));
         public static void Parse() { Rm.IgnoreCase = true; }
 
         protected ResourceShortcutSetting(string defaultValue)
@@ -63,7 +63,7 @@ namespace Jetproger.Tools.Convert.Settings
 
     public abstract class ResourceSpecifySetting : Setting
     {
-        private static readonly ResourceManager Rm = t<ResourceManager>.one(() => f.sys.resourceof("ResourceSpecifies", k<ResourceAssembly>.As<string>()));
+        private static readonly ResourceManager Rm = t<ResourceManager>.one(() => f.sys.resxof("ResourceSpecifies", k<ResourceAssembly>.key()));
         public static void Parse() { Rm.IgnoreCase = true; }
 
         protected ResourceSpecifySetting(string defaultValue)
@@ -90,7 +90,7 @@ namespace Jetproger.Tools.Convert.Settings
 
     public abstract class ResourcePictureSetting : Setting
     {
-        private static readonly ResourceManager Rm = t<ResourceManager>.one(() => f.sys.resourceof("ResourcePictures", k<ResourceAssembly>.As<string>()));
+        private static readonly ResourceManager Rm = t<ResourceManager>.one(() => f.sys.resxof("ResourcePictures", k<ResourceAssembly>.key()));
         public static void Parse() { Rm.IgnoreCase = true; }
 
         protected ResourcePictureSetting(string defaultValue)
@@ -117,7 +117,7 @@ namespace Jetproger.Tools.Convert.Settings
 
     public abstract class ResourceNameSetting : Setting
     {
-        private static readonly ResourceManager Rm = t<ResourceManager>.one(() => f.sys.resourceof("ResourceNames", k<ResourceAssembly>.As<string>()));
+        private static readonly ResourceManager Rm = t<ResourceManager>.one(() => f.sys.resxof("ResourceNames", k<ResourceAssembly>.key()));
         public static void Parse() { Rm.IgnoreCase = true; }
 
         protected ResourceNameSetting(string defaultValue)
@@ -529,92 +529,92 @@ namespace Jetproger.Tools.AppResource
     #endregion
 
     #region Pictures 
-    public class AskExitIcon : ResourcePictureSetting { public AskExitIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class AskTitleIcon : ResourcePictureSetting { public AskTitleIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class CancelIcon : ResourcePictureSetting { public CancelIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class CaptionIcon : ResourcePictureSetting { public CaptionIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class DialogIcon : ResourcePictureSetting { public DialogIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class ErrorTitleIcon : ResourcePictureSetting { public ErrorTitleIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class InfoTitleIcon : ResourcePictureSetting { public InfoTitleIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class InfoTraceIcon : ResourcePictureSetting { public InfoTraceIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class LoginIcon : ResourcePictureSetting { public LoginIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class MessageLoadingIcon : ResourcePictureSetting { public MessageLoadingIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class MessageNonConnectIcon : ResourcePictureSetting { public MessageNonConnectIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class MessageNonPasswordIcon : ResourcePictureSetting { public MessageNonPasswordIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class MessageStartIcon : ResourcePictureSetting { public MessageStartIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class MessageSuccessConnectIcon : ResourcePictureSetting { public MessageSuccessConnectIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class MessageSuccessPasswordIcon : ResourcePictureSetting { public MessageSuccessPasswordIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class OkIcon : ResourcePictureSetting { public OkIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class PasswordIcon : ResourcePictureSetting { public PasswordIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class PasswordChangeIcon : ResourcePictureSetting { public PasswordChangeIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class PasswordNewIcon : ResourcePictureSetting { public PasswordNewIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class PasswordOldIcon : ResourcePictureSetting { public PasswordOldIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class UserIcon : ResourcePictureSetting { public UserIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class AddIcon : ResourcePictureSetting { public AddIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class CopyIcon : ResourcePictureSetting { public CopyIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class EditIcon : ResourcePictureSetting { public EditIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class RefreshIcon : ResourcePictureSetting { public RefreshIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class RemoveIcon : ResourcePictureSetting { public RemoveIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class RestoreIcon : ResourcePictureSetting { public RestoreIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class DescriptionIcon : ResourcePictureSetting { public DescriptionIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class FolderIcon : ResourcePictureSetting { public FolderIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class FolderOpenIcon : ResourcePictureSetting { public FolderOpenIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class IconIcon : ResourcePictureSetting { public IconIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class TypeIcon : ResourcePictureSetting { public TypeIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class BinaryIcon : ResourcePictureSetting { public BinaryIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class BooleanIcon : ResourcePictureSetting { public BooleanIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class DateIcon : ResourcePictureSetting { public DateIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class GuidIcon : ResourcePictureSetting { public GuidIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class IntegerIcon : ResourcePictureSetting { public IntegerIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class ListIcon : ResourcePictureSetting { public ListIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class NumericIcon : ResourcePictureSetting { public NumericIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class RangeIcon : ResourcePictureSetting { public RangeIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class ReferenceIcon : ResourcePictureSetting { public ReferenceIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class StringIcon : ResourcePictureSetting { public StringIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class LoginInvalidIcon : ResourcePictureSetting { public LoginInvalidIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class LoginLengthIcon : ResourcePictureSetting { public LoginLengthIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class MetaCreateTypeIcon : ResourcePictureSetting { public MetaCreateTypeIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class MetaImplementInterfaceIcon : ResourcePictureSetting { public MetaImplementInterfaceIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class NullCodeIcon : ResourcePictureSetting { public NullCodeIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class NullLoginIcon : ResourcePictureSetting { public NullLoginIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class NullIconIcon : ResourcePictureSetting { public NullIconIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class PasswordConfirmationInvalidIcon : ResourcePictureSetting { public PasswordConfirmationInvalidIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class PasswordNewInvalidIcon : ResourcePictureSetting { public PasswordNewInvalidIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class ConfigurationIcon : ResourcePictureSetting { public ConfigurationIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class ConstantIcon : ResourcePictureSetting { public ConstantIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class ContextIcon : ResourcePictureSetting { public ContextIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class PreviousIcon : ResourcePictureSetting { public PreviousIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class FullIcon : ResourcePictureSetting { public FullIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class NoneIcon : ResourcePictureSetting { public NoneIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class ReadIcon : ResourcePictureSetting { public ReadIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class LikeLoginIcon : ResourcePictureSetting { public LikeLoginIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class NoDigitIcon : ResourcePictureSetting { public NoDigitIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class NoLowerIcon : ResourcePictureSetting { public NoLowerIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class NoSymbolIcon : ResourcePictureSetting { public NoSymbolIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class NoUpperIcon : ResourcePictureSetting { public NoUpperIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class SmallLengthIcon : ResourcePictureSetting { public SmallLengthIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class StrengthIcon : ResourcePictureSetting { public StrengthIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class DelIcon : ResourcePictureSetting { public DelIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class NewIcon : ResourcePictureSetting { public NewIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class ProcIcon : ResourcePictureSetting { public ProcIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class AppMemoryIcon : ResourcePictureSetting { public AppMemoryIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class ComputerIconIcon : ResourcePictureSetting { public ComputerIconIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class DefaultUserIcon : ResourcePictureSetting { public DefaultUserIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class DotNetVersionIcon : ResourcePictureSetting { public DotNetVersionIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class DrivesIcon : ResourcePictureSetting { public DrivesIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class OperatingSystemIcon : ResourcePictureSetting { public OperatingSystemIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class ProcessorCountIcon : ResourcePictureSetting { public ProcessorCountIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class TotalMemoryIcon : ResourcePictureSetting { public TotalMemoryIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class WindowsUserIcon : ResourcePictureSetting { public WindowsUserIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class StartAppLangIcon : ResourcePictureSetting { public StartAppLangIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class StartCmdArgsIcon : ResourcePictureSetting { public StartCmdArgsIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class StartCmdPoolIcon : ResourcePictureSetting { public StartCmdPoolIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class StartDIIcon : ResourcePictureSetting { public StartDIIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class StartEndIcon : ResourcePictureSetting { public StartEndIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class StartNLogBaseIcon : ResourcePictureSetting { public StartNLogBaseIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class StartNLogTypedIcon : ResourcePictureSetting { public StartNLogTypedIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class StartReadConfIcon : ResourcePictureSetting { public StartReadConfIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class StartResIcon : ResourcePictureSetting { public StartResIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
-    public class StartTraceIcon : ResourcePictureSetting { public StartTraceIcon() : base(f.sys.defaultof<Image>().As<string>()) { } }
+    public class AskExitIcon : ResourcePictureSetting { public AskExitIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class AskTitleIcon : ResourcePictureSetting { public AskTitleIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class CancelIcon : ResourcePictureSetting { public CancelIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class CaptionIcon : ResourcePictureSetting { public CaptionIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class DialogIcon : ResourcePictureSetting { public DialogIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class ErrorTitleIcon : ResourcePictureSetting { public ErrorTitleIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class InfoTitleIcon : ResourcePictureSetting { public InfoTitleIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class InfoTraceIcon : ResourcePictureSetting { public InfoTraceIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class LoginIcon : ResourcePictureSetting { public LoginIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class MessageLoadingIcon : ResourcePictureSetting { public MessageLoadingIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class MessageNonConnectIcon : ResourcePictureSetting { public MessageNonConnectIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class MessageNonPasswordIcon : ResourcePictureSetting { public MessageNonPasswordIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class MessageStartIcon : ResourcePictureSetting { public MessageStartIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class MessageSuccessConnectIcon : ResourcePictureSetting { public MessageSuccessConnectIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class MessageSuccessPasswordIcon : ResourcePictureSetting { public MessageSuccessPasswordIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class OkIcon : ResourcePictureSetting { public OkIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class PasswordIcon : ResourcePictureSetting { public PasswordIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class PasswordChangeIcon : ResourcePictureSetting { public PasswordChangeIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class PasswordNewIcon : ResourcePictureSetting { public PasswordNewIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class PasswordOldIcon : ResourcePictureSetting { public PasswordOldIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class UserIcon : ResourcePictureSetting { public UserIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class AddIcon : ResourcePictureSetting { public AddIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class CopyIcon : ResourcePictureSetting { public CopyIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class EditIcon : ResourcePictureSetting { public EditIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class RefreshIcon : ResourcePictureSetting { public RefreshIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class RemoveIcon : ResourcePictureSetting { public RemoveIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class RestoreIcon : ResourcePictureSetting { public RestoreIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class DescriptionIcon : ResourcePictureSetting { public DescriptionIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class FolderIcon : ResourcePictureSetting { public FolderIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class FolderOpenIcon : ResourcePictureSetting { public FolderOpenIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class IconIcon : ResourcePictureSetting { public IconIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class TypeIcon : ResourcePictureSetting { public TypeIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class BinaryIcon : ResourcePictureSetting { public BinaryIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class BooleanIcon : ResourcePictureSetting { public BooleanIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class DateIcon : ResourcePictureSetting { public DateIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class GuidIcon : ResourcePictureSetting { public GuidIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class IntegerIcon : ResourcePictureSetting { public IntegerIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class ListIcon : ResourcePictureSetting { public ListIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class NumericIcon : ResourcePictureSetting { public NumericIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class RangeIcon : ResourcePictureSetting { public RangeIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class ReferenceIcon : ResourcePictureSetting { public ReferenceIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class StringIcon : ResourcePictureSetting { public StringIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class LoginInvalidIcon : ResourcePictureSetting { public LoginInvalidIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class LoginLengthIcon : ResourcePictureSetting { public LoginLengthIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class MetaCreateTypeIcon : ResourcePictureSetting { public MetaCreateTypeIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class MetaImplementInterfaceIcon : ResourcePictureSetting { public MetaImplementInterfaceIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class NullCodeIcon : ResourcePictureSetting { public NullCodeIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class NullLoginIcon : ResourcePictureSetting { public NullLoginIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class NullIconIcon : ResourcePictureSetting { public NullIconIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class PasswordConfirmationInvalidIcon : ResourcePictureSetting { public PasswordConfirmationInvalidIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class PasswordNewInvalidIcon : ResourcePictureSetting { public PasswordNewInvalidIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class ConfigurationIcon : ResourcePictureSetting { public ConfigurationIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class ConstantIcon : ResourcePictureSetting { public ConstantIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class ContextIcon : ResourcePictureSetting { public ContextIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class PreviousIcon : ResourcePictureSetting { public PreviousIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class FullIcon : ResourcePictureSetting { public FullIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class NoneIcon : ResourcePictureSetting { public NoneIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class ReadIcon : ResourcePictureSetting { public ReadIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class LikeLoginIcon : ResourcePictureSetting { public LikeLoginIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class NoDigitIcon : ResourcePictureSetting { public NoDigitIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class NoLowerIcon : ResourcePictureSetting { public NoLowerIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class NoSymbolIcon : ResourcePictureSetting { public NoSymbolIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class NoUpperIcon : ResourcePictureSetting { public NoUpperIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class SmallLengthIcon : ResourcePictureSetting { public SmallLengthIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class StrengthIcon : ResourcePictureSetting { public StrengthIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class DelIcon : ResourcePictureSetting { public DelIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class NewIcon : ResourcePictureSetting { public NewIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class ProcIcon : ResourcePictureSetting { public ProcIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class AppMemoryIcon : ResourcePictureSetting { public AppMemoryIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class ComputerIconIcon : ResourcePictureSetting { public ComputerIconIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class DefaultUserIcon : ResourcePictureSetting { public DefaultUserIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class DotNetVersionIcon : ResourcePictureSetting { public DotNetVersionIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class DrivesIcon : ResourcePictureSetting { public DrivesIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class OperatingSystemIcon : ResourcePictureSetting { public OperatingSystemIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class ProcessorCountIcon : ResourcePictureSetting { public ProcessorCountIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class TotalMemoryIcon : ResourcePictureSetting { public TotalMemoryIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class WindowsUserIcon : ResourcePictureSetting { public WindowsUserIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class StartAppLangIcon : ResourcePictureSetting { public StartAppLangIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class StartCmdArgsIcon : ResourcePictureSetting { public StartCmdArgsIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class StartCmdPoolIcon : ResourcePictureSetting { public StartCmdPoolIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class StartDIIcon : ResourcePictureSetting { public StartDIIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class StartEndIcon : ResourcePictureSetting { public StartEndIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class StartNLogBaseIcon : ResourcePictureSetting { public StartNLogBaseIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class StartNLogTypedIcon : ResourcePictureSetting { public StartNLogTypedIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class StartReadConfIcon : ResourcePictureSetting { public StartReadConfIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class StartResIcon : ResourcePictureSetting { public StartResIcon() : base(f.sys.defof<Image>().As<string>()) { } }
+    public class StartTraceIcon : ResourcePictureSetting { public StartTraceIcon() : base(f.sys.defof<Image>().As<string>()) { } }
     #endregion
 }

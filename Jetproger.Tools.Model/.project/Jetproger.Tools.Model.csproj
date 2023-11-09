@@ -44,115 +44,45 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\CustomType.cs">
-      <Link>Bases\CustomType.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\Face.cs">
-      <Link>Bases\Face.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\FaceItem.cs">
-      <Link>Bases\FaceItem.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\Grid.cs">
-      <Link>Bases\Grid.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\GridItem.cs">
-      <Link>Bases\GridItem.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\ParameterScope.cs">
-      <Link>Bases\ParameterScope.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\Task.cs">
-      <Link>Bases\Task.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\TaskItem.cs">
-      <Link>Bases\TaskItem.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\Tree.cs">
-      <Link>Bases\Tree.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\TreeItem.cs">
-      <Link>Bases\TreeItem.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\Unit.cs">
-      <Link>Bases\Unit.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\UnitItem.cs">
-      <Link>Bases\UnitItem.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\Permission.cs">
-      <Link>Bases\Permission.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\PermissionRole.cs">
-      <Link>Bases\PermissionRole.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\Role.cs">
-      <Link>Bases\Role.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\User.cs">
-      <Link>Bases\User.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\UserRole.cs">
-      <Link>Bases\UserRole.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\..\.solution\AssemblyInfo.cs">
-      <Link>.project\AssemblyInfo.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\.solution\jetproger.pfx">
-      <Link>.project\jetproger.pfx</Link>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Jetproger.Tools.Convert\.project\Jetproger.Tools.Convert.csproj">
       <Project>{600aa7dc-ea39-4609-ab2a-3546bb5f8b72}</Project>
       <Name>Jetproger.Tools.Convert</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\.setting\Jetproger.Tools.Model.nuspec">
-      <Link>.project\Jetproger.Tools.Model.nuspec</Link>
-    </None>
+    <Compile Include="..\Bases\ParameterScope.cs"><Link>Bases\ParameterScope.cs</Link></Compile>
+    <Compile Include="..\Bases\CustomType.cs"><Link>Bases\CustomType.cs</Link></Compile>
+    <Compile Include="..\Bases\Card.cs"><Link>Bases\Card.cs</Link></Compile>
+    <Compile Include="..\Bases\CardItem.cs"><Link>Bases\CardItem.cs</Link></Compile>
+    <Compile Include="..\Bases\Page.cs"><Link>Bases\Page.cs</Link></Compile>
+    <Compile Include="..\Bases\PageItem.cs"><Link>Bases\PageItem.cs</Link></Compile>
+    <Compile Include="..\Bases\Grid.cs"><Link>Bases\Grid.cs</Link></Compile>
+    <Compile Include="..\Bases\GridItem.cs"><Link>Bases\GridItem.cs</Link></Compile>
+    <Compile Include="..\Bases\Task.cs"><Link>Bases\Task.cs</Link></Compile>
+    <Compile Include="..\Bases\TaskItem.cs"><Link>Bases\TaskItem.cs</Link></Compile>
+    <Compile Include="..\Bases\Tree.cs"><Link>Bases\Tree.cs</Link></Compile>
+    <Compile Include="..\Bases\TreeItem.cs"><Link>Bases\TreeItem.cs</Link></Compile>
+    <Compile Include="..\Bases\Unit.cs"><Link>Bases\Unit.cs</Link></Compile>
+    <Compile Include="..\Bases\UnitItem.cs"><Link>Bases\UnitItem.cs</Link></Compile>
+    <Compile Include="..\Bases\Flag.cs"><Link>Bases\Flag.cs</Link></Compile>
+    <Compile Include="..\Bases\FlagRole.cs"><Link>Bases\FlagRole.cs</Link></Compile>
+    <Compile Include="..\Bases\Role.cs"><Link>Bases\Role.cs</Link></Compile>
+    <Compile Include="..\Bases\User.cs"><Link>Bases\User.cs</Link></Compile>
+    <Compile Include="..\Bases\UserRole.cs"><Link>Bases\UserRole.cs</Link></Compile>
+    <Compile Include="..\Bases\Firm.cs"><Link>Bases\Firm.cs</Link></Compile>
+    <Compile Include="..\Bases\Note.cs"><Link>Bases\Note.cs</Link></Compile>
+    <Compile Include="..\Bases\Rule.cs"><Link>Bases\Rule.cs</Link></Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\.solution\AssemblyInfo.cs"><Link>.project\AssemblyInfo.cs</Link></Compile>
+    <None Include="..\..\.solution\jetproger.pfx"><Link>.project\jetproger.pfx</Link></None>
+    <None Include="..\.setting\Jetproger.Tools.Model.nuspec"><Link>.project\Jetproger.Tools.Model.nuspec</Link></None>
   </ItemGroup>
   <Target Name="RemoveDirectories" BeforeTargets="ResolveReferences">
     <Exec Command="for /d %%p in (&quot;$(ProjectDir)&quot;\*) do if /I &quot;%%p&quot; neq &quot;$(ProjectDir)\obj&quot; (rd /Q /S &quot;%%p&quot;)" />
   </Target>
   <Target Name="RemoveObj" AfterTargets="Rebuild">
+    <Exec Command="call $(SolutionDir)post-build.bat $(SolutionDir) $(ProjectDir) $(TargetDir) $(ProjectName)" />
     <Exec Command="rd /Q /S &quot;$(ProjectDir)\obj&quot;" />
   </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

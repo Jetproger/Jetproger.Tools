@@ -16,7 +16,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\.Jetproger.Tools.Cache\</OutputPath>
+    <OutputPath>..\..\.Jetproger.Tools\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -24,7 +24,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\.Jetproger.Tools.Cache\</OutputPath>
+    <OutputPath>..\..\.Jetproger.Tools\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -52,55 +52,17 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\Cache.cs">
-      <Link>Bases\Cache.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\CacheCore.cs">
-      <Link>Bases\CacheCore.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\CacheRemote.cs">
-      <Link>Bases\CacheRemote.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\Dotnet.cs">
-      <Link>Bases\Dotnet.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\Property.cs">
-      <Link>Bases\Property.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\..\.solution\AssemblyInfo.cs">
-      <Link>.project\AssemblyInfo.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\.solution\jetproger.pfx">
-      <Link>.project\jetproger.pfx</Link>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\.setting\Jetproger.Tools.Cache.nuspec">
-      <Link>.project\Jetproger.Tools.Cache.nuspec</Link>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\.setting\packages.config">
-      <Link>.project\packages.config</Link>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Jetproger.Tools.Convert\.project\Jetproger.Tools.Convert.csproj">
       <Project>{600aa7dc-ea39-4609-ab2a-3546bb5f8b72}</Project>
       <Name>Jetproger.Tools.Convert</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Bases\Program.cs"><Link>Bases\Program.cs</Link></Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\.solution\AssemblyInfo.cs"><Link>.project\AssemblyInfo.cs</Link></Compile>
+    <None Include="..\..\.solution\jetproger.pfx"><Link>.project\jetproger.pfx</Link></None>
   </ItemGroup>
   <Target Name="RemoveDirectories" BeforeTargets="ResolveReferences">
     <Exec Command="for /d %%p in (&quot;$(ProjectDir)&quot;\*) do if /I &quot;%%p&quot; neq &quot;$(ProjectDir)\obj&quot; (rd /Q /S &quot;%%p&quot;)" />

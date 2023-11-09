@@ -18,10 +18,10 @@ namespace Jetproger.Tools.Convert.Factories
 
         public static TValue Get(TKey key)
         {
-            return Store.TryGetValue(key, out var value) ? value : f.sys.defaultof<TValue>();
+            return Store.TryGetValue(key, out var value) ? value : f.sys.defof<TValue>();
         }
 
-        public static TValue GetSet(TKey key, ParameterizedCreator creator)
+        public static TValue GetSet(TKey key, ParamCreator creator)
         {
             return Store.GetOrAdd(key, (TValue)creator.Create(key));
         }
@@ -47,7 +47,7 @@ namespace Jetproger.Tools.Convert.Factories
             return GetMethods.GetOrAdd(_T(keyType, valueType), x => _M(x, "Get"))?.Invoke(null, new object[] { key });
         }
 
-        public static object GetSet(Type keyType, Type valueType, object key, ParameterizedCreator creator)
+        public static object GetSet(Type keyType, Type valueType, object key, ParamCreator creator)
         {
             return GetSetMethods.GetOrAdd(_T(keyType, valueType), x => _M(x, "GetSet"))?.Invoke(null, new object[] { key, creator });
         }

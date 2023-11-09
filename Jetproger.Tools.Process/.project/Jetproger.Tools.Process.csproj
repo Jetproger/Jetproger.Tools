@@ -39,21 +39,6 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\.Newtonsoft.Json\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation">
-      <HintPath>..\..\.Microsoft.Practices\Microsoft.Practices.ServiceLocation.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity">
-      <HintPath>..\..\.Microsoft.Practices\Microsoft.Practices.Unity.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Configuration">
-      <HintPath>..\..\.Microsoft.Practices\Microsoft.Practices.Unity.Configuration.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Interception">
-      <HintPath>..\..\.Microsoft.Practices\Microsoft.Practices.Unity.Interception.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Interception.Configuration">
-      <HintPath>..\..\.Microsoft.Practices\Microsoft.Practices.Unity.Interception.Configuration.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.configuration" />
@@ -68,191 +53,9 @@
     <Reference Include="System.Runtime.Remoting" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\Methods.cs">
-      <Link>Bases\Methods.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\Process.cs">
-      <Link>Bases\Process.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\ProgramStarter.cs">
-      <Link>Bases\ProgramStarter.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\StructureExtensions.cs">
-      <Link>Bases\StructureExtensions.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\DatasetExtensions.cs">
-      <Link>Bases\DatasetExtensions.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Bases\ServerStarter.cs">
-      <Link>Bases\ServerStarter.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Commands\Command.cs">
-      <Link>Commands\Command.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Commands\CommandAgent.cs">
-      <Link>Commands\CommandAgent.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Commands\CommandDirect.cs">
-      <Link>Commands\CommandDirect.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Commands\CommandFactory.cs">
-      <Link>Commands\CommandFactory.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Commands\CommandMapper.cs">
-      <Link>Commands\CommandMapper.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Commands\CommandPool.cs">
-      <Link>Commands\CommandPool.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Commands\CommandProvider.cs">
-      <Link>Commands\CommandProvider.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Commands\CommandServerToClientMessage.cs">
-      <Link>Commands\CommandServerToClientMessage.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Commands\CommandService.cs">
-      <Link>Commands\CommandService.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Commands\CommandState.cs">
-      <Link>Commands\CommandState.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Commands\CommandStrategy.cs">
-      <Link>Commands\CommandStrategy.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Commands\CommandWorker.cs">
-      <Link>Commands\CommandWorker.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Commands\CommandType.cs">
-      <Link>Commands\CommandType.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Commands\CommandRequest.cs">
-      <Link>Commands\CommandRequest.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Commands\CommandResponse.cs">
-      <Link>Commands\CommandResponse.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Services\SchedulerService.cs">
-      <Link>Services\SchedulerService.cs</Link>
-      <SubType>Component</SubType>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Services\ServerBuilder.cs">
-      <Link>Services\ServerBuilder.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Services\ServerContract.cs">
-      <Link>Services\ServerContract.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Services\ServerService.cs">
-      <Link>Services\ServerService.cs</Link>
-      <SubType>Component</SubType>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Services\ServiceErrorHandler.cs">
-      <Link>Services\ServiceErrorHandler.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Services\ServiceMounter.cs">
-      <Link>Services\ServiceMounter.cs</Link>
-      <SubType>Component</SubType>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Services\StarterService.cs">
-      <Link>Services\StarterService.cs</Link>
-      <SubType>Component</SubType>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Aspects\CacheCallHandler.cs">
-      <Link>Aspects\CacheCallHandler.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Aspects\DurationCallHandler.cs">
-      <Link>Aspects\DurationCallHandler.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Aspects\ExceptionCallHandler.cs">
-      <Link>Aspects\ExceptionCallHandler.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Aspects\SecurityCallHandler.cs">
-      <Link>Aspects\SecurityCallHandler.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\..\.solution\AssemblyInfo.cs">
-      <Link>.project\AssemblyInfo.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\.solution\jetproger.pfx">
-      <Link>.project\jetproger.pfx</Link>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Jetproger.Tools.Cache\.project\Jetproger.Tools.Cache.csproj">
-      <Project>{0E365FF3-8139-4F71-B5E1-E8A5212F94B7}</Project>
-      <Name>Jetproger.Tools.Cache</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Jetproger.Tools.Convert\.project\Jetproger.Tools.Convert.csproj">
       <Project>{600AA7DC-EA39-4609-AB2A-3546BB5F8B72}</Project>
       <Name>Jetproger.Tools.Convert</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Jetproger.Tools.Inject\.project\Jetproger.Tools.Inject.csproj">
-      <Project>{A210FC06-1EA3-4206-B466-B730D19C738C}</Project>
-      <Name>Jetproger.Tools.DI</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Jetproger.Tools.File\.project\Jetproger.Tools.File.csproj">
       <Project>{7A3F5D37-B9BE-4C40-8C31-AD181D16FF43}</Project>
@@ -266,20 +69,17 @@
       <Project>{F2644829-D8F4-4CFF-BF32-46745BEF2638}</Project>
       <Name>Jetproger.Tools.Structure</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Jetproger.Tools.Trace\.project\Jetproger.Tools.Trace.csproj">
-      <Project>{ADE5BFBB-508C-4A3B-BF93-A9BA4570E4E1}</Project>
-      <Name>Jetproger.Tools.Trace</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\.setting\Jetproger.Tools.Process.nuspec">
-      <Link>.project\Jetproger.Tools.Process.nuspec</Link>
-    </None>
+    <Compile Include="..\..\.solution\AssemblyInfo.cs"><Link>.project\AssemblyInfo.cs</Link></Compile>
+    <None Include="..\..\.solution\jetproger.pfx"><Link>.project\jetproger.pfx</Link></None>
+    <None Include="..\.setting\Jetproger.Tools.Process.nuspec"><Link>.project\Jetproger.Tools.Process.nuspec</Link></None>
   </ItemGroup>
   <Target Name="RemoveDirectories" BeforeTargets="ResolveReferences">
     <Exec Command="for /d %%p in (&quot;$(ProjectDir)&quot;\*) do if /I &quot;%%p&quot; neq &quot;$(ProjectDir)\obj&quot; (rd /Q /S &quot;%%p&quot;)" />
   </Target>
   <Target Name="RemoveObj" AfterTargets="Rebuild">
+    <Exec Command="call $(SolutionDir)post-build.bat $(SolutionDir) $(ProjectDir) $(TargetDir) $(ProjectName)" />
     <Exec Command="rd /Q /S &quot;$(ProjectDir)\obj&quot;" />
   </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
