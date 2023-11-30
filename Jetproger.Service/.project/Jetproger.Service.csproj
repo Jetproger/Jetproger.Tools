@@ -39,33 +39,66 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NLog"><HintPath>..\..\.NLog\NLog.dll</HintPath></Reference>
-    <Reference Include="NLog.Extended"><HintPath>..\..\.NLog\NLog.Extended.dll</HintPath></Reference>
+    <Reference Include="NLog">
+      <HintPath>..\..\.NLog\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog.Extended">
+      <HintPath>..\..\.NLog\NLog.Extended.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Runtime.Remoting" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Jetproger.Tools.Convert\.project\Jetproger.Tools.Convert.csproj">
-      <Project>{600aa7dc-ea39-4609-ab2a-3546bb5f8b72}</Project>
-      <Name>Jetproger.Tools.Convert</Name>
-    </ProjectReference>
+    <Compile Include="..\Bases\AppMethods.cs">
+      <Link>Bases\AppMethods.cs</Link>
+    </Compile>
+    <Compile Include="..\Bases\AppService.cs">
+      <Link>Bases\AppService.cs</Link>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="..\Bases\AppSetuper.cs">
+      <Link>Bases\AppSetuper.cs</Link>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="..\Bases\AppStarter.cs">
+      <Link>Bases\AppStarter.cs</Link>
+    </Compile>
+    <Compile Include="..\Bases\AppUpdater.cs">
+      <Link>Bases\AppUpdater.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Bases\AppStart.cs"><Link>Bases\AppStart.cs</Link></Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\..\.solution\AssemblyInfo.cs"><Link>.project\AssemblyInfo.cs</Link></Compile>
-    <None Include="..\..\.solution\jetproger.pfx"><Link>.project\jetproger.pfx</Link></None>
+    <Compile Include="..\..\.solution\AssemblyInfo.cs">
+      <Link>.project\AssemblyInfo.cs</Link>
+    </Compile>
+    <None Include="..\..\.solution\jetproger.pfx">
+      <Link>.project\jetproger.pfx</Link>
+    </None>
+    <None Include="..\.setting\services.bat">
+      <Link>.project\services.bat</Link>
+    </None>
+    <None Include="..\.setting\Jetproger.Mssql.exe.config">
+      <Link>.project\Jetproger.Mssql.exe.config</Link>
+    </None>
+    <None Include="..\.setting\Jetproger.Server.exe.config">
+      <Link>.project\Jetproger.Server.exe.config</Link>
+    </None>
   </ItemGroup>
   <Target Name="RemoveDirectories" BeforeTargets="ResolveReferences">
     <Exec Command="for /d %%p in (&quot;$(ProjectDir)&quot;\*) do if /I &quot;%%p&quot; neq &quot;$(ProjectDir)\obj&quot; (rd /Q /S &quot;%%p&quot;)" />
   </Target>
   <Target Name="RemoveObj" AfterTargets="Rebuild">
+    <Exec Command="..\.setting\services.bat $(SolutionDir) $(ProjectDir) $(TargetDir) $(ProjectName)" />
     <Exec Command="rd /Q /S &quot;$(ProjectDir)\obj&quot;" />
   </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

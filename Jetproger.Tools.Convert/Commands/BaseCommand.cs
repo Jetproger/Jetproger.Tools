@@ -198,6 +198,7 @@ namespace Jetproger.Tools.Convert.Commands
             if (State == ECommandState.Completed) return;
             if (state == ECommandState.Running)
             {
+                Error = f.cry.accessof(this);
                 if (f.mem.of(this, out object result))
                 {
                     state = ECommandState.Completed;
@@ -291,7 +292,6 @@ namespace Jetproger.Tools.Convert.Commands
         private readonly T7[] _p7 = { default(T7) };
         private readonly T8[] _p8 = { default(T8) };
         private readonly T9[] _p9 = { default(T9) };
-
         #endregion
     }
 

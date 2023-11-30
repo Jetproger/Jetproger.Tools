@@ -97,7 +97,7 @@
     <Compile Include="..\Commanders\CommandResponse.cs"><Link>Commanders\CommandResponse.cs</Link></Compile>
     <Compile Include="..\Commanders\CommandMessage.cs"><Link>Commanders\CommandMessage.cs</Link></Compile>
     <Compile Include="..\Commanders\CommandRecord.cs"><Link>Commanders\CommandRecord.cs</Link></Compile>
-    <Compile Include="..\Commanders\CommandService.cs"><Link>Commanders\CommandService.cs</Link></Compile>
+    <Compile Include="..\Commanders\CommandProvider.cs"><Link>Commanders\CommandProvider.cs</Link></Compile>
     <Compile Include="..\Commanders\CommandStreams.cs"><Link>Commanders\CommandStreams.cs</Link></Compile>
     <Compile Include="..\Commanders\CommandWatcher.cs"><Link>Commanders\CommandWatcher.cs</Link></Compile>
   </ItemGroup>
@@ -138,7 +138,7 @@
     <Exec Command="for /d %%p in (&quot;$(ProjectDir)&quot;\*) do if /I &quot;%%p&quot; neq &quot;$(ProjectDir)\obj&quot; (rd /Q /S &quot;%%p&quot;)" />
   </Target>
   <Target Name="RemoveObj" AfterTargets="Rebuild">
-    <Exec Command="call $(SolutionDir)post-build.bat $(SolutionDir) $(ProjectDir) $(TargetDir) $(ProjectName)" />
+    <Exec Command="call $(SolutionDir)packages.bat $(SolutionDir) $(ProjectDir) $(TargetDir) $(ProjectName)" />
     <Exec Command="rd /Q /S &quot;$(ProjectDir)\obj&quot;" />
   </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

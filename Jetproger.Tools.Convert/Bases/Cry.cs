@@ -13,7 +13,10 @@ namespace Jetproger.Tools.Convert.Bases
     public class CryExpander
     {
         public X509Certificate2 app { get { return CryptoExtensions.AppCertificate; } }
-        public X509Certificate2 ext { get { return CryptoExtensions.OutCertificate; } } 
+        public X509Certificate2 ext { get { return CryptoExtensions.OutCertificate; } }
+        private ISecurityContext _securityContext;
+        public void access(ISecurityContext securityContext) { _securityContext = _securityContext ?? securityContext; }
+        public Exception accessof(object entity) { return _securityContext?.AccessOf(entity); }
     }
 
     public static class CryptoExtensions
@@ -161,6 +164,7 @@ namespace Jetproger.Tools.Convert.Bases
         public const uint CRYPT_VERIFYCONTEXT = 0xF0000000;
         public const uint CRYPT_FQCN = 0x10;
         public const uint CRYPT_FIRST = 0x00000001;
+
         public const uint PP_ENUMREADERS = 114;
         public const uint PP_ENUMCONTAINERS = 0x2;
         public const uint AT_KEYEXCHANGE = 1;
@@ -169,6 +173,7 @@ namespace Jetproger.Tools.Convert.Bases
         public const uint X509_NDR_ENCODING = 0x00000002;
         public const uint PKCS_7_ASN_ENCODING = 0x00010000;
         public const uint PKCS_7_NDR_ENCODING = 0x00020000;
+
         public const int WM_KEYDOWN = 0x0100;
         public const int VK_ENTER = 0x0D;
         public const int VK_TAB = 0x09;
@@ -256,6 +261,11 @@ namespace Jetproger.Tools.Convert.Bases
         }
 
         #endregion
+    }
+
+    public interface ISecurityContext
+    {
+        Exception AccessOf(object entity);
     }
 }
 

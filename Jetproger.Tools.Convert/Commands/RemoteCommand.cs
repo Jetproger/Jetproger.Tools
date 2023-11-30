@@ -28,12 +28,20 @@ namespace Jetproger.Tools.Convert.Commands
         {
             Client = new WebClient();
             Client.Headers[HttpRequestHeader.ContentType] = "text/plain";
-            Client.UploadStringCompleted += WebClientUploadStringCompleted;
+            Client.UploadStringCompleted += UploadStringCompleted;
         }
 
-        private class _RemoteWebCommand : BaseCommand<CommandResponse, CommandRequest>, ICommand
+        private static void UploadStringCompleted(object sender, UploadStringCompletedEventArgs e)
+        {
+            var cmd = e.UserState as _RemoteWebCommand;
+            if (cmd == null) return;
+            cmd.Delay(e);
+        }
+
+        private class _RemoteWebCommand : DelayCommand<CommandResponse, CommandRequest>, ICommand
         {
             public _RemoteWebCommand(string url) { _url = url; }
+            private UploadStringCompletedEventArgs _state;
             private readonly string _url;
 
             public void Execute()
@@ -51,29 +59,36 @@ namespace Jetproger.Tools.Convert.Commands
                     Error = e;
                 }
             }
-        }
 
-        private static void WebClientUploadStringCompleted(object sender, UploadStringCompletedEventArgs e)
-        {
-            var cmd = e.UserState as IBaseCommand;
-            if (cmd == null)
+            public void Delay(UploadStringCompletedEventArgs state)
             {
-                return;
+                _state = state;
+                if (((IDelay)this).CancelDelay) Completing(state); else SetState(ECommandState.Completed);
             }
-            if (e.Error != null)
+
+            public override void Complete()
             {
-                cmd.Error = e.Error;
-                return;
+                Completing(_state);
+                base.Complete();
             }
-            try
+
+            private void Completing(UploadStringCompletedEventArgs state)
             {
-                var json = (e.Result ?? string.Empty).Trim('\0');
-                var result = json.As<NewtonsoftJson>().As<CommandResponse>();
-                cmd.Result = result;
-            }
-            catch (Exception exception)
-            {
-                cmd.Error = exception;
+                if (state.Error != null)
+                {
+                    Error = state.Error;
+                    return;
+                }
+                try
+                {
+                    var json = (state.Result ?? string.Empty).Trim('\0');
+                    var result = json.As<NewtonsoftJson>().As<CommandResponse>();
+                    Result = result;
+                }
+                catch (Exception exception)
+                {
+                    Error = exception;
+                }
             }
         }
     }
